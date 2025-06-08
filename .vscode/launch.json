@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ProtacticApplication<protactic>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.protactic.protactic.ProtacticApplication",
+            "projectName": "protactic",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Clubes</title>
+</head>
+<body>
+    <h1>Clubes</h1>
+    <a href="/clubes/novo">Novo Clube</a>
+    <table border="1">
+        <tr>
+            <th>CNPJ</th>
+            <th>Nome</th>
+            <th>Cidade</th>
+            <th>Estado</th>
+            <th>País</th>
+            <th>Ações</th>
+        </tr>
+        <tr th:each="clube : ${clubes}">
+            <td th:text="${clube.cnpj}">CNPJ</td>
+            <td th:text="${clube.nome}">Nome</td>
+            <td th:text="${clube.cidade}">Cidade</td>
+            <td th:text="${clube.estado}">Estado</td>
+            <td th:text="${clube.pais}">País</td>
+            <td>
+                <a th:href="@{/clubes/editar/{cnpj}(cnpj=${clube.cnpj})}">Editar</a>
+                <a th:href="@{/clubes/deletar/{cnpj}(cnpj=${clube.cnpj})}">Excluir</a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
