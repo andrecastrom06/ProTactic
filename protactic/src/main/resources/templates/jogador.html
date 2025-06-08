@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Protactic - Jogador</title>
+</head>
+<body>
+    <h1>Lista de Jogadores</h1>
+
+    <table border="1">
+        <tr>
+            <th>CPF</th>
+            <th>Empresário CPF</th>
+            <th>Clube CNPJ</th>
+            <th>Posição</th>
+            <th>Altura</th>
+            <th>Peso</th>
+            <th>Valor Estimado</th>
+            <th>Perna Preferida</th>
+            <th>Categoria</th>
+        </tr>
+        <tr th:each="jogador : ${jogadores}">
+            <td th:text="${jogador.pessoaCpf}">CPF</td>
+            <td th:text="${jogador.empresario != null ? jogador.empresario.pessoaCpf : 'N/A'}">Empresário CPF</td>
+            <td th:text="${jogador.clube != null ? jogador.clube.cnpj : 'N/A'}">Clube CNPJ</td>
+            <td th:text="${jogador.posicao}">Posição</td>
+            <td th:text="${jogador.altura}">Altura</td>
+            <td th:text="${jogador.peso}">Peso</td>
+            <td th:text="${jogador.valorEstimado}">Valor Estimado</td>
+            <td th:text="${jogador.pernaPreferida}">Perna Preferida</td>
+            <td th:text="${jogador.categoria}">Categoria</td>
+        </tr>
+    </table>
+    
+</body>
+</html>

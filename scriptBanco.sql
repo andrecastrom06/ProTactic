@@ -109,3 +109,51 @@ CREATE TABLE Analisa (
     FOREIGN KEY (fk_Analista_CPF) REFERENCES Analista_de_desempenho(fk_Pessoa_CPF),
     FOREIGN KEY (fk_Jogador_CPF) REFERENCES Jogador(fk_Pessoa_CPF)
 );
+
+-- Populando TESTE
+
+INSERT INTO Pessoa (CPF, Nome, Cidade, Estado, Pais, RG, Data_Nascimento) VALUES
+('11111111111', 'Carlos Silva', 'São Paulo', 'SP', 'Brasil', 'MG1234567', '1990-05-12'),
+('22222222222', 'Ana Souza', 'Rio de Janeiro', 'RJ', 'Brasil', 'RJ2345678', '1985-08-23'),
+('33333333333', 'Marcos Lima', 'Belo Horizonte', 'MG', 'Brasil', 'MG3456789', '1995-03-14'),
+('44444444444', 'Paula Mendes', 'Porto Alegre', 'RS', 'Brasil', 'RS4567890', '1992-11-05'),
+('55555555555', 'Rafael Costa', 'Curitiba', 'PR', 'Brasil', 'PR5678901', '2000-07-30');
+
+INSERT INTO Clube (CNPJ, Pais, Estado, Cidade, Nome) VALUES
+('12345678000100', 'Brasil', 'SP', 'São Paulo', 'São Paulo FC'),
+('98765432000199', 'Brasil', 'RJ', 'Rio de Janeiro', 'Flamengo');
+
+INSERT INTO Analista_de_desempenho (fk_Pessoa_CPF, fk_Clube_CNPJ, Matricula, Ativo) VALUES
+('11111111111', '12345678000100', 'A001', TRUE),
+('22222222222', '98765432000199', 'A002', TRUE);
+
+INSERT INTO Empresario (fk_Pessoa_CPF, Agencia, Registro_FIFA) VALUES
+('33333333333', 'Top Sports', 'FIFA-99999');
+
+INSERT INTO Jogador (fk_Pessoa_CPF, fk_Empresario_CPF, fk_Clube_CNPJ, Posicao, Altura, Peso, Valor_estimado, Perna_preferida, Categoria) VALUES
+('44444444444', '33333333333', '12345678000100', 'Atacante', 1.80, 75.5, 1000000, 'Direita', 'Profissional'),
+('55555555555', '33333333333', '98765432000199', 'Meio-Campo', 1.75, 70.0, 800000, 'Esquerda', 'Profissional');
+
+INSERT INTO Partida (ID, Mandante, Visitante, Data) VALUES
+('P001', 'São Paulo FC', 'Flamengo', '2025-06-01'),
+('P002', 'Flamengo', 'São Paulo FC', '2025-06-07');
+
+INSERT INTO Desempenha (
+    fk_Partida_ID, fk_Jogador_CPF, Gols, Assistencias, Passe_curto_tentados, Passe_curto_acertados,
+    Passe_longo_tentados, Passe_longo_acertados, Cruzamento_tentados, Cruzamento_acertados,
+    Dominio_tentados, Dominio_acertados, Finalizacao_tentadas, Finalizacao_acertadas,
+    Cabeceio_tentados, Cabeceios_acertados, Drible_tentados, Drible_acertados,
+    Faltas_tentadas, Faltas_acertadas, Velocidade_media, Velocidade_sprint, Velocidade_reacao,
+    Impulsao, Resistencia, Forca, Chute_longe_tentados, Chute_longe_acertados,
+    Interceptacao_tentadas, Interceptacao_acertadas, Penaltis_tentados, Penaltis_acertados,
+    Desarmes_tentados, Desarmes_acertados, Chutes_goleiro_defendidos, Chutes_goleiro_nao_defendidos,
+    Lancamento_com_mao_tentado, Lancamento_com_mao_acertado
+) VALUES
+('P001', '44444444444', 1, 1, 25, 22, 5, 3, 4, 2, 20, 18, 6, 3, 2, 1, 8, 6, 3, 2, 28.50, 33.40, 0.85,
+ 40.5, 90, 85, 2, 1, 3, 2, 1, 1, 5, 4, 0, 0, 0, 0),
+('P002', '55555555555', 0, 2, 30, 28, 6, 4, 3, 1, 22, 20, 4, 2, 1, 0, 10, 8, 2, 1, 27.80, 32.10, 0.90,
+ 38.0, 88, 80, 1, 1, 4, 3, 0, 0, 6, 5, 0, 0, 0, 0);
+
+INSERT INTO Analisa (fk_Analista_CPF, fk_Jogador_CPF) VALUES
+('11111111111', '44444444444'),
+('22222222222', '55555555555');
