@@ -1,5 +1,5 @@
-# protactic
-ProTactic
+# proscout
+ProScout
 
 LINUX: export DB_PASSWORD="senha"<br>
 WINDOWS: $env:DB_PASSWORD="senha"<br>
