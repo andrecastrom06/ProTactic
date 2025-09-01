@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.protactic</groupId>
-	<artifactId>sgb-modulos</artifactId>
+	<artifactId>sgb-apresentacao</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
@@ -15,11 +15,8 @@
 	</properties>	
 
 	<modules>
-		<module>aplicacao</module>
-		<module>apresentacao</module>
-		<module>docker</module>	
-		<module>dominio</module>
-		<module>infraestrutura</module>
-		<module>pai</module>
+		<module>backend</module>
+		<module>frontend</module>
+		<module>vaadin</module>
 	</modules>
 </project>

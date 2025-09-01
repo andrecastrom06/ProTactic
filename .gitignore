@@ -36,3 +36,6 @@ build/
 /mvnw.cmd
 
 /HELP.md
+
+schema.sql
+src-gen
