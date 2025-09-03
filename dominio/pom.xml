@@ -15,10 +15,7 @@
 	</properties>
 
 	<modules>
-		<module>acervo</module>
-		<module>acervo-bdd</module>
-		<module>administracao</module>
-		<module>analise</module>
-		<module>comum</module>
+		<module>principal</module>
+		<module>principal-bdd</module>
 	</modules>
 </project>
