@@ -31,21 +31,9 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>sgb-dominio-acervo</artifactId>
+			<artifactId>sgb-dominio-principal</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sgb-dominio-administracao</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sgb-dominio-analise</artifactId>
-			<version>${project.version}</version>
-		</dependency>		
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>

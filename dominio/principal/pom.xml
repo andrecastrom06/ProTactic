@@ -11,7 +11,7 @@
 	    <relativePath>../../pai</relativePath>
 	</parent>
 
-	<artifactId>sgb-dominio-acervo</artifactId>
+	<artifactId>sgb-dominio-principal</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -22,12 +22,6 @@
 		<dependency>
 			<groupId>org.jmolecules</groupId>
 			<artifactId>jmolecules-events</artifactId>
-		</dependency>			
-
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sgb-dominio-comum</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

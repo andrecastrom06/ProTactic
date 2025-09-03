@@ -23,11 +23,5 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sgb-dominio-comum</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 	</dependencies>				
 </project>

@@ -11,7 +11,7 @@
 	    <relativePath>../../pai</relativePath>
 	</parent>
 
-	<artifactId>sgb-dominio-acervo-bdd</artifactId>
+	<artifactId>sgb-dominio-principal-bdd</artifactId>
 
     <build>
         <plugins>
