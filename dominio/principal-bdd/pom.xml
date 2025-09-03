@@ -64,6 +64,24 @@
 			<artifactId>sgb-infraestrutura-persistencia-memoria</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>	
+
+        <dependency>
+            <groupId>com.protactic</groupId>
+            <artifactId>sgb-dominio-principal</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>	
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 </project>
