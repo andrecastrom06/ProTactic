@@ -1,1 +1,0 @@
-package dev.sauloaraujo.sgb.apresentacao.acervo.livro;
