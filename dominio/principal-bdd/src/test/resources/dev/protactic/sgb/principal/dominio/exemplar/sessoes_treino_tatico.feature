@@ -2,6 +2,7 @@
 
 Funcionalidade: 10 - Criar sessões de treinos táticos vinculados a um jogo
 
+
   Regra: Deve haver um jogo no calendário para vincular um treino tático.
          Os atletas selecionados não podem estar indisponíveis (lesão grau 1, 2 ou 3, ou suspensão).
          Lesão grau 0 não impede a participação.
