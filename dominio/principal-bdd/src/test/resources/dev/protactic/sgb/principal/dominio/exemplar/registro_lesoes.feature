@@ -1,4 +1,5 @@
 # language: pt
+
 Funcionalidade: 3 - Registro de lesões e planejamento de recuperações
   Como gestor do elenco
   Quero registrar lesões e planejar recuperações
