@@ -1,4 +1,6 @@
-ContextMap {
+ContextMap ClubeFutebolMap {
+  type = SYSTEM_LANDSCAPE
+
   contains JogadoresContext
   contains ContratosContext
   contains LesoesContext
@@ -10,22 +12,29 @@ ContextMap {
   contains DesempenhoContext
   contains PremiacaoContext
 
-  // Relações entre contextos
-  ContratosContext -> JogadoresContext { relationship = UpstreamDownstream }
-  LesoesContext -> JogadoresContext { relationship = UpstreamDownstream }
-  DisciplinarContext -> JogadoresContext { relationship = UpstreamDownstream }
-  CompeticaoContext -> JogadoresContext { relationship = UpstreamDownstream }
-  TreinamentoContext -> JogadoresContext { relationship = UpstreamDownstream }
-  EscalacaoContext -> JogadoresContext { relationship = UpstreamDownstream }
-  EscalacaoContext -> LesoesContext { relationship = UpstreamDownstream }
-  EscalacaoContext -> DisciplinarContext { relationship = UpstreamDownstream }
-  GestaoContext -> ContratosContext { relationship = UpstreamDownstream }
-  GestaoContext -> JogadoresContext { relationship = UpstreamDownstream }
-  PremiacaoContext -> DesempenhoContext { relationship = UpstreamDownstream }
+  // Jogadores expõe OHS de diretório de atletas
+  JogadoresContext -> ContratosContext : OpenHostService
+  JogadoresContext -> LesoesContext : OpenHostService
+  JogadoresContext -> DisciplinarContext : OpenHostService
+  JogadoresContext -> TreinamentoContext : OpenHostService
+  JogadoresContext -> EscalacaoContext : OpenHostService
+  JogadoresContext -> CompeticaoContext : OpenHostService
+  JogadoresContext -> DesempenhoContext : OpenHostService
+  JogadoresContext -> PremiacaoContext : OpenHostService
+  JogadoresContext -> GestaoContext : OpenHostService
+
+  // Consumidores conformistas do diretório de jogadores
+  ContratosContext -> JogadoresContext : Conformist
+  LesoesContext -> JogadoresContext : Conformist
+  DisciplinarContext -> JogadoresContext : Conformist
+  TreinamentoContext -> { JogadoresContext, ContratosContext, LesoesContext } : CustomerSupplier
+  EscalacaoContext -> { JogadoresContext, ContratosContext, LesoesContext, DisciplinarContext, CompeticaoContext } : CustomerSupplier
+  GestaoContext -> { JogadoresContext, ContratosContext } : CustomerSupplier
+  PremiacaoContext -> { DesempenhoContext, JogadoresContext } : Conformist
 }
 
 /////////////////////////////////////////////////////
-// Contextos e agregados
+// Bounded Contexts (tático mínimo)
 /////////////////////////////////////////////////////
 
 BoundedContext JogadoresContext {
@@ -33,54 +42,148 @@ BoundedContext JogadoresContext {
 
   Aggregate Jogador {
     Entity Jogador {
+      @id String playerId
       String nome
       Integer idade
-      Boolean contratoAtivo
-      Boolean suspenso
+      // Nada de contratoAtivo/suspenso aqui: vêm de outros contextos
+      Date dataIngressoClube // útil para capitão/vice (tempo de casa)
+      Integer minutosAcumulados // ou derive via eventos
     }
+
+    // Eventos úteis
+    DomainEvent JogadorCadastrado { String playerId }
+    DomainEvent JogadorAtualizado { String playerId }
+  }
+
+  Service DiretórioJogadores {
+    // Exemplos de queries oferecidas como OHS
+    domainFunction getPlayerById(String playerId)
+    domainFunction listPlayersByIds(List<String> ids)
   }
 }
 
 BoundedContext ContratosContext {
   Subdomain = "Core"
 
+  ValueObject Periodo { Date inicio; Date fim }
+  ValueObject JanelaTransferencia { Integer mesInicio; Integer mesFim } // ou usar enum
+
   Aggregate Contrato {
     Entity Contrato {
-      Date inicio
-      Date fim
+      @id String contratoId
+      String playerId
+      Periodo vigencia
       Boolean ativo
+      Boolean rescisaoEmAndamento
     }
+
+    // Invariantes (comentários/ou anotações próprias do time):
+    // - Um único contrato ativo por playerId.
+    // - Criação/renovação apenas em janela de transferência, exceto se o atleta estiver sem contrato vigente.
+
+    DomainEvent ContractSigned { String contratoId; String playerId }
+    DomainEvent ContractTerminated { String contratoId; String playerId; Date data }
+  }
+
+  Service GestaoContratos {
+    command AssinarContrato(String playerId, Periodo vigencia)
+    command RenovarContrato(String contratoId, Periodo novaVigencia)
+    command SolicitarRescisao(String contratoId)
   }
 }
 
 BoundedContext LesoesContext {
   Subdomain = "Core"
 
+  ValueObject GrauLesao { Integer grau } // 0..3
+
   Aggregate Lesao {
-    Entity Lesao {
-      Integer grau
+    Entity LesaoAtiva {
+      @id String lesaoId
+      String playerId
+      GrauLesao grau
       Date dataInicio
       Date dataFimPrevista
       Boolean ativa
     }
+
+    // Regra: uma única lesão ativa por playerId
+    DomainEvent InjuryRegistered { String lesaoId; String playerId; Integer grau }
+    DomainEvent InjuryClosed { String lesaoId; String playerId; Date dataFim }
+  }
+
+  Service RegistroLesoes {
+    command RegistrarLesao(String playerId, Integer grau, Date dataInicio, Date dataFimPrevista)
+    command EncerrarLesao(String lesaoId, Date dataFim)
+  }
+}
+
+BoundedContext DisciplinarContext {
+  Subdomain = "Supporting"
+
+  Aggregate Disciplina {
+    Entity HistoricoDisciplinar {
+      @id String disciplinaId
+      String playerId
+      Integer amarelosAcumulados // por competição/campeonato, se for o caso
+      Boolean suspenso
+    }
+
+    DomainEvent YellowCardAdded { String playerId; Date data; String jogoId }
+    DomainEvent RedCardAdded { String playerId; Date data; String jogoId }
+    DomainEvent PlayerSuspended { String playerId }
+    DomainEvent SuspensionCleared { String playerId }
+  }
+
+  Service RegrasDisciplinares {
+    command RegistrarCartaoAmarelo(String playerId, Date data, String jogoId)
+    command RegistrarCartaoVermelho(String playerId, Date data, String jogoId)
+    command LiberarPosSuspensao(String playerId) // após cumprir um jogo
   }
 }
 
 BoundedContext TreinamentoContext {
   Subdomain = "Supporting"
 
-  Aggregate CargaSemanal {
-    Entity Treino {
-      Date semana
+  ValueObject Semana { Date inicioDaSemana }
+
+  Aggregate PlanoCarga {
+    Entity CargaSemanal {
+      @id String cargaId
+      String playerId
+      Semana semana
       Integer intensidade
+      // Regra: só criar se contrato ativo e (sem lesão ou grau 0)
     }
+
+    DomainEvent TrainingPlanned { String cargaId; String playerId }
   }
 
   Aggregate SessaoTatica {
     Entity Sessao {
+      @id String sessaoId
+      String jogoId // referência ao jogo no contexto de Competição/Escalação
       Date data
       String tipo
       Boolean vinculadaAoJogo
+      List<String> convocados // PlayerIds; apenas disponíveis aparecem
+    }
+
+    DomainEvent TacticalSessionCreated { String sessaoId; String jogoId }
+  }
+}
+
+BoundedContext CompeticaoContext {
+  Subdomain = "Supporting"
+
+  Aggregate Competicao {
+    Entity RegistroDeCompeticao {
+      @id String registroId
+      String playerId
+      String competicaoId
+      Date dataRegistro
+      Boolean valido
+      // Regra: >= 16 anos e contrato ativo
     }
   }
 }
@@ -88,14 +191,59 @@ BoundedContext TreinamentoContext {
 BoundedContext EscalacaoContext {
   Subdomain = "Core"
 
-  Aggregate Escalacao {
+  Aggregate Partida {
     Entity Jogo {
+      @id String jogoId
       Date data
-      List<Jogador> titulares
-      List<Jogador> reservas
-      Jogador capitao
-      Jogador viceCapitao
+      List<String> titulares // PlayerIds
+      List<String> reservas  // PlayerIds
+      String capitaoPlayerId
+      String viceCapitaoPlayerId
+      // Regras: só com jogo no calendário; todos disponíveis;
+      // capitão/vice não podem ser o mesmo; critérios de tempo no clube/minutagem podem ser validados aqui ou em Jogadores
     }
+
+    DomainEvent LineupRegistered { String jogoId }
+  }
+
+  Service EscalacaoService {
+    command RegistrarEsquemaTatico(String jogoId, List<String> titulares, List<String> reservas, String capitaoPlayerId, String viceCapitaoPlayerId)
+  }
+}
+
+BoundedContext DesempenhoContext {
+  Subdomain = "Supporting"
+
+  Aggregate Avaliacao {
+    Entity NotaDeJogo {
+      @id String notaId
+      String jogoId
+      String playerId
+      Float valor // 0..10
+      String observacao
+      Boolean consideravelNaMedia // false se só observação
+    }
+
+    DomainEvent PlayerRated { String playerId; String jogoId; Float valor }
+  }
+}
+
+BoundedContext PremiacaoContext {
+  Subdomain = "Supporting"
+
+  ValueObject Periodo { Date inicio; Date fim }
+
+  Aggregate Premio {
+    Entity PremioMensal {
+      @id String premioId
+      String timeId
+      Periodo periodo
+      String vencedorPlayerId // opcional; nulo se ninguém passou de 6
+      Float mediaVencedor
+    }
+
+    DomainEvent AwardGranted { String premioId; String vencedorPlayerId }
+    DomainEvent AwardWithheld { String premioId } // ninguém >= 6
   }
 }
 
@@ -104,71 +252,24 @@ BoundedContext GestaoContext {
 
   Aggregate Proposta {
     Entity PropostaContrato {
-      String tipo // nova, renovação
-      String status
+      @id String propostaId
+      String playerId
+      String tipo // NOVA, RENOVACAO
+      String status // RASCUNHO, ENVIADA, APROVADA, REJEITADA
       Date data
     }
+
+    DomainEvent ProposalCreated { String propostaId; String playerId; String tipo }
+    DomainEvent ProposalRejected { String propostaId }
+    DomainEvent ProposalApproved { String propostaId }
   }
 
   Aggregate Rescisao {
     Entity ProcessoRescisao {
+      @id String processoId
+      String contratoId
       Date dataSolicitacao
-      Boolean permitida
-    }
-  }
-}
-
-BoundedContext CompeticaoContext {
-  Subdomain = "Supporting"
-
-  Aggregate RegistroCompeticao {
-    Entity Registro {
-      String competencia
-      Date dataRegistro
-      Boolean valido
-    }
-  }
-}
-
-BoundedContext DisciplinarContext {
-  Subdomain = "Supporting"
-
-  Aggregate Cartao {
-    Entity Cartao {
-      String tipo // amarelo ou vermelho
-      Date data
-      Integer quantidade
-    }
-  }
-
-  Aggregate Suspensao {
-    Entity Suspensao {
-      Date inicio
-      Date fim
-      Boolean ativa
-    }
-  }
-}
-
-BoundedContext DesempenhoContext {
-  Subdomain = "Supporting"
-
-  Aggregate Avaliacao {
-    Entity Nota {
-      Float valor
-      String observacao
-    }
-  }
-}
-
-BoundedContext PremiacaoContext {
-  Subdomain = "Supporting"
-
-  Aggregate Premio {
-    Entity Premio {
-      String descricao
-      Jogador vencedor
-      Date periodo
+      Boolean permitida // Regra: proíbe se jogador está lesionado
     }
   }
 }
