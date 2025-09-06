@@ -1,0 +1,174 @@
+ContextMap {
+  contains JogadoresContext
+  contains ContratosContext
+  contains LesoesContext
+  contains TreinamentoContext
+  contains EscalacaoContext
+  contains GestaoContext
+  contains CompeticaoContext
+  contains DisciplinarContext
+  contains DesempenhoContext
+  contains PremiacaoContext
+
+  // Relações entre contextos
+  ContratosContext -> JogadoresContext { relationship = UpstreamDownstream }
+  LesoesContext -> JogadoresContext { relationship = UpstreamDownstream }
+  DisciplinarContext -> JogadoresContext { relationship = UpstreamDownstream }
+  CompeticaoContext -> JogadoresContext { relationship = UpstreamDownstream }
+  TreinamentoContext -> JogadoresContext { relationship = UpstreamDownstream }
+  EscalacaoContext -> JogadoresContext { relationship = UpstreamDownstream }
+  EscalacaoContext -> LesoesContext { relationship = UpstreamDownstream }
+  EscalacaoContext -> DisciplinarContext { relationship = UpstreamDownstream }
+  GestaoContext -> ContratosContext { relationship = UpstreamDownstream }
+  GestaoContext -> JogadoresContext { relationship = UpstreamDownstream }
+  PremiacaoContext -> DesempenhoContext { relationship = UpstreamDownstream }
+}
+
+/////////////////////////////////////////////////////
+// Contextos e agregados
+/////////////////////////////////////////////////////
+
+BoundedContext JogadoresContext {
+  Subdomain = "Core"
+
+  Aggregate Jogador {
+    Entity Jogador {
+      String nome
+      Integer idade
+      Boolean contratoAtivo
+      Boolean suspenso
+    }
+  }
+}
+
+BoundedContext ContratosContext {
+  Subdomain = "Core"
+
+  Aggregate Contrato {
+    Entity Contrato {
+      Date inicio
+      Date fim
+      Boolean ativo
+    }
+  }
+}
+
+BoundedContext LesoesContext {
+  Subdomain = "Core"
+
+  Aggregate Lesao {
+    Entity Lesao {
+      Integer grau
+      Date dataInicio
+      Date dataFimPrevista
+      Boolean ativa
+    }
+  }
+}
+
+BoundedContext TreinamentoContext {
+  Subdomain = "Supporting"
+
+  Aggregate CargaSemanal {
+    Entity Treino {
+      Date semana
+      Integer intensidade
+    }
+  }
+
+  Aggregate SessaoTatica {
+    Entity Sessao {
+      Date data
+      String tipo
+      Boolean vinculadaAoJogo
+    }
+  }
+}
+
+BoundedContext EscalacaoContext {
+  Subdomain = "Core"
+
+  Aggregate Escalacao {
+    Entity Jogo {
+      Date data
+      List<Jogador> titulares
+      List<Jogador> reservas
+      Jogador capitao
+      Jogador viceCapitao
+    }
+  }
+}
+
+BoundedContext GestaoContext {
+  Subdomain = "Supporting"
+
+  Aggregate Proposta {
+    Entity PropostaContrato {
+      String tipo // nova, renovação
+      String status
+      Date data
+    }
+  }
+
+  Aggregate Rescisao {
+    Entity ProcessoRescisao {
+      Date dataSolicitacao
+      Boolean permitida
+    }
+  }
+}
+
+BoundedContext CompeticaoContext {
+  Subdomain = "Supporting"
+
+  Aggregate RegistroCompeticao {
+    Entity Registro {
+      String competencia
+      Date dataRegistro
+      Boolean valido
+    }
+  }
+}
+
+BoundedContext DisciplinarContext {
+  Subdomain = "Supporting"
+
+  Aggregate Cartao {
+    Entity Cartao {
+      String tipo // amarelo ou vermelho
+      Date data
+      Integer quantidade
+    }
+  }
+
+  Aggregate Suspensao {
+    Entity Suspensao {
+      Date inicio
+      Date fim
+      Boolean ativa
+    }
+  }
+}
+
+BoundedContext DesempenhoContext {
+  Subdomain = "Supporting"
+
+  Aggregate Avaliacao {
+    Entity Nota {
+      Float valor
+      String observacao
+    }
+  }
+}
+
+BoundedContext PremiacaoContext {
+  Subdomain = "Supporting"
+
+  Aggregate Premio {
+    Entity Premio {
+      String descricao
+      Jogador vencedor
+      Date periodo
+    }
+  }
+}
