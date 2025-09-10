@@ -6,7 +6,8 @@ Funcionalidade: Cadastro de Atleta
     Dado que o ano atual é 2025
 
   Cenário: Contratar um jogador fora da janela de transferências
-    Dado que um lateral direito com contrato em outro clube existe no dia 29 de setembro
+    Dado que um lateral direito com contrato em outro clube existe 
+    E está dentro da janela de transferência
     Quando eu tentar cadastrar esse atleta no meu clube
     Então não conseguirei realizar a contratação
 
@@ -15,7 +16,3 @@ Funcionalidade: Cadastro de Atleta
     Quando eu tentar cadastrar esse atleta no meu clube
     Então o registro do atleta será adicionado à lista de atletas do clube
 
-  Cenário: Editar o cadastro de um atleta
-    Dado que um goleiro com contrato em meu clube existe
-    Quando eu editar seu contrato
-    Então o novo contrato do atleta será atualizado em sua aba
