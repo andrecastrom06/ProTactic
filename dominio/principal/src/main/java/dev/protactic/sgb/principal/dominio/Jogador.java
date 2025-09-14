@@ -30,6 +30,11 @@ public class Jogador {
         this.assistencias = assistencias;
     }
 
+    public Jogador(String nome, Clube clube){
+        this.clube = clube;
+        this.nome = nome;
+    }
+
     public int getId() {
         return id;
     }

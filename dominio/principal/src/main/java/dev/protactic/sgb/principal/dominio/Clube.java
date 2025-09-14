@@ -1,5 +1,8 @@
 package dev.protactic.sgb.principal.dominio;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Clube {
     private int id;
     private Treinador treinador;
@@ -11,6 +14,8 @@ public class Clube {
     private String estadio;
     private Jogador capitao;
     private Jogador viceCapitao;
+    
+    private List<Jogador> jogadores;
 
     public Clube(int id, Treinador treinador, Analista analista, Preparador preparador,
                  Competicao competicao, String nome, String cidadeEstado, String estadio,
@@ -25,6 +30,40 @@ public class Clube {
         this.estadio = estadio;
         this.capitao = capitao;
         this.viceCapitao = viceCapitao;
+        this.jogadores = new ArrayList<>();
+    }
+
+    public Clube(String nome) {
+        this.nome = nome;
+        this.jogadores = new ArrayList<>();
+    }
+    
+    public void adicionarJogador(Jogador jogador) {
+        if (jogador != null && !this.jogadores.contains(jogador)) {
+            this.jogadores.add(jogador);
+        }
+        if (jogador.getClube() != this) {
+            jogador.setClube(this);
+        }
+    }
+    
+    public void removerJogador(Jogador jogador) {
+        if (jogador != null) {
+            this.jogadores.remove(jogador);
+        }
+    }
+    
+    public boolean possuiJogador(String nomeJogador) {
+        return this.jogadores.stream()
+                .anyMatch(jogador -> jogador.getNome().equals(nomeJogador));
+    }
+    
+    public List<Jogador> getJogadores() {
+        return jogadores;
+    }
+
+    public void setJogadores(List<Jogador> jogadores) {
+        this.jogadores = jogadores;
     }
 
     public int getId() { return id; }
