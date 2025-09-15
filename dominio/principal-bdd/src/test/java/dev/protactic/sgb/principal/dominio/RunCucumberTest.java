@@ -1,15 +1,7 @@
 package dev.protactic.sgb.principal.dominio;
 
-import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
+import io.cucumber.junit.platform.engine.Cucumber;
 
-import org.junit.platform.suite.api.ConfigurationParameter;
-import org.junit.platform.suite.api.IncludeEngines;
-import org.junit.platform.suite.api.SelectPackages;
-import org.junit.platform.suite.api.Suite;
-
-@Suite
-@IncludeEngines("cucumber")
-@SelectPackages("dev.protactic.sgb.principal.dominio")
-@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
+@Cucumber
 public class RunCucumberTest {
 }

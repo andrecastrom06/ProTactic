@@ -2,16 +2,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	
-	<parent>
-		<groupId>com.protactic</groupId>
-		<artifactId>sgb-pai</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	    <relativePath>../../pai</relativePath>
-	</parent>
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sgb-dominio-principal-bdd</artifactId>
+    <parent>
+        <groupId>com.protactic</groupId>
+        <artifactId>sgb-pai</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../../pai</relativePath>
+    </parent>
+
+    <artifactId>sgb-dominio-principal-bdd</artifactId>
 
     <build>
         <plugins>
@@ -20,7 +20,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
         </plugins>
-    </build>	
+    </build>  
 
     <dependencyManagement>
         <dependencies>
@@ -34,57 +34,53 @@
         </dependencies>
     </dependencyManagement>
 
-	<dependencies>
+    <dependencies>
+        <!-- Cucumber -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>7.14.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit-platform-engine</artifactId>
-            <version>7.14.0</version>
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite</artifactId>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- JUnit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-		
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sgb-infraestrutura-persistencia-memoria</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>	
+
+        <!-- Infraestrutura de testes -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sgb-infraestrutura-persistencia-memoria</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency> 
 
         <dependency>
             <groupId>com.protactic</groupId>
             <artifactId>sgb-dominio-principal</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>	
+        </dependency> 
 
+        <!-- Spring Boot Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-spring</artifactId>
-            <version>7.18.0</version>
-            <scope>test</scope>
-        </dependency>
-	</dependencies>
+    </dependencies>
 </project>
