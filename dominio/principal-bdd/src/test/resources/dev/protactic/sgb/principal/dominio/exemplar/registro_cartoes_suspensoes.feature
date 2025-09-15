@@ -1,3 +1,5 @@
+# language: pt
+
 Funcionalidade: 8 - Registro de cartões e suspensões de atletas
 
 Como analista de desempenho

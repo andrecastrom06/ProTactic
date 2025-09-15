@@ -1,4 +1,5 @@
-language: pt
+# language: pt
+
 Funcionalidade: 6 - Registro de inscrição de atletas em competições
 
 Como analista de desempenho

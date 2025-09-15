@@ -1,3 +1,4 @@
+# language: pt
 
 Funcionalidade: Cadastro de Atleta
   Como gestor de um clube, desejo cadastrar atletas no meu time, seguindo as regras de período de transferências, para manter o elenco atualizado.
@@ -15,4 +16,3 @@ Funcionalidade: Cadastro de Atleta
     Dado que um zagueiro sem contrato existe no dia 30 de outubro
     Quando eu tentar cadastrar esse atleta no meu clube
     Então o registro do atleta será adicionado à lista de atletas do clube
-

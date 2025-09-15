@@ -1,3 +1,4 @@
+# language: pt
 
 Funcionalidade: Criar premiações diferentes
   Como treinador, desejo criar premiações para os atletas do meu time com base em seu desempenho, para reconhecer os melhores.

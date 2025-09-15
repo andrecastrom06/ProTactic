@@ -1,0 +1,1 @@
+package dev.protactic.sgb.principal.dominio;
