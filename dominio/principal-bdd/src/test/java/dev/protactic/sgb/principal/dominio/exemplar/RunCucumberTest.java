@@ -1,4 +1,4 @@
-package dev.protactic.sgb.principal.dominio;
+package dev.protactic.sgb.principal.dominio.exemplar;
 
 import io.cucumber.junit.platform.engine.Cucumber;
 
