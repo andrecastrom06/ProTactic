@@ -1,53 +1,12 @@
-Domain GereciamentoBiblioteca {
-	Subdomain Acervo
-	Subdomain Administracao
-	Subdomain Analise
+Domain Protactic {
+	Subdomain Principal
 }
 
 ContextMap {
-	contains Administracao
-	contains Acervo	
-	contains Analise	
-	
-	Acervo Shared-Kernel Administracao
-
-	Analise Shared-Kernel Administracao	
-	Analise Shared-Kernel Acervo
+	contains Principal
 }
 
-BoundedContext Acervo implements Acervo {
-	Aggregate Autor {
-		Entity Autor {
-			aggregateRoot
-
-			-AutorId id
-			String nome
-		}
-		
-		ValueObject AutorId {
-			int id
-		}
-	}
-
-	Aggregate Livro {
-		Entity Livro {
-			aggregateRoot
-
-			-Isbn id
-			String titulo
-			String subtitulo nullable
-			-List<AutorId> autores notEmpty
-		}
-
-		ValueObject Isbn {
-			String codigo
-		}
-
-		ValueObject Isbn10 extends Isbn
-
-		ValueObject Isbn13 extends Isbn
-	}
-
+BoundedContext Principal implements Principal {
 	Aggregate Exemplar {
 		Service EmprestimoServico {
 			void realizarEmprestimo(@ExemplarId exemplar, @SocioId tomador);
@@ -100,43 +59,6 @@ BoundedContext Acervo implements Acervo {
 		ValueObject Periodo {
 			Date inicio
 			Date fim
-		}
-	}
-}
-
-BoundedContext Administracao implements Administracao {
-	Aggregate Socio {
-		Entity Socio {
-			aggregateRoot
-			
-			-SocioId id
-			String nome
-			-Email emailContato
-		}
-		
-		ValueObject SocioId {
-			int id
-		}
-		
-		ValueObject Email {
-			String endereco
-		}
-	}
-}
-
-BoundedContext Analise implements Analise {
-	Aggregate EmprestimoRegistro {
-		Entity EmprestimoRegistro {
-			aggregateRoot
-
-			-EmprestimoRegistroId id
-			-Exemplar exemplar			
-			-Emprestimo emprestimo
-			Date devolucao nullable
-		}
-
-		ValueObject EmprestimoRegistroId {
-			int id
 		}
 	}
 }

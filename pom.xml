@@ -4,21 +4,21 @@
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.protactic</groupId>
-	<artifactId>sgb-modulos</artifactId>
+	<groupId>dev.com.protactic</groupId>
+	<artifactId>protactic-modulos</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
-	
+
 	<properties>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>	
+	</properties>
 
 	<modules>
 		<module>aplicacao</module>
-		<module>apresentacao</module>
-		<module>docker</module>	
-		<module>dominio</module>
+		<module>apresentacao-backend</module>
+		<module>apresentacao-frontend</module>	
+		<module>dominio-principal</module>
 		<module>infraestrutura</module>
 		<module>pai</module>
 	</modules>

@@ -11,13 +11,5 @@
 	    <relativePath>../pai</relativePath>
 	</parent>
 
-	<artifactId>protactic-aplicacao</artifactId>
-
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>protactic-dominio-principal</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+	<artifactId>protactic-apresentacao-frontend</artifactId>
 </project>
