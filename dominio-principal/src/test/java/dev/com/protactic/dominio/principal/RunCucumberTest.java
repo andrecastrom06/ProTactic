@@ -1,5 +1,4 @@
-/* TEM QUE TROCAR
-package dev.sauloaraujo.sgb.dominio.acervo;
+package dev.com.protactic.dominio.principal;
 
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 
@@ -10,7 +9,7 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectPackages("dev.sauloaraujo.sgb.dominio.acervo")
+@SelectPackages("dev.com.protactic.dominio.principal")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 public class RunCucumberTest {
-}*/
+}
