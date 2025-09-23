@@ -10,7 +10,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class PlanejamentoCargaSemanalSteps {
+public class PlanejamentoCargaSemanalfeature {
 
     private static class Jogador {
         private final String nome;
