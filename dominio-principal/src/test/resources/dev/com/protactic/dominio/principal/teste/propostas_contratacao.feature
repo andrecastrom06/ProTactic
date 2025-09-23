@@ -19,7 +19,7 @@ Funcionalidade: Registrar proposta de contratação de novos jogadores
     Então a proposta deve ser registrada com sucesso
 
   Cenário: "Kieza" tem contrato com o "Santos" e o "Sport" tenta contratá-lo em "25/04/2025"
-    Dado um jogador chamado "Kieza" que tem contrato com o “Santos”
+    Dado um jogador chamado "Kieza" que tem contrato com o "Santos"
     E a data é "25/04/2025"
     Quando um analista do "Sport" cria uma proposta de contrato para "Kieza"
     Então o sistema deve lançar uma exceção com a mensagem "Jogador não pode ser contratado fora do prazo de transferência."

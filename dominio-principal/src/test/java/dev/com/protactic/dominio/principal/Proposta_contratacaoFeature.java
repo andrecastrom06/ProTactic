@@ -1,49 +1,73 @@
 package dev.com.protactic.dominio.principal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.text.ParseException;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
-import io.cucumber.java.pt.E;
 
 public class Proposta_contratacaoFeature {
+
+    private Jogador jogador;
+    private Clube clubeProponente;
+    private Date dataAtual;
+    private Proposta proposta;
+    private Exception excecao;
+
     @Dado("um jogador chamado {string} que não tem contrato")
     public void um_jogador_chamado_que_não_tem_contrato(String nomeJogador) {
-        // Implementação do passo
+        this.jogador = new Jogador(nomeJogador, null);
+        this.jogador.setContrato(null);
     }
 
     @Dado("um jogador chamado {string} que tem contrato ativo com o {string}")
-    public void um_jogador_chamado_que_tem_contrato_ativo_com_o(String nomeJogador, String nomeClube) {
-        // Implementação do passo
+    public void um_jogador_chamado_que_tem_contrato_ativo_com_o(String nomeJogador, String clube) {
+        Clube clubeObj = new Clube(clube);
+        Contrato contrato = new Contrato(clubeObj);
+        contrato.setStatus("ATIVO");
+        this.jogador = new Jogador(nomeJogador, clubeObj);
+        this.jogador.setContrato(contrato);
+    }
+
+    @Dado("um jogador chamado {string} que tem contrato com o {string}")
+    public void um_jogador_chamado_que_tem_contrato_com_o(String nomeJogador, String clube) {
+        Clube clubeObj = new Clube(clube);
+        Contrato contrato = new Contrato(clubeObj);
+        contrato.setStatus("ATIVO");
+        this.jogador = new Jogador(nomeJogador, clubeObj);
+        this.jogador.setContrato(contrato);
     }
 
     @Dado("a data é {string}")
-    public void a_data_é(String data) throws ParseException {
-        Locale locale = new Locale("pt", "BR");
-        // Implementação do passo
+    public void a_data_e(String data) throws ParseException {
+        this.dataAtual = new SimpleDateFormat("dd/MM/yyyy").parse(data);
     }
 
     @Quando("um analista do {string} cria uma proposta de contrato para {string}")
     public void um_analista_do_cria_uma_proposta_de_contrato_para(String nomeClube, String nomeJogador) {
-        // Implementação do passo
-    }
-    
-    @Então("a proposta deve ser registrada com sucesso")
-    public void a_proposta_deve_ser_registrada_com_sucesso() {
-        // Implementação do passo
-    }
-    
-    @Então("o sistema deve lançar uma exceção com a mensagem {string}")
-    public void o_sistema_deve_lançar_uma_exceção_com_a_mensagem(String mensagemEsperada) {
-        // Implementação do passo
+        this.clubeProponente = new Clube(nomeClube);
+        try {
+            this.proposta = new Proposta(jogador, clubeProponente, dataAtual);
+        } catch (Exception e) {
+            this.excecao = e;
+        }
     }
 
-    //TESTE1 = D1, Q1, E1
-    //TESTE2 = D2, Q1, E2
-    //TESTE3 = D2, D3, Q1, E1
-    //TESTE4 = D2, D3, Q1, E2
+    @Então("a proposta deve ser registrada com sucesso")
+    public void a_proposta_deve_ser_registrada_com_sucesso() {
+        assertEquals(jogador, proposta.getJogador());
+        assertEquals(clubeProponente, proposta.getPropositor());
+        assertEquals(dataAtual, proposta.getData());
+    }
+
+    @Então("o sistema deve lançar uma exceção com a mensagem {string}")
+    public void o_sistema_deve_lançar_uma_exceção_com_a_mensagem(String mensagemEsperada) {
+        assertThrows(Exception.class, () -> { throw excecao; });
+        assertEquals(mensagemEsperada, excecao.getMessage());
+    }
 }

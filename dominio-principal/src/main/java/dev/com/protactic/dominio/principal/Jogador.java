@@ -31,7 +31,18 @@ public class Jogador {
     }
 
     public Jogador(String nome, Clube clube){
+        this.nome = nome;
         this.clube = clube;
+        if (clube != null) {
+            this.contrato = new Contrato(clube);
+        }
+    }
+
+    public Jogador(Contrato contrato) {
+        this.contrato = contrato;
+    }
+
+    public Jogador(String nome) {
         this.nome = nome;
     }
 
@@ -49,6 +60,9 @@ public class Jogador {
 
     public void setContrato(Contrato contrato) {
         this.contrato = contrato;
+        if (contrato != null) {
+            this.clube = contrato.getClube();
+        }
     }
 
     public Clube getClube() {

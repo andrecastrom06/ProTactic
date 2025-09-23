@@ -5,12 +5,19 @@ public class Contrato {
     private int duracaoMeses;
     private double salario;
     private String status;
+    private Clube clube;
 
-    public Contrato(int id, int duracaoMeses, double salario, String status) {
+    public Contrato(int id, int duracaoMeses, double salario, String status, Clube clube) {
         this.id = id;
         this.duracaoMeses = duracaoMeses;
         this.salario = salario;
         this.status = status;
+        this.clube = clube;
+    }
+
+    public Contrato(Clube clube) {
+        this.clube = clube;
+        this.status = "ATIVO";
     }
 
     public int getId() {
@@ -43,5 +50,12 @@ public class Contrato {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Clube getClube() {
+        return clube;
+    }
+    public void setClube(Clube clube) {
+        this.clube = clube;
     }
 }
