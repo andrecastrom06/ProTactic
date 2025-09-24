@@ -2,6 +2,7 @@ package dev.com.protactic.dominio.principal;
 
 import io.cucumber.java.pt.*;
 import io.cucumber.java.Before;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import dev.com.protactic.dominio.principal.premiacaoInterna.*;
@@ -12,12 +13,12 @@ public class PremiacaoInternaFeature {
     private Jogador jogadorSegundoLugar;
     private Premiacao premiacaoCriada;
 
-    private PremiacaoRepository premiacaoRepo;
+    private IPremiacaoRepository premiacaoRepo;
     private PremiacaoService premiacaoService;
 
     @Before
     public void setup() {
-        // Sempre cria repositório e service antes de cada cenário
+        // Usa a implementação concreta, mas acessa via interface
         this.premiacaoRepo = new PremiacaoRepository();
         this.premiacaoService = new PremiacaoService(premiacaoRepo);
     }
@@ -48,12 +49,15 @@ public class PremiacaoInternaFeature {
     @Então("o prêmio será atribuído a este jogador")
     public void premio_atribuido() {
         assertNotNull(premiacaoCriada, "O prêmio deveria ter sido criado.");
-        assertEquals(jogadorMaiorPontuacao, premiacaoCriada.getJogador(),
-                "O prêmio deveria ser do jogador com maior pontuação.");
+        assertEquals(
+            jogadorMaiorPontuacao,
+            premiacaoCriada.getJogador(),
+            "O prêmio deveria ser atribuído ao jogador com maior pontuação."
+        );
     }
 
     @Então("o prêmio não será atribuído a este jogador")
     public void premio_nao_atribuido() {
-        assertNull(premiacaoCriada, "O prêmio não deveria ser atribuído.");
+        assertNull(premiacaoCriada, "O prêmio não deveria ter sido criado.");
     }
 }

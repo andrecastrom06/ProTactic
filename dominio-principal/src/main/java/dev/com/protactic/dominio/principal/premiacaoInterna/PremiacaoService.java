@@ -1,15 +1,13 @@
 package dev.com.protactic.dominio.principal.premiacaoInterna;
 
 import dev.com.protactic.dominio.principal.*;
-
-
 import java.util.Date;
 
 public class PremiacaoService {
 
-    private final PremiacaoRepository premiacaoRepo;
+    private final IPremiacaoRepository premiacaoRepo;
 
-    public PremiacaoService(PremiacaoRepository premiacaoRepo) {
+    public PremiacaoService(IPremiacaoRepository premiacaoRepo) {
         this.premiacaoRepo = premiacaoRepo;
     }
 
@@ -24,7 +22,6 @@ public class PremiacaoService {
             premiacaoRepo.salvar(premiacao);
             return premiacao;
         }
-        return null; // não cria prêmio se não tiver jogador válido
+        return null;
     }
 }
-
