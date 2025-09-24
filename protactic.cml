@@ -1,142 +1,421 @@
-Domain GereciamentoBiblioteca {
-	Subdomain Acervo
-	Subdomain Administracao
-	Subdomain Analise
+Domain Protactic {
+	Subdomain Principal
 }
 
 ContextMap {
-	contains Administracao
-	contains Acervo	
-	contains Analise	
-	
-	Acervo Shared-Kernel Administracao
-
-	Analise Shared-Kernel Administracao	
-	Analise Shared-Kernel Acervo
+	contains Principal
 }
 
-BoundedContext Acervo implements Acervo {
-	Aggregate Autor {
-		Entity Autor {
-			aggregateRoot
+BoundedContext Principal implements Principal {
+	Aggregate Outros {
 
-			-AutorId id
-			String nome
-		}
+		Entity Analista {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Analista.java
+			annotations: 
 		
-		ValueObject AutorId {
-			int id
+		
+		}
+		Entity Competicao {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Competicao.java
+			annotations: 
+		
+			-id : int
+			-nome : String
+			-dataInicio : Date
+			-dataFim : Date
+		
+			def int getId();
+			def void setId(int id);
+			def String getNome();
+			def void setNome(String nome);
+			def Date getDataInicio();
+			def void setDataInicio(Date dataInicio);
+			def Date getDataFim();
+			def void setDataFim(Date dataFim);
+		}
+		Entity Escalacao {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Escalacao.java
+			annotations: 
+		
+			-id : int
+			-partida : Partida
+			-esquema : String
+			-jogadores : Jogador[]
+		
+			def int getId();
+			def void setId(int id);
+			def Partida getPartida();
+			def void setPartida(Partida partida);
+			def String getEsquema();
+			def void setEsquema(String esquema);
+			def Jogador[] getJogadores();
+			def void setJogadores(Jogador[] jogadores);
+		}
+		Entity Fisico {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Fisico.java
+			annotations: 
+		
+			-id : int
+			-jogador : Jogador
+			-nome : String
+			-musculo : String
+			-intensidade : String
+			-descricao : String
+			-dataInicio : Date
+			-dataFim : Date
+		
+			def int getId();
+			def void setId(int id);
+			def Jogador getJogador();
+			def void setJogador(Jogador jogador);
+			def String getNome();
+			def void setNome(String nome);
+			def String getMusculo();
+			def void setMusculo(String musculo);
+			def String getIntensidade();
+			def void setIntensidade(String intensidade);
+		}
+		Entity Lesao {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Lesao.java
+			annotations: 
+		
+			-id : int
+			-jogador : Jogador
+			-lesionado : boolean
+			-tempo : String
+			-plano : String
+			-grau : int
+		
+			def int getId();
+			def void setId(int id);
+			def Jogador getJogador();
+			def void setJogador(Jogador jogador);
+			def boolean isLesionado();
+			def void setLesionado(boolean lesionado);
+			def String getTempo();
+			def void setTempo(String tempo);
+			def String getPlano();
+			def void setPlano(String plano);
+		}
+		Entity Partida {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Partida.java
+			annotations: 
+		
+			-id : int
+			-clubeCasa : Clube
+			-clubeVisitante : Clube
+			-dataJogo : Date
+			-hora : String
+			-placarClubeCasa : int
+			-placarClubeVisitante : int
+		
+			def int getId();
+			def void setId(int id);
+			def Clube getClubeCasa();
+			def void setClubeCasa(Clube clubeCasa);
+			def Clube getClubeVisitante();
+			def void setClubeVisitante(Clube clubeVisitante);
+			def Date getDataJogo();
+			def void setDataJogo(Date dataJogo);
+			def String getHora();
+			def void setHora(String hora);
+		}
+		Entity Preparador {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Preparador.java
+			annotations: 
+		
+		
+		}
+		Entity Suspensao {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Suspensao.java
+			annotations: 
+		
+			-id : int
+			-jogador : Jogador
+			-suspenso : boolean
+			-amarelo : int
+			-vermelho : int
+		
+			def int getId();
+			def void setId(int id);
+			def Jogador getJogador();
+			def void setJogador(Jogador jogador);
+			def boolean isSuspenso();
+			def void setSuspenso(boolean suspenso);
+			def int getAmarelo();
+			def void setAmarelo(int amarelo);
+			def int getVermelho();
+			def void setVermelho(int vermelho);
+		}
+		Entity Tatico {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Tatico.java
+			annotations: 
+		
+			-id : int
+			-jogador : Jogador
+			-partida : Partida
+			-categoria : String
+			-nome : String
+			-descricao : String
+		
+			def int getId();
+			def void setId(int id);
+			def Jogador getJogador();
+			def void setJogador(Jogador jogador);
+			def Partida getPartida();
+			def void setPartida(Partida partida);
+			def String getCategoria();
+			def void setCategoria(String categoria);
+			def String getNome();
+			def void setNome(String nome);
+		}
+		Entity Treinador {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Treinador.java
+			annotations: 
+		
+		
+		}
+		Entity Usuario {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Usuario.java
+			annotations: 
+		
+			-id : int
+			-login : String
+			-senha : String
+			-nome : String
+		
+			def int getId();
+			def void setId(int id);
+			def String getLogin();
+			def void setLogin(String login);
+			def String getSenha();
+			def void setSenha(String senha);
+			def String getNome();
+			def void setNome(String nome);
+		}
+		Entity CadastroDeAtletaService {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/cadastroAtleta/CadastroDeAtletaService.java
+			annotations: 
+		
+		
+			def boolean contratar(Clube clubeDestino, Jogador jogador, boolean janelaAberta);
+		}
+		Entity ContratacaoServico {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/dispensa/ContratacaoServico.java
+			annotations: 
+		
+		
+			def boolean registrarAtleta(Clube clubeDestino, Jogador jogador, boolean janelaDeTransferenciaAberta);
+		}
+		Entity ContratoMock {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/dispensa/ContratoMock.java
+			annotations: 
+		
+			-sequence : int
+		
+			def Contrato saveContrato(Contrato contrato);
+			def Contrato findContratoById(int id);
+			def List<Contrato> findAllContratos();
+		}
+		Entity DispensaService {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/dispensa/DispensaService.java
+			annotations: 
+		
+		
+			def boolean jogadorSaudavel(Jogador jogador);
+		}
+		Entity PropostaMock {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/proposta/PropostaMock.java
+			annotations: 
+		
+			-sequence : long
+		
+			def Proposta saveProposta(Proposta proposta);
+			def Proposta findPropostaById(int id);
+			def List<Proposta> findAllPropostas();
 		}
 	}
 
-	Aggregate Livro {
-		Entity Livro {
-			aggregateRoot
-
-			-Isbn id
-			String titulo
-			String subtitulo nullable
-			-List<AutorId> autores notEmpty
+	Aggregate Clube {
+		Entity Clube {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Clube.java
+			annotations: 
+		
+			-id : int
+			-treinador : Treinador
+			-analista : Analista
+			-preparador : Preparador
+			-competicao : Competicao
+			-nome : String
+			-cidadeEstado : String
+			-estadio : String
+			-capitao : Jogador
+			-viceCapitao : Jogador
+			-jogadores : List<Jogador>
+		
+			def void adicionarJogador(Jogador jogador);
+			def void removerJogador(Jogador jogador);
+			def boolean possuiJogador(String nomeJogador);
+			def List<Jogador> getJogadores();
+			def void setJogadores(List<Jogador> jogadores);
+			def int getId();
+			def void setId(int id);
+			def Treinador getTreinador();
+			def void setTreinador(Treinador treinador);
+			def Analista getAnalista();
 		}
-
-		ValueObject Isbn {
-			String codigo
+		Entity Jogador {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Jogador.java
+			annotations: 
+		
+			-id : int
+			-contrato : Contrato
+			-clube : Clube
+			-competicao : Competicao
+			-nome : String
+			-idade : int
+			-posicao : String
+			-perna : String
+			-nota : double
+			-jogos : int
+			-gols : int
+			-assistencias : int
+		
+			def int getId();
+			def void setId(int id);
+			def Contrato getContrato();
+			def void setContrato(Contrato contrato);
+			def Clube getClube();
+			def void setClube(Clube clube);
+			def Competicao getCompeticao();
+			def void setCompeticao(Competicao competicao);
+			def String getNome();
+			def void setNome(String nome);
 		}
-
-		ValueObject Isbn10 extends Isbn
-
-		ValueObject Isbn13 extends Isbn
+		Repository ClubeRepository {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/cadastroAtleta/ClubeRepository.java
+			annotations: 
+		
+		
+			def void salvar(Clube clube);
+			def Clube buscarPorNome(String nome);
+			def List<Clube> listarTodos();
+		}
+		Repository JogadorRepository {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/cadastroAtleta/JogadorRepository.java
+			annotations: 
+		
+		
+			def void salvar(Jogador jogador);
+			def Jogador buscarPorNome(String nome);
+			def boolean existe(String nome);
+			def List<Jogador> listarTodos();
+		}
 	}
 
-	Aggregate Exemplar {
-		Service EmprestimoServico {
-			void realizarEmprestimo(@ExemplarId exemplar, @SocioId tomador);
-			void realizarEmprestimo(@Isbn livro, @SocioId tomador);
-			void devolver(@ExemplarId exemplar);
-		}
+	Aggregate Contrato {
+		Entity Contrato {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Contrato.java
+			annotations: 
 		
-		DomainEvent EmprestimoEvento {
-			-Exemplar exemplar
-		}
+			-id : int
+			-duracaoMeses : int
+			-salario : double
+			-status : String
+			-clube : Clube
 		
-		DomainEvent EmprestimoRealizadoEvento extends EmprestimoEvento {
-			-Exemplar exemplar
+			def boolean isExpirado();
+			def int getId();
+			def void setId(int id);
+			def int getDuracaoMeses();
+			def void setDuracaoMeses(int duracaoMeses);
+			def double getSalario();
+			def void setSalario(double salario);
+			def String getStatus();
+			def void setStatus(String status);
+			def Clube getClube();
 		}
+		Service ContratoRepository {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/dispensa/ContratoRepository.java
+			annotations: 
 		
-		DomainEvent ExemplarDevolvidoEvento extends EmprestimoEvento {
-			-Exemplar exemplar
-			-Emprestimo emprestimo
-		}
 		
-		Entity Exemplar {
-			aggregateRoot
-
-			-ExemplarId id
-			-Isbn livro
-			-Emprestimo emprestimo nullable
-
-			def boolean disponivel();   // return emprestimo == null
-			def boolean indisponivel(); // return emprestimo != null
-			def boolean emprestado();   // return emprestimo == null
-
-			def @EmprestimoRealizadoEvento realizarEmprestimo(@SocioId tomador);
-			def @ExemplarDevolvidoEvento devolver();
-
-			Repository ExemplarRepository {
-				@Exemplar obter(@ExemplarId id); // Pode ser omitido do modelo
-				List<@Exemplar> pesquisarDisponiveis(@Isbn livro);
-			}
-		}
-
-		ValueObject ExemplarId {
-			int id
-		}
-
-		ValueObject Emprestimo {
-			-Periodo periodo
-			-SocioId tomador
-		}
-
-		ValueObject Periodo {
-			Date inicio
-			Date fim
 		}
 	}
-}
 
-BoundedContext Administracao implements Administracao {
-	Aggregate Socio {
-		Entity Socio {
-			aggregateRoot
-			
-			-SocioId id
-			String nome
-			-Email emailContato
-		}
+	Aggregate Premiacao {
+		Entity Premiacao {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Premiacao.java
+			annotations: 
 		
-		ValueObject SocioId {
-			int id
-		}
+			-id : int
+			-jogador : Jogador
+			-nome : String
+			-dataPremiacao : Date
 		
-		ValueObject Email {
-			String endereco
+			def int getId();
+			def void setId(int id);
+			def Jogador getJogador();
+			def void setJogador(Jogador jogador);
+			def String getNome();
+			def void setNome(String nome);
+			def Date getDataPremiacao();
+			def void setDataPremiacao(Date dataPremiacao);
+		}
+		Repository PremiacaoRepository {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/premiacaoInterna/PremiacaoRepository.java
+			annotations: 
+		
+		
+			def void salvar(Premiacao premiacao);
+			def Premiacao buscarPorId(int id);
+			def List<Premiacao> listarTodos();
+		}
+		Entity PremiacaoService {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/premiacaoInterna/PremiacaoService.java
+			annotations: 
+		
+		
+			def Premiacao criarPremiacaoMelhorJogador(Jogador jogadorMaiorPontuacao);
 		}
 	}
-}
 
-BoundedContext Analise implements Analise {
-	Aggregate EmprestimoRegistro {
-		Entity EmprestimoRegistro {
-			aggregateRoot
-
-			-EmprestimoRegistroId id
-			-Exemplar exemplar			
-			-Emprestimo emprestimo
-			Date devolucao nullable
+	Aggregate Proposta {
+		Entity Proposta {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/Proposta.java
+			annotations: 
+		
+			-id : int
+			-propositor : Clube
+			-receptor : Clube
+			-jogador : Jogador
+			-status : String
+			-valor : double
+			-data : java.util.Date
+		
+			def boolean isPeriodoTransferencia(java.util.Date data);
+			def int getId();
+			def void setId(int id);
+			def Clube getPropositor();
+			def void setPropositor(Clube propositor);
+			def Clube getReceptor();
+			def void setReceptor(Clube receptor);
+			def Jogador getJogador();
+			def void setJogador(Jogador jogador);
+			def String getStatus();
 		}
-
-		ValueObject EmprestimoRegistroId {
-			int id
+		Service PropostaRepository {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/proposta/PropostaRepository.java
+			annotations: 
+		
+		
+		}
+		Entity PropostaService {
+			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/proposta/PropostaService.java
+			annotations: 
+		
+		
+			def boolean estaDentroDaJanelaDeTransferencia(Date data);
 		}
 	}
 }
