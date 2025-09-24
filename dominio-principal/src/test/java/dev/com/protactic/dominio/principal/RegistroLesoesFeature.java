@@ -9,20 +9,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Steps para o feature "3 - Registro de lesões e planejamento de recuperações".
- *
- * Regras:
- * - O atleta precisa ter contrato ativo para registrar lesão.
- * - É preciso ter lesão registrada para planejar recuperação.
- * - Não é permitido registrar nova lesão enquanto houver lesão ativa.
- *
- * Implementação no mesmo estilo Map-based das suas outras classes de steps.
- * Integra com POJOs existentes SEM exigir construtores padrão:
- *  - Contrato(id, duracaoMeses, salario, status, clube)  -> usamos status "ativo"/"inativo" e clube null
- *  - Lesao(id, jogador, lesionado, tempo, plano, grau)   -> passamos jogador null; tempo/plano só quando há plano
- *  - Jogador: não instanciamos (não é necessário para estas asserções)
- */
 public class RegistroLesoesFeature {
 
     // ====================== "Banco" simples por atleta ======================

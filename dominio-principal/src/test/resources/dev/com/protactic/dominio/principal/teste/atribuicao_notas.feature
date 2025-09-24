@@ -13,7 +13,7 @@ Funcionalidade: 9 - Atribuição de nota técnica e observações
 
   Contexto:
     Dado que existe o jogo "Sport x Náutico" identificado por "JOGO-NAUTICO"
-    E existe o elenco cadastrado com os jogadores:
+    E existe o elenco de avaliação cadastrado com os jogadores:
       | nome  | posição   |
       | João  | atacante  |
       | Pedro | lateral   |
@@ -29,14 +29,14 @@ Funcionalidade: 9 - Atribuição de nota técnica e observações
   Cenário: Impedir atribuição de nota a jogador que não atuou
     Dado que Pedro não participou do jogo "JOGO-NAUTICO"
     Quando o treinador tentar registrar a nota 7 para Pedro no jogo "JOGO-NAUTICO"
-    Então o sistema não permite o registro
-    E o sistema exibe o erro "Apenas jogadores que atuaram podem receber nota técnica"
+    Então o sistema de avaliação não permite o registro
+    E o sistema de avaliação exibe o erro "Apenas jogadores que atuaram podem receber nota técnica"
 
   Cenário: Impedir nota fora do intervalo válido
     Dado que Lucas participou do jogo "JOGO-NAUTICO"
     Quando o treinador tentar registrar a nota 12 para Lucas no jogo "JOGO-NAUTICO"
-    Então o sistema não permite o registro
-    E o sistema exibe o erro "Nota inválida. Informe um valor entre 0 e 10"
+    Então o sistema de avaliação não permite o registro
+    E o sistema de avaliação exibe o erro "Nota inválida. Informe um valor entre 0 e 10"
 
   Cenário: Registrar observação sem nota
     Dado que Caio participou do jogo "JOGO-NAUTICO"
