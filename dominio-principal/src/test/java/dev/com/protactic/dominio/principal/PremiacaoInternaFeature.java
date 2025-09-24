@@ -1,15 +1,26 @@
 package dev.com.protactic.dominio.principal;
 
 import io.cucumber.java.pt.*;
+import io.cucumber.java.Before;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Date;
+import dev.com.protactic.dominio.principal.premiacaoInterna.*;
 
 public class PremiacaoInternaFeature {
 
     private Jogador jogadorMaiorPontuacao;
     private Jogador jogadorSegundoLugar;
     private Premiacao premiacaoCriada;
+
+    private PremiacaoRepository premiacaoRepo;
+    private PremiacaoService premiacaoService;
+
+    @Before
+    public void setup() {
+        // Sempre cria repositório e service antes de cada cenário
+        this.premiacaoRepo = new PremiacaoRepository();
+        this.premiacaoService = new PremiacaoService(premiacaoRepo);
+    }
 
     @Dado("que um jogador obteve a maior pontuação no mês de setembro, com nota média de {double}")
     public void jogador_com_maior_pontuacao_setembro(double nota) {
@@ -31,22 +42,7 @@ public class PremiacaoInternaFeature {
 
     @Quando("o treinador for criar o prêmio de melhor jogador do time")
     public void criar_premio() {
-        if (jogadorMaiorPontuacao != null) {
-            System.out.println("DEBUG >> Jogador: " + jogadorMaiorPontuacao.getNome()
-                    + " | Nota: " + jogadorMaiorPontuacao.getNota());
-        }
-
-        // Só cria prêmio se jogador existe e nota >= 6
-        if (jogadorMaiorPontuacao != null && jogadorMaiorPontuacao.getNota() >= 6.0) {
-            this.premiacaoCriada = new Premiacao(
-                1,
-                jogadorMaiorPontuacao,
-                "Melhor Jogador do Time",
-                new Date()
-            );
-        } else {
-            this.premiacaoCriada = null;
-        }
+        this.premiacaoCriada = premiacaoService.criarPremiacaoMelhorJogador(jogadorMaiorPontuacao);
     }
 
     @Então("o prêmio será atribuído a este jogador")
