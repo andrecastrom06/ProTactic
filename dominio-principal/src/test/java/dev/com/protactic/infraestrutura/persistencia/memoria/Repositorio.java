@@ -1,5 +1,4 @@
-/* TEM QUE TROCAR
-package dev.sauloaraujo.sgb.infraestrutura.persistencia.memoria;
+package dev.com.protactic.infraestrutura.persistencia.memoria;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -8,73 +7,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import dev.sauloaraujo.sgb.dominio.acervo.autor.Autor;
-import dev.sauloaraujo.sgb.dominio.acervo.autor.AutorId;
-import dev.sauloaraujo.sgb.dominio.acervo.autor.AutorRepositorio;
-import dev.sauloaraujo.sgb.dominio.acervo.exemplar.Exemplar;
-import dev.sauloaraujo.sgb.dominio.acervo.exemplar.ExemplarId;
-import dev.sauloaraujo.sgb.dominio.acervo.exemplar.ExemplarRepositorio;
-import dev.sauloaraujo.sgb.dominio.acervo.livro.Isbn;
-import dev.sauloaraujo.sgb.dominio.acervo.livro.Livro;
-import dev.sauloaraujo.sgb.dominio.acervo.livro.LivroRepositorio;
+import dev.com.protactic.dominio.principal.Contrato;
+import dev.com.protactic.dominio.principal.Proposta;
+import dev.com.protactic.dominio.principal.dispensa.ContratoRepository;
+import dev.com.protactic.dominio.principal.proposta.PropostaRepository;
 
-public class Repositorio implements AutorRepositorio, LivroRepositorio, ExemplarRepositorio {
-	/*-----------------------------------------------------------------------*/
-	/*private Map<AutorId, Autor> autores = new HashMap<>();
+public class Repositorio implements ContratoRepository, PropostaRepository {
+
+	private final Map<Integer, Contrato> armazenamentoContrato = new HashMap<>();
+	private final Map<Integer, Proposta> armazenamentoProposta = new HashMap<>();
 
 	@Override
-	public void salvar(Autor autor) {
-		notNull(autor, "O autor não pode ser nulo");
-
-		autores.put(autor.getId(), autor);
+	public Contrato saveContrato(Contrato contrato) {
+		notNull(contrato, "Contrato nulo");
+		armazenamentoContrato.put(contrato.getId(), contrato);
+		return contrato;
 	}
 
 	@Override
-	public Autor obter(AutorId id) {
-		notNull(id, "O id do autor não pode ser nulo");
-
-		var autor = autores.get(id);
-		return Optional.ofNullable(autor).get();
-	}
-	
-	private Map<Isbn, Livro> livros = new HashMap<>();
-
-	@Override
-	public void salvar(Livro livro) {
-		notNull(livro, "O livro não pode ser nulo");
-
-		livros.put(livro.getId(), livro);
+	public Contrato findContratoById(int id) {
+		return Optional.ofNullable(armazenamentoContrato.get(id))
+				.orElseThrow(() -> new IllegalArgumentException("Contrato não encontrado com id: " + id));
 	}
 
 	@Override
-	public Livro obter(Isbn id) {
-		notNull(id, "O ISBN do livro não pode ser nulo");
-
-		var livro = livros.get(id);
-		return Optional.ofNullable(livro).get();
-	}
-	
-	private Map<ExemplarId, Exemplar> exemplares = new HashMap<>();
-
-	@Override
-	public void salvar(Exemplar exemplar) {
-		notNull(exemplar, "O exemplar não pode ser nulo");
-
-		exemplares.put(exemplar.getId(), exemplar);
+	public List<Contrato> findAllContratos() {
+		return List.copyOf(armazenamentoContrato.values());
 	}
 
 	@Override
-	public Exemplar obter(ExemplarId id) {
-		notNull(id, "O id do exemplar não pode ser nulo");
-
-		var exemplar = exemplares.get(id);
-		return Optional.ofNullable(exemplar).get();
+	public Proposta saveProposta(Proposta proposta) {
+		notNull(proposta, "Proposta nula");
+		armazenamentoProposta.put(proposta.getId(), proposta);
+		return proposta;
 	}
 
 	@Override
-	public List<Exemplar> pesquisarDisponiveis(Isbn livro) {
-		return exemplares.values().stream()
-				.filter(exemplar -> exemplar.getLivro().equals(livro) && exemplar.disponivel()).toList();
+	public Proposta findPropostaById(int id) {
+		return Optional.ofNullable(armazenamentoProposta.get(id))
+				.orElseThrow(() -> new IllegalArgumentException("Proposta não encontrada com id: " + id));
 	}
-	
-}*/
+
+	@Override
+	public List<Proposta> findAllPropostas() {
+		return List.copyOf(armazenamentoProposta.values());
+	}
+}

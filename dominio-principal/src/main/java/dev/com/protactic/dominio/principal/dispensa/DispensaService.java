@@ -24,7 +24,7 @@ public class DispensaService {
         Clube passesLivres = new Clube("Passes Livres");
         jogador.setClube(passesLivres);
 
-        contratoRepository.save(jogador.getContrato());
+        contratoRepository.saveContrato(jogador.getContrato());
     }
 
     private boolean jogadorSaudavel(Jogador jogador) {

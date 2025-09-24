@@ -5,7 +5,7 @@ import java.util.List;
 import dev.com.protactic.dominio.principal.Proposta;
 
 public interface PropostaRepository {
-    Proposta save(Proposta proposta);
-    Proposta findById(int id);
-    List<Proposta> findAll();
+    Proposta saveProposta(Proposta proposta);
+    Proposta findPropostaById(int id);
+    List<Proposta> findAllPropostas();
 }

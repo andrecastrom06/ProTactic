@@ -9,19 +9,19 @@ public class PropostaMock implements PropostaRepository {
     private long sequence = 1L;
 
     @Override
-    public Proposta save(Proposta proposta) {
+    public Proposta saveProposta(Proposta proposta) {
         proposta.setId((int) sequence++);
         storage.put((long) proposta.getId(), proposta);
         return proposta;
     }
 
     @Override
-    public Proposta findById(int id) {
+    public Proposta findPropostaById(int id) {
         return storage.get((long) id);
     }
 
     @Override
-    public List<Proposta> findAll() {
+    public List<Proposta> findAllPropostas() {
         return new ArrayList<>(storage.values());
     }
 }

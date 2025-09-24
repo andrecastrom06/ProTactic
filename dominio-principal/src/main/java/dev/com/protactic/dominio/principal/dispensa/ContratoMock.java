@@ -9,7 +9,7 @@ public class ContratoMock implements ContratoRepository {
     private int sequence = 1;
 
     @Override
-    public Contrato save(Contrato contrato) {
+    public Contrato saveContrato(Contrato contrato) {
         if (contrato.getId() == 0) {
             contrato.setId(sequence++);
         }
@@ -18,12 +18,12 @@ public class ContratoMock implements ContratoRepository {
     }
 
     @Override
-    public Contrato findById(int id) {
+    public Contrato findContratoById(int id) {
         return storage.get(id);
     }
 
     @Override
-    public List<Contrato> findAll() {
+    public List<Contrato> findAllContratos() {
         return new ArrayList<>(storage.values());
     }
 }

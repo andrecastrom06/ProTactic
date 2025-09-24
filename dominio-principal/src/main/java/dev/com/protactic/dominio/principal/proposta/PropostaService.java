@@ -27,7 +27,7 @@ public class PropostaService {
         }
 
         Proposta proposta = new Proposta(jogador, clube, data);
-        return propostaRepository.save(proposta);
+        return propostaRepository.saveProposta(proposta);
     }
 
 
