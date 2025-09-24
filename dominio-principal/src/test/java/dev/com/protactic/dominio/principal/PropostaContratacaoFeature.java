@@ -11,7 +11,7 @@ import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
 
-public class Proposta_contratacaoFeature {
+public class PropostaContratacaoFeature {
 
     private Jogador jogador;
     private Clube clubeProponente;

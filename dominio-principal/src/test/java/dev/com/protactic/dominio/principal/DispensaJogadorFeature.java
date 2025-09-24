@@ -3,7 +3,7 @@ package dev.com.protactic.dominio.principal;
 import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Dispensa_jogadorFeature {
+public class DispensaJogadorFeature {
 
     private String jogador;
     private String clube;
