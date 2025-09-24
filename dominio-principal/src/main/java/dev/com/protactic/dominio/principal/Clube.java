@@ -95,4 +95,17 @@ public class Clube {
 
     public Jogador getViceCapitao() { return viceCapitao; }
     public void setViceCapitao(Jogador viceCapitao) { this.viceCapitao = viceCapitao; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Clube clube = (Clube) o;
+        return nome != null && nome.equalsIgnoreCase(clube.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        return nome != null ? nome.toLowerCase().hashCode() : 0;
+    }
 }

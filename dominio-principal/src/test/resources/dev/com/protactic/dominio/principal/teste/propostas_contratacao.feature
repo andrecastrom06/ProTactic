@@ -4,6 +4,7 @@ Funcionalidade: Registrar proposta de contratação de novos jogadores
 
   Cenário: "Kieza" não tem contrato e "Sport" tenta contratá-lo
     Dado um jogador chamado "Kieza" que não tem contrato
+    E a data é "25/01/2025"
     Quando um analista do "Sport" cria uma proposta de contrato para "Kieza"
     Então a proposta deve ser registrada com sucesso
 

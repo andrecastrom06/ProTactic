@@ -18,6 +18,8 @@ public class Proposta_contratacaoFeature {
     private Date dataAtual;
     private Proposta proposta;
     private Exception excecao;
+    private PropostaRepository propostaRepository = new PropostaMock();
+    private PropostaService propostaService = new PropostaService(propostaRepository);
 
     @Dado("um jogador chamado {string} que não tem contrato")
     public void um_jogador_chamado_que_não_tem_contrato(String nomeJogador) {
@@ -52,7 +54,7 @@ public class Proposta_contratacaoFeature {
     public void um_analista_do_cria_uma_proposta_de_contrato_para(String nomeClube, String nomeJogador) {
         this.clubeProponente = new Clube(nomeClube);
         try {
-            this.proposta = new Proposta(jogador, clubeProponente, dataAtual);
+            this.proposta = propostaService.criarProposta(jogador, clubeProponente, dataAtual);
         } catch (Exception e) {
             this.excecao = e;
         }
