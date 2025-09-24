@@ -1,6 +1,10 @@
-package dev.com.protactic.dominio.principal;
+package dev.com.protactic.dominio.principal.proposta;
 
 import java.util.Date;
+
+import dev.com.protactic.dominio.principal.Clube;
+import dev.com.protactic.dominio.principal.Jogador;
+import dev.com.protactic.dominio.principal.Proposta;
 
 public class PropostaService {
     private final PropostaRepository propostaRepository;

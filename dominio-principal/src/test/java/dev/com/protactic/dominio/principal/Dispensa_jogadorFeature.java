@@ -3,18 +3,24 @@ package dev.com.protactic.dominio.principal;
 import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DispensaJogadorFeature {
+import dev.com.protactic.dominio.principal.dispensa.ContratoMock;
+import dev.com.protactic.dominio.principal.dispensa.DispensaService;
 
-    private String jogador;
-    private String clube;
+public class Dispensa_jogadorFeature {
+
+    private Jogador jogador;
+    private Clube clube;
     private boolean estaSaudavel;
     private String mensagemErro;
 
+    private DispensaService dispensaService = new DispensaService(new ContratoMock());
+
     @Dado("um jogador chamado {string} com contrato ativo com o {string}")
-    public void um_jogador_chamado_com_contrato_ativo_com_o(String nome, String clube) {
-        this.jogador = nome;
-        this.clube = clube;
-        this.mensagemErro = null;
+    public void um_jogador_chamado_com_contrato_ativo_com_o(String nome, String nomeClube) {
+        this.clube = new Clube(nomeClube);
+        Contrato contrato = new Contrato(clube);
+        this.jogador = new Jogador(nome, clube);
+        this.jogador.setContrato(contrato);
     }
 
     @E("o jogador está saudável")
@@ -29,17 +35,19 @@ public class DispensaJogadorFeature {
 
     @Quando("o analista do {string} solicitar a rescisão do seu contrato")
     public void o_analista_do_solicitar_a_rescisao_do_seu_contrato(String clube) {
-        if (!estaSaudavel) {
-            this.mensagemErro = "Não é permitido dispensar jogadores que estão lesionados.";
-        } else {
-            this.clube = "Passes Livres";
+        try {
+            if (!estaSaudavel) {
+                throw new Exception("Não é permitido dispensar jogadores que estão lesionados.");
+            }
+            dispensaService.dispensarJogador(jogador);
+        } catch (Exception e) {
+            this.mensagemErro = e.getMessage();
         }
     }
 
     @Então("o clube do jogador deve ser {string}")
     public void o_clube_do_jogador_deve_ser(String esperado) {
-        assertEquals(esperado, this.clube);
-        assertNotNull(this.jogador, "O nome do jogador deve estar definido.");
+        assertEquals(esperado, jogador.getClube().getNome());
     }
 
     @Então("o sistema deve bloquear a rescisão com a mensagem {string}")

@@ -1,9 +1,9 @@
 package dev.com.protactic.dominio.principal;
 
 import dev.com.protactic.dominio.principal.Clube;
-import dev.com.protactic.dominio.principal.ContratacaoServico;
 import dev.com.protactic.dominio.principal.Contrato;
 import dev.com.protactic.dominio.principal.Jogador;
+import dev.com.protactic.dominio.principal.dispensa.ContratacaoServico;
 import io.cucumber.java.pt.*;
 
 import static org.junit.jupiter.api.Assertions.*;

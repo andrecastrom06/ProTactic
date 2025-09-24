@@ -1,6 +1,8 @@
-package dev.com.protactic.dominio.principal;
+package dev.com.protactic.dominio.principal.proposta;
 
 import java.util.*;
+
+import dev.com.protactic.dominio.principal.Proposta;
 
 public class PropostaMock implements PropostaRepository {
     private Map<Long, Proposta> storage = new HashMap<>();

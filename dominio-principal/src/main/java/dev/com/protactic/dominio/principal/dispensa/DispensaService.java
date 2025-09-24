@@ -1,4 +1,7 @@
-package dev.com.protactic.dominio.principal;
+package dev.com.protactic.dominio.principal.dispensa;
+
+import dev.com.protactic.dominio.principal.Clube;
+import dev.com.protactic.dominio.principal.Jogador;
 
 public class DispensaService {
     private final ContratoRepository contratoRepository;
