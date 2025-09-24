@@ -24,7 +24,7 @@ Funcionalidade: 3 - Registro de lesões e planejamento de recuperações
     Dado que o atleta "AT-001" está saudável e sem contrato ativo
     Quando tentar registrar uma lesão de grau 2 para o atleta "AT-001"
     Então a lesão não é registrada
-    E o sistema exibe o erro "Contrato inativo impede o registro de lesão"
+    E o sistema de lesões exibe o erro "Contrato inativo impede o registro de lesão"
 
   Cenário: Planejamento para recuperação de uma lesão leve de um atleta
     Dado que o atleta "AT-001" possui uma lesão de grau 1 registrada e ativa
