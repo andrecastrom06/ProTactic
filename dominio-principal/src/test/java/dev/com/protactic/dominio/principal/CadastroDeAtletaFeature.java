@@ -1,9 +1,6 @@
 package dev.com.protactic.dominio.principal;
 
-import dev.com.protactic.dominio.principal.Clube;
-import dev.com.protactic.dominio.principal.Contrato;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.dispensa.ContratacaoServico;
+import dev.com.protactic.dominio.principal.cadastroAtleta.*;
 import io.cucumber.java.pt.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,24 +11,33 @@ public class CadastroDeAtletaFeature {
     private Clube outroClube;
     private Jogador jogador;
     private boolean janelaAberta;
-    private ContratacaoServico contratacaoServico;
+    private CadastroDeAtletaService cadastroDeAtletaService;
     private boolean resultadoContratacao;
+
+    // repos em memória
+    private JogadorRepository jogadorRepo;
+    private ClubeRepository clubeRepo;
 
     @Dado("que o ano atual é {int}")
     public void que_o_ano_atual_e(Integer ano) {
         this.meuClube = new Clube("Meu Time FC");
         this.outroClube = new Clube("Rival AC");
-        this.contratacaoServico = new ContratacaoServico();
+
+        // inicializa repos
+        this.jogadorRepo = new JogadorRepository();
+        this.clubeRepo = new ClubeRepository();
+
+        // inicializa service
+        this.cadastroDeAtletaService = new CadastroDeAtletaService(jogadorRepo, clubeRepo);
+
         System.out.println("Contexto: Ano atual é " + ano);
     }
 
-    // --- Cenário 1: Contratar fora da janela ---
     @Dado("que um lateral direito com contrato em outro clube existe")
     public void que_um_lateral_direito_com_contrato_em_outro_clube_existe() {
         this.jogador = new Jogador("Léo Destro");
         this.jogador.setPosicao("Lateral Direito");
 
-        // cria contrato ativo no outro clube
         Contrato contratoExistente = new Contrato(outroClube);
         this.jogador.setContrato(contratoExistente);
         outroClube.adicionarJogador(this.jogador);
@@ -42,27 +48,22 @@ public class CadastroDeAtletaFeature {
 
     @Dado("está dentro da janela de transferência")
     public void esta_dentro_da_janela_de_transferencia() {
-        // aqui você decide: se o cenário for para simular fora da janela, use false
-        // se for dentro da janela, use true
-        this.janelaAberta = false; // no cenário 1 é fora da janela
+        this.janelaAberta = false; // cenário 1 = fora da janela
     }
 
-    // --- Cenário 2: Jogador livre dentro da janela ---
     @Dado("que um zagueiro sem contrato existe no dia {int} de outubro")
     public void que_um_zagueiro_sem_contrato_existe_no_dia_de_outubro(Integer dia) {
         this.jogador = new Jogador("David Muro");
         this.jogador.setPosicao("Zagueiro");
-        this.janelaAberta = true; // esse cenário deve simular janela aberta
+        this.janelaAberta = true; // cenário 2 = janela aberta
         assertNull(jogador.getContrato(), "O jogador deveria estar sem contrato.");
     }
 
-    // --- Step compartilhado entre os cenários ---
     @Quando("eu tentar cadastrar esse atleta no meu clube")
     public void eu_tentar_cadastrar_esse_atleta_no_meu_clube() {
-        this.resultadoContratacao = contratacaoServico.registrarAtleta(meuClube, jogador, this.janelaAberta);
+        this.resultadoContratacao = cadastroDeAtletaService.contratar(meuClube, jogador, this.janelaAberta);
     }
 
-    // --- Validações ---
     @Então("não conseguirei realizar a contratação")
     public void nao_conseguirei_realizar_a_contratacao() {
         assertFalse(this.resultadoContratacao, "A contratação deveria ter falhado.");

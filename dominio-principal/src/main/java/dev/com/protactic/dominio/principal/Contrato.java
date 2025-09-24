@@ -20,6 +20,11 @@ public class Contrato {
         this.status = "ATIVO";
     }
 
+    public boolean isExpirado() {
+        return !"ATIVO".equalsIgnoreCase(this.status);
+    }
+
+
     public int getId() {
         return id;
     }
@@ -58,4 +63,6 @@ public class Contrato {
     public void setClube(Clube clube) {
         this.clube = clube;
     }
+
+    
 }
