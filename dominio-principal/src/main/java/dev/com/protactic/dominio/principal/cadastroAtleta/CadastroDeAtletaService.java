@@ -1,17 +1,13 @@
 package dev.com.protactic.dominio.principal.cadastroAtleta;
 
-
-
-
-
 import dev.com.protactic.dominio.principal.*;
 
 public class CadastroDeAtletaService {
 
-    private final JogadorRepository jogadorRepo;
-    private final ClubeRepository clubeRepo;
+    private final IJogadorRepository jogadorRepo;
+    private final IClubeRepository clubeRepo;
 
-    public CadastroDeAtletaService(JogadorRepository jogadorRepo, ClubeRepository clubeRepo) {
+    public CadastroDeAtletaService(IJogadorRepository jogadorRepo, IClubeRepository clubeRepo) {
         this.jogadorRepo = jogadorRepo;
         this.clubeRepo = clubeRepo;
     }
@@ -37,6 +33,4 @@ public class CadastroDeAtletaService {
         clubeRepo.salvar(clubeDestino);
         return true;
     }
-
-    
 }

@@ -1,24 +1,27 @@
 package dev.com.protactic.dominio.principal.cadastroAtleta;
 
-
 import dev.com.protactic.dominio.principal.Jogador;
 import java.util.*;
 
-public class JogadorRepository {
+public class JogadorRepository implements IJogadorRepository {
     private final Map<String, Jogador> jogadores = new HashMap<>();
 
+    @Override
     public void salvar(Jogador jogador) {
         jogadores.put(jogador.getNome(), jogador);
     }
 
+    @Override
     public Jogador buscarPorNome(String nome) {
         return jogadores.get(nome);
     }
 
+    @Override
     public boolean existe(String nome) {
         return jogadores.containsKey(nome);
     }
 
+    @Override
     public List<Jogador> listarTodos() {
         return new ArrayList<>(jogadores.values());
     }

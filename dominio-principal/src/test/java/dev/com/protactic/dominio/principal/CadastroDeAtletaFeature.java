@@ -14,9 +14,9 @@ public class CadastroDeAtletaFeature {
     private CadastroDeAtletaService cadastroDeAtletaService;
     private boolean resultadoContratacao;
 
-    // repos em memória
-    private JogadorRepository jogadorRepo;
-    private ClubeRepository clubeRepo;
+    // repos em memória (interfaces + implementações concretas)
+    private IJogadorRepository jogadorRepo;
+    private IClubeRepository clubeRepo;
 
     @Dado("que o ano atual é {int}")
     public void que_o_ano_atual_e(Integer ano) {
