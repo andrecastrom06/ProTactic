@@ -193,14 +193,14 @@ BoundedContext Principal implements Principal {
 			def String getNome();
 			def void setNome(String nome);
 		}
-		Entity CadastroDeAtletaService {
+		Service CadastroDeAtletaService {
 			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/cadastroAtleta/CadastroDeAtletaService.java
 			annotations: 
 		
 		
 			def boolean contratar(Clube clubeDestino, Jogador jogador, boolean janelaAberta);
 		}
-		Entity ContratacaoServico {
+		Service ContratacaoServico {
 			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/dispensa/ContratacaoServico.java
 			annotations: 
 		
@@ -217,7 +217,7 @@ BoundedContext Principal implements Principal {
 			def Contrato findContratoById(int id);
 			def List<Contrato> findAllContratos();
 		}
-		Entity DispensaService {
+		Service DispensaService {
 			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/dispensa/DispensaService.java
 			annotations: 
 		
@@ -335,7 +335,7 @@ BoundedContext Principal implements Principal {
 			def void setStatus(String status);
 			def Clube getClube();
 		}
-		Service ContratoRepository {
+		Repository ContratoRepository {
 			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/dispensa/ContratoRepository.java
 			annotations: 
 		
@@ -371,7 +371,7 @@ BoundedContext Principal implements Principal {
 			def Premiacao buscarPorId(int id);
 			def List<Premiacao> listarTodos();
 		}
-		Entity PremiacaoService {
+		Service PremiacaoService {
 			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/premiacaoInterna/PremiacaoService.java
 			annotations: 
 		
@@ -404,13 +404,13 @@ BoundedContext Principal implements Principal {
 			def void setJogador(Jogador jogador);
 			def String getStatus();
 		}
-		Service PropostaRepository {
+		Repository PropostaRepository {
 			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/proposta/PropostaRepository.java
 			annotations: 
 		
 		
 		}
-		Entity PropostaService {
+		Service PropostaService {
 			// extraído do arquivo: dominio-principal/src/main/java/dev/com/protactic/dominio/principal/proposta/PropostaService.java
 			annotations: 
 		
