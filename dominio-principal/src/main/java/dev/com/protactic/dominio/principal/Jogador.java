@@ -13,6 +13,7 @@ public class Jogador {
     private int jogos;
     private int gols;
     private int assistencias;
+    private String status;
 
     public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias) {
@@ -144,4 +145,17 @@ public class Jogador {
     public void setAssistencias(int assistencias) {
         this.assistencias = assistencias;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isDisponivel() {
+        return "disponível".equalsIgnoreCase(this.status);
+    }   
+
 }

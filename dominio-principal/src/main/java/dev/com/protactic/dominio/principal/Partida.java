@@ -42,4 +42,8 @@ public class Partida {
 
     public int getPlacarClubeVisitante() { return placarClubeVisitante; }
     public void setPlacarClubeVisitante(int placarClubeVisitante) { this.placarClubeVisitante = placarClubeVisitante; }
+
+    public String getDescricao() {
+        return clubeCasa.getNome() + " vs " + clubeVisitante.getNome();
+    }
 }
