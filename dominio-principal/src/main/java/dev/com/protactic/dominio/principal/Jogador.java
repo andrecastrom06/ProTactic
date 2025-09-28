@@ -20,6 +20,8 @@ public class Jogador {
     private int anosDeClube;     
     private boolean capitao;    
     private boolean viceCapitao; 
+    private int grauLesao = -1;         
+    private boolean contratoAtivo = false; 
 
     public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias,
@@ -135,4 +137,21 @@ public class Jogador {
 
     public boolean isViceCapitao() { return viceCapitao; }
     public void setViceCapitao(boolean viceCapitao) { this.viceCapitao = viceCapitao; }
+
+    // --- Getters e setters adicionados ---
+    public int getGrauLesao() {
+        return grauLesao;
+    }
+
+    public void setGrauLesao(int grauLesao) {
+        this.grauLesao = grauLesao;
+    }
+
+    public boolean isContratoAtivo() {
+        return contratoAtivo;
+    }
+
+    public void setContratoAtivo(boolean contratoAtivo) {
+        this.contratoAtivo = contratoAtivo;
+    }
 }
