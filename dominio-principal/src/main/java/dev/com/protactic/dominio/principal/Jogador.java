@@ -1,6 +1,8 @@
 package dev.com.protactic.dominio.principal;
 
 public class Jogador {
+
+    // --- Campos principais ---
     private int id;
     private Contrato contrato;
     private Clube clube;
@@ -14,9 +16,14 @@ public class Jogador {
     private int gols;
     private int assistencias;
     private String status;
+    private String minutagem;   
+    private int anosDeClube;     
+    private boolean capitao;    
+    private boolean viceCapitao; 
 
     public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
-                   String posicao, String perna, double nota, int jogos, int gols, int assistencias) {
+                   String posicao, String perna, double nota, int jogos, int gols, int assistencias,
+                   String minutagem, int anosDeClube, boolean capitao, boolean viceCapitao) {
         this.id = id;
         this.contrato = contrato;
         this.clube = clube;
@@ -29,36 +36,50 @@ public class Jogador {
         this.jogos = jogos;
         this.gols = gols;
         this.assistencias = assistencias;
+        this.minutagem = minutagem;
+        this.anosDeClube = anosDeClube;
+        this.capitao = capitao;
+        this.viceCapitao = viceCapitao;
     }
 
-    public Jogador(String nome, Clube clube){
+    public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
+                   String posicao, String perna, double nota, int jogos, int gols, int assistencias) {
+        this(id, contrato, clube, competicao, nome, idade, posicao, perna, nota, jogos, gols, assistencias,
+             null, 0, false, false);
+    }
+
+    public Jogador(String nome, Clube clube) {
         this.nome = nome;
         this.clube = clube;
         if (clube != null) {
             this.contrato = new Contrato(clube);
         }
+        this.minutagem = null;
+        this.anosDeClube = 0;
+        this.capitao = false;
+        this.viceCapitao = false;
     }
 
     public Jogador(Contrato contrato) {
         this.contrato = contrato;
+        this.minutagem = null;
+        this.anosDeClube = 0;
+        this.capitao = false;
+        this.viceCapitao = false;
     }
 
     public Jogador(String nome) {
         this.nome = nome;
+        this.minutagem = null;
+        this.anosDeClube = 0;
+        this.capitao = false;
+        this.viceCapitao = false;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Contrato getContrato() {
-        return contrato;
-    }
-
+    public Contrato getContrato() { return contrato; }
     public void setContrato(Contrato contrato) {
         this.contrato = contrato;
         if (contrato != null) {
@@ -66,96 +87,52 @@ public class Jogador {
         }
     }
 
-    public Clube getClube() {
-        return clube;
-    }
+    public Clube getClube() { return clube; }
+    public void setClube(Clube clube) { this.clube = clube; }
 
-    public void setClube(Clube clube) {
-        this.clube = clube;
-    }
+    public Competicao getCompeticao() { return competicao; }
+    public void setCompeticao(Competicao competicao) { this.competicao = competicao; }
 
-    public Competicao getCompeticao() {
-        return competicao;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public void setCompeticao(Competicao competicao) {
-        this.competicao = competicao;
-    }
+    public int getIdade() { return idade; }
+    public void setIdade(int idade) { this.idade = idade; }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getPosicao() { return posicao; }
+    public void setPosicao(String posicao) { this.posicao = posicao; }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    public String getPerna() { return perna; }
+    public void setPerna(String perna) { this.perna = perna; }
 
-    public int getIdade() {
-        return idade;
-    }
+    public double getNota() { return nota; }
+    public void setNota(double nota) { this.nota = nota; }
 
-    public void setIdade(int idade) {
-        this.idade = idade;
-    }
+    public int getJogos() { return jogos; }
+    public void setJogos(int jogos) { this.jogos = jogos; }
 
-    public String getPosicao() {
-        return posicao;
-    }
+    public int getGols() { return gols; }
+    public void setGols(int gols) { this.gols = gols; }
 
-    public void setPosicao(String posicao) {
-        this.posicao = posicao;
-    }
+    public int getAssistencias() { return assistencias; }
+    public void setAssistencias(int assistencias) { this.assistencias = assistencias; }
 
-    public String getPerna() {
-        return perna;
-    }
-
-    public void setPerna(String perna) {
-        this.perna = perna;
-    }
-
-    public double getNota() {
-        return nota;
-    }
-
-    public void setNota(double nota) {
-        this.nota = nota;
-    }
-
-    public int getJogos() {
-        return jogos;
-    }
-
-    public void setJogos(int jogos) {
-        this.jogos = jogos;
-    }
-
-    public int getGols() {
-        return gols;
-    }
-
-    public void setGols(int gols) {
-        this.gols = gols;
-    }
-
-    public int getAssistencias() {
-        return assistencias;
-    }
-
-    public void setAssistencias(int assistencias) {
-        this.assistencias = assistencias;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public boolean isDisponivel() {
         return "disponível".equalsIgnoreCase(this.status);
-    }   
+    }
 
+    public String getMinutagem() { return minutagem; }
+    public void setMinutagem(String minutagem) { this.minutagem = minutagem; }
+
+    public int getAnosDeClube() { return anosDeClube; }
+    public void setAnosDeClube(int anosDeClube) { this.anosDeClube = anosDeClube; }
+
+    public boolean isCapitao() { return capitao; }
+    public void setCapitao(boolean capitao) { this.capitao = capitao; }
+
+    public boolean isViceCapitao() { return viceCapitao; }
+    public void setViceCapitao(boolean viceCapitao) { this.viceCapitao = viceCapitao; }
 }
