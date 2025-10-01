@@ -7,9 +7,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import dev.com.protactic.dominio.principal.proposta.PropostaMock;
 import dev.com.protactic.dominio.principal.proposta.PropostaRepository;
 import dev.com.protactic.dominio.principal.proposta.PropostaService;
+import dev.com.protactic.mocks.PropostaMock;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;

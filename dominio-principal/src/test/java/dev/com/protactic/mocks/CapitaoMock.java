@@ -1,10 +1,12 @@
-package dev.com.protactic.dominio.principal.capitao;
+package dev.com.protactic.mocks;
 
 import dev.com.protactic.dominio.principal.Jogador;
+import dev.com.protactic.dominio.principal.capitao.CapitaoRepository;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class CapitaoRepositoryFake implements CapitaoRepository {
+public class CapitaoMock implements CapitaoRepository {
     private final Map<String, Jogador> mapa = new HashMap<>();
 
     @Override

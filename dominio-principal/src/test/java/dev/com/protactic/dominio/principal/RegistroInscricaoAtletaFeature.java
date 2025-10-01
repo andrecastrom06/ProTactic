@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dev.com.protactic.dominio.principal.registroInscricaoAtleta.InscricaoAtleta;
-import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoRepositoryFake;
 import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoService;
+import dev.com.protactic.mocks.RegistroInscricaoMock;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
@@ -20,7 +20,7 @@ public class RegistroInscricaoAtletaFeature {
     private String competicao;
 
     public RegistroInscricaoAtletaFeature() {
-        this.service = new RegistroInscricaoService(new RegistroInscricaoRepositoryFake());
+        this.service = new RegistroInscricaoService(new RegistroInscricaoMock());
     }
 
     // ---------- Passos genéricos ----------

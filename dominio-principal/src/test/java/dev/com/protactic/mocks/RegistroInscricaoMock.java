@@ -1,9 +1,12 @@
-package dev.com.protactic.dominio.principal.registroInscricaoAtleta;
+package dev.com.protactic.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegistroInscricaoRepositoryFake implements RegistroInscricaoRepository {
+import dev.com.protactic.dominio.principal.registroInscricaoAtleta.InscricaoAtleta;
+import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoRepository;
+
+public class RegistroInscricaoMock implements RegistroInscricaoRepository {
 
     private final List<InscricaoAtleta> banco = new ArrayList<>();
 

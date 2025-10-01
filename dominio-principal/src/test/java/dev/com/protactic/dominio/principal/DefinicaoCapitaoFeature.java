@@ -3,18 +3,18 @@ package dev.com.protactic.dominio.principal;
 import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import dev.com.protactic.dominio.principal.capitao.CapitaoRepositoryFake;
 import dev.com.protactic.dominio.principal.capitao.CapitaoService;
+import dev.com.protactic.mocks.CapitaoMock;
 
 public class DefinicaoCapitaoFeature {
 
     private Jogador jogador;
     private CapitaoService service;
-    private CapitaoRepositoryFake repository;
+    private CapitaoMock repository;
 
     @Dado("um jogador chamado {string}")
     public void um_jogador_chamado(String nome) {
-        repository = new CapitaoRepositoryFake();
+        repository = new CapitaoMock();
         service = new CapitaoService(repository);
         jogador = new Jogador(nome); // usa o construtor que você já tem
     }

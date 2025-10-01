@@ -4,8 +4,8 @@ import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesMock;
 import dev.com.protactic.dominio.principal.lesao.RegistroLesoesServico;
+import dev.com.protactic.mocks.RegistroLesoesMock;
 
 public class RegistroLesoesFeature {
 

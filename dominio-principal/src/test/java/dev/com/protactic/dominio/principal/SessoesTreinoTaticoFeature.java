@@ -1,8 +1,8 @@
 package dev.com.protactic.dominio.principal;
 
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreino;
-import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoRepositoryFake;
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoService;
+import dev.com.protactic.mocks.SessaoTreinoMock;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Então;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SessoesTreinoTaticoFeature {
 
-    private SessaoTreinoRepositoryFake repo;
+    private SessaoTreinoMock repo;
     private SessaoTreinoService service;
     private SessaoTreino sessaoCriada;
     private Partida partidaAtual;
@@ -25,7 +25,7 @@ public class SessoesTreinoTaticoFeature {
 
     @Dado("que o treinador está na área de planejamento de treinos")
     public void que_o_treinador_está_na_área_de_planejamento_de_treinos() {
-        repo = new SessaoTreinoRepositoryFake();
+        repo = new SessaoTreinoMock();
         service = new SessaoTreinoService(repo);
     }
 

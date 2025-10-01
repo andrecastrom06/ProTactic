@@ -1,8 +1,10 @@
-package dev.com.protactic.dominio.principal.lesao;
+package dev.com.protactic.mocks;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
 
 public class RegistroLesoesMock implements RegistroLesoesRepository {
 

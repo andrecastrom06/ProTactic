@@ -1,10 +1,13 @@
-package dev.com.protactic.dominio.principal.registroCartoesSuspensoes;
+package dev.com.protactic.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RegistroCartoesRepositoryFake implements RegistroCartoesRepository {
+import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartao;
+import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesRepository;
+
+public class RegistroCartoesMock implements RegistroCartoesRepository {
 
 private final List<RegistroCartao> registros = new ArrayList<>();
 

@@ -1,8 +1,9 @@
-package dev.com.protactic.dominio.principal.nota;
+package dev.com.protactic.mocks;
 
 import java.util.*;
 
 import dev.com.protactic.dominio.principal.Nota;
+import dev.com.protactic.dominio.principal.nota.NotaRepository;
 
 public class NotaMock implements NotaRepository {
     private final Map<String, Nota> notasPorChave = new HashMap<>();

@@ -1,8 +1,10 @@
-package dev.com.protactic.dominio.principal.definirEsquemaTatico;
+package dev.com.protactic.mocks;
 
 import java.util.*;
 
-public class EscalacaoRepositoryMock implements EscalacaoRepository {
+import dev.com.protactic.dominio.principal.definirEsquemaTatico.EscalacaoRepository;
+
+public class EscalacaoMock implements EscalacaoRepository {
 
     private final Map<String, List<String>> banco = new HashMap<>();
 

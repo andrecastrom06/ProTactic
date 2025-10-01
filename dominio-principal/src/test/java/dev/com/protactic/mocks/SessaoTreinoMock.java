@@ -1,10 +1,13 @@
-package dev.com.protactic.dominio.principal.treinoTatico;
+package dev.com.protactic.mocks;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SessaoTreinoRepositoryFake implements SessaoTreinoRepository {
+import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreino;
+import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoRepository;
+
+public class SessaoTreinoMock implements SessaoTreinoRepository {
     private final List<SessaoTreino> banco = new ArrayList<>();
 
     @Override

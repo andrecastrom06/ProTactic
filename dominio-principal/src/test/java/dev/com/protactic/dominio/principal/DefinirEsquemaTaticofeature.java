@@ -1,8 +1,7 @@
 package dev.com.protactic.dominio.principal;
 
 import dev.com.protactic.dominio.principal.definirEsquemaTatico.DefinirEsquemaTaticoService;
-import dev.com.protactic.dominio.principal.definirEsquemaTatico.EscalacaoRepositoryMock;
-
+import dev.com.protactic.mocks.EscalacaoMock;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Então;
@@ -30,7 +29,7 @@ public class DefinirEsquemaTaticofeature {
     private String jogoEmContexto;
 
     // Service + Repository
-    private final EscalacaoRepositoryMock repository = new EscalacaoRepositoryMock();
+    private final EscalacaoMock repository = new EscalacaoMock();
     private final DefinirEsquemaTaticoService service = new DefinirEsquemaTaticoService(repository);
 
     @Dado("que o treinador está na tela de gerenciamento de escalação e tática")
