@@ -13,15 +13,15 @@ public class CadastroDeAtletaService {
     }
 
     public boolean contratar(Clube clubeDestino, Jogador jogador, boolean janelaAberta) {
+        // Caso 1: jogador com contrato ativo
         if (jogador.getContrato() != null && !jogador.getContrato().isExpirado()) {
-            // jogador já tem contrato ativo
-            return false;
+            if (!janelaAberta) {
+                return false; // só pode se a janela estiver aberta
+            }
         }
 
-        if (!janelaAberta) {
-            // fora da janela
-            return false;
-        }
+        // Caso 2: jogador sem contrato ou contrato expirado
+        // -> pode contratar em qualquer data (mesmo fora da janela)
 
         // cria novo contrato
         Contrato novoContrato = new Contrato(clubeDestino);
@@ -31,6 +31,7 @@ public class CadastroDeAtletaService {
         // persiste
         jogadorRepo.salvar(jogador);
         clubeRepo.salvar(clubeDestino);
+
         return true;
     }
 }
