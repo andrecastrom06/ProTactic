@@ -1,0 +1,267 @@
+Domain Protactic {}
+
+BoundedContext Principal implements Principal {
+
+	Aggregate Clube {
+		Entity Clube {
+			aggregateRoot
+
+			-ClubeId id;
+			-Treinador treinador;
+			-Analista analista;
+			-Preparador preparador;
+			-Competicao competicao;
+			String nome;
+			String cidadeEstado;
+			String estadio;
+			Jogador capitao;
+			Jogador viceCapitao;
+			List<@Jogador> jogadores;
+		}
+		
+        ValueObject ClubeId{
+            int id;
+        }
+
+		Entity Jogador {
+			-JogadorId id;
+			-Contrato contrato;
+			-Clube clube;
+			-Competicao competicao;
+			String nome;
+			int idade;
+			String posicao;
+			String perna;
+			double nota;
+			int jogos;
+			int gols;
+			int assistencias;
+		}
+
+        ValueObject JogadorId{
+            int id;
+        }
+        
+		Repository ClubeRepository {
+			salvar(@Clube clube);
+			buscarPorNome(String nome);
+			List<@Clube> listarTodos();
+		}
+		
+		Repository JogadorRepository {
+			salvar(@Jogador jogador);
+			buscarPorNome(String nome);
+			existe(String nome);
+			List<@Jogador> listarTodos();
+		}
+		
+		Service CadastroDeAtletaService {
+			contratar(@Clube clubeDestino, @Jogador jogador, boolean janelaAberta);
+		}
+	}
+	
+	Aggregate Contrato {
+		Entity Contrato {
+			aggregateRoot
+			
+			-ContratoId id;
+			int duracaoMeses;
+			double salario;
+			String status;
+			-Clube clube;
+		}
+
+		ValueObject ContratoId{
+            int id;
+        }
+
+		Repository ContratoRepository {
+            saveContrato(@Contrato contrato);
+            findContratoById(int id);
+            List<@Contrato> findAllContratos();
+        }   
+		
+		Service DispensaService {
+			jogadorSaudavel(@Jogador jogador);
+            dispensarJogador(@Jogador jogador);
+		}
+		
+		Service ContratacaoServico {
+			registrarAtleta(@Clube clubeDestino, @Jogador jogador, boolean janelaAberta);
+		}
+	}
+	
+	Aggregate Proposta {
+		Entity Proposta {
+			aggregateRoot
+			
+			-PropostaId id;
+			-Clube propositor;
+			-Clube receptor;
+			-Jogador jogador;
+			String status;
+			double valor;
+			Date data;
+		}
+
+		ValueObject PropostaId{
+            int id;
+        }
+
+		Repository PropostaRepository {
+            saveProposta(@Proposta proposta);
+            findPropostaById(@Proposta id);
+            List<@Proposta> findAllPropostas();
+        }
+		
+		Service PropostaService {
+			estaDentroDaJanelaDeTransferencia(Date data);
+            criarProposta(Jogador jogador, Clube clube, Date data)
+		}
+	}
+	
+	Aggregate Premiacao {
+		Entity Premiacao {
+			aggregateRoot
+			
+			-PremiacaoId id;
+			-Jogador jogador;
+			String nome;
+			Date dataPremiacao;
+		}
+
+		ValueObject PremiacaoId{
+            int id;
+        }
+
+		Repository PremiacaoRepository {
+			salvar(@Premiacao premiacao);
+			buscarPorId(@Premiacao id);
+			List<@Premiacao> listarTodos();
+		}
+		
+		Service PremiacaoService {
+			criarPremiacaoMelhorJogador(@Jogador jogadorMaiorPontuacao);
+		}
+	}
+	
+	Aggregate Competicao {
+		Entity Competicao {
+			aggregateRoot
+			
+			-CompeticaoId id;
+			String nome;
+			Date dataInicio;
+			Date dataFim;
+		}
+
+        ValueObject CompeticaoId{
+            int id;
+        }
+	}
+	
+	Aggregate Partida {
+		Entity Partida {
+			aggregateRoot
+			
+			-PartidaId id;
+			-Clube clubeCasa;
+			-Clube clubeVisitante;
+			Date dataJogo
+			String hora;
+			int placarClubeCasa;
+			int placarClubeVisitante;
+		}
+
+        ValueObject CompeticaoId{
+            int id;
+        }   
+	}
+	
+	Aggregate Nota {
+		Entity Nota {
+			aggregateRoot
+			
+			-PartidaId jogoId;
+			-JogadorId jogadorId;
+			double nota;
+			String observacao;
+		}
+		
+		Repository NotaRepository {
+                Optional<@Nota> buscar(@Partida jogoId, @Jogador jogadorId);
+                salvar(@Nota nota);
+                registrarParticipacao(@Partida jogoId, @Jogador jogadorId, boolean atuou);
+                atuouNoJogo(@Partida jogoId, @Jogador jogadorId);
+                registrarJogadorNoElenco(@Jogador jogadorId);
+                jogadorExisteNoElenco(@Jogador jogadorId);
+        }
+		
+		Service NotaService {
+            atribuirNotaEObservacao(@Partida jogoId, @Jogador jogadorId, BigDecimal nota, String observacao);
+        }
+	}
+	
+	Aggregate Desempenho {
+		Entity Lesao {
+			-LesaoId id;
+			-Jogador jogadorId;
+			boolean lesionado;
+			String tempo;
+			String plano;
+			int grau;
+		}
+
+		ValueObject LesaoId{
+            int id
+        }
+
+		Entity Fisico {
+			-FisicoId id;
+			-Jogador jogadorId;
+			String nome;
+			String musculo;
+			String intensidade;
+			String descricao;
+			Date dataInicio;
+			Date dataFim;
+		}
+
+        ValueObject FisicoId{
+            int id;
+        }
+		
+		Entity Suspensao {
+			-SuspensaoId id;
+			-Jogador jogadorId;
+			boolean suspenso;
+			int amarelo;
+			int vermelho;
+		}
+
+        ValueObject SuspensaoId{
+            int id;
+        }
+	}
+	
+	Aggregate Usuario {
+		Entity Usuario {
+			aggregateRoot
+			
+			-UsuarioId id;
+			String login;
+			String senha;
+			String nome;
+		}
+
+        ValueObject UsuarioId{
+            int id;
+        }
+	}
+	
+	// Entidades auxiliares
+	Entity Analista {}
+	Entity Preparador {}
+	Entity Treinador {}
+	Entity Tatico {}
+}
