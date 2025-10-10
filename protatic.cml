@@ -1,12 +1,12 @@
 Domain Protactic {}
 
-BoundedContext Principal implements Principal {
+BoundedContext Protactic implements Protactic {
 
 	Aggregate Clube {
 		Entity Clube {
 			aggregateRoot
 
-			-ClubeId id;
+			int id;
 			-Treinador treinador;
 			-Analista analista;
 			-Preparador preparador;
@@ -14,17 +14,13 @@ BoundedContext Principal implements Principal {
 			String nome;
 			String cidadeEstado;
 			String estadio;
-			Jogador capitao;
-			Jogador viceCapitao;
+			-Jogador capitao;
+			-Jogador viceCapitao;
 			List<@Jogador> jogadores;
 		}
-		
-        ValueObject ClubeId{
-            int id;
-        }
-
+	
 		Entity Jogador {
-			-JogadorId id;
+			int id;
 			-Contrato contrato;
 			-Clube clube;
 			-Competicao competicao;
@@ -36,11 +32,14 @@ BoundedContext Principal implements Principal {
 			int jogos;
 			int gols;
 			int assistencias;
+			String status;
+			String minutagem;
+			int anosDeClube;
+			boolean capitão;
+			boolean viceCapitao;
+			int grauDeLesao;
+			boolean contratoAtivo;
 		}
-
-        ValueObject JogadorId{
-            int id;
-        }
         
 		Repository ClubeRepository {
 			salvar(@Clube clube);
@@ -64,16 +63,12 @@ BoundedContext Principal implements Principal {
 		Entity Contrato {
 			aggregateRoot
 			
-			-ContratoId id;
+			int id;
 			int duracaoMeses;
 			double salario;
 			String status;
 			-Clube clube;
 		}
-
-		ValueObject ContratoId{
-            int id;
-        }
 
 		Repository ContratoRepository {
             saveContrato(@Contrato contrato);
@@ -94,8 +89,8 @@ BoundedContext Principal implements Principal {
 	Aggregate Proposta {
 		Entity Proposta {
 			aggregateRoot
-			
-			-PropostaId id;
+
+			int id;
 			-Clube propositor;
 			-Clube receptor;
 			-Jogador jogador;
@@ -104,19 +99,15 @@ BoundedContext Principal implements Principal {
 			Date data;
 		}
 
-		ValueObject PropostaId{
-            int id;
-        }
-
 		Repository PropostaRepository {
             saveProposta(@Proposta proposta);
-            findPropostaById(@Proposta id);
+            findPropostaById(int id);
             List<@Proposta> findAllPropostas();
         }
 		
 		Service PropostaService {
+            criarProposta(@Jogador jogador, @Clube clube, Date data);
 			estaDentroDaJanelaDeTransferencia(Date data);
-            criarProposta(Jogador jogador, Clube clube, Date data)
 		}
 	}
 	
@@ -124,19 +115,16 @@ BoundedContext Principal implements Principal {
 		Entity Premiacao {
 			aggregateRoot
 			
-			-PremiacaoId id;
+			int id;
 			-Jogador jogador;
 			String nome;
 			Date dataPremiacao;
 		}
 
-		ValueObject PremiacaoId{
-            int id;
-        }
 
 		Repository PremiacaoRepository {
 			salvar(@Premiacao premiacao);
-			buscarPorId(@Premiacao id);
+			buscarPorId(int id);
 			List<@Premiacao> listarTodos();
 		}
 		
@@ -149,76 +137,69 @@ BoundedContext Principal implements Principal {
 		Entity Competicao {
 			aggregateRoot
 			
-			-CompeticaoId id;
+			int id;
 			String nome;
 			Date dataInicio;
 			Date dataFim;
 		}
-
-        ValueObject CompeticaoId{
-            int id;
-        }
 	}
 	
 	Aggregate Partida {
 		Entity Partida {
 			aggregateRoot
 			
-			-PartidaId id;
+			int id;
 			-Clube clubeCasa;
 			-Clube clubeVisitante;
-			Date dataJogo
+			Date dataJogo;
 			String hora;
 			int placarClubeCasa;
 			int placarClubeVisitante;
 		}
 
-        ValueObject CompeticaoId{
-            int id;
-        }   
 	}
 	
 	Aggregate Nota {
 		Entity Nota {
 			aggregateRoot
 			
-			-PartidaId jogoId;
-			-JogadorId jogadorId;
+			int jogoId;
+			String jogadorId;
 			double nota;
 			String observacao;
 		}
 		
 		Repository NotaRepository {
-                Optional<@Nota> buscar(@Partida jogoId, @Jogador jogadorId);
-                salvar(@Nota nota);
-                registrarParticipacao(@Partida jogoId, @Jogador jogadorId, boolean atuou);
-                atuouNoJogo(@Partida jogoId, @Jogador jogadorId);
-                registrarJogadorNoElenco(@Jogador jogadorId);
-                jogadorExisteNoElenco(@Jogador jogadorId);
+			Optional<Nota> buscar(String jogoId, String jogadorId);
+			salvar(Nota nota);
+			registrarParticipacao(String jogoId, String jogadorId, boolean atuou);
+			atuouNoJogo(String jogoId, String jogadorId);
+			registrarJogadorNoElenco(String jogadorId);
+			jogadorExisteNoElenco(String jogadorId);			
         }
 		
 		Service NotaService {
-            atribuirNotaEObservacao(@Partida jogoId, @Jogador jogadorId, BigDecimal nota, String observacao);
+            atribuirNotaEObservacao(String jogoId, String jogadorId, BigDecimal nota, String observacao);
+			registrarObservacao(String jogoId, String jogadorId, String observacao);
+			Optional<Nota> obterRegistro(String jogoId, String jogadorId);
+			registrarJogadorNoElenco(String jogadorId);
+			registrarParticipacao(String jogoId, String jogadorId, boolean atuou);
         }
 	}
 	
-	Aggregate Desempenho {
+	Aggregate Aptidao {
 		Entity Lesao {
-			-LesaoId id;
-			-Jogador jogadorId;
+			int id;
+			-Jogador jogador;
 			boolean lesionado;
 			String tempo;
 			String plano;
 			int grau;
 		}
 
-		ValueObject LesaoId{
-            int id
-        }
-
 		Entity Fisico {
-			-FisicoId id;
-			-Jogador jogadorId;
+			int id;
+			-Jogador jogador;
 			String nome;
 			String musculo;
 			String intensidade;
@@ -227,41 +208,31 @@ BoundedContext Principal implements Principal {
 			Date dataFim;
 		}
 
-        ValueObject FisicoId{
-            int id;
-        }
-		
 		Entity Suspensao {
-			-SuspensaoId id;
-			-Jogador jogadorId;
+			int id;
+			-Jogador jogador;
 			boolean suspenso;
 			int amarelo;
 			int vermelho;
 		}
 
-        ValueObject SuspensaoId{
-            int id;
-        }
 	}
 	
 	Aggregate Usuario {
 		Entity Usuario {
 			aggregateRoot
 			
-			-UsuarioId id;
+			int id;
 			String login;
 			String senha;
 			String nome;
 		}
-
-        ValueObject UsuarioId{
-            int id;
-        }
 	}
 	
-	// Entidades auxiliares
-	Entity Analista {}
-	Entity Preparador {}
-	Entity Treinador {}
-	Entity Tatico {}
+	Aggregate SuporteTecnico {
+		Entity Analista {}
+		Entity Preparador {}
+		Entity Treinador {}
+		Entity Tatico {}
+	}
 }
