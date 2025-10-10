@@ -1,8 +1,9 @@
-package dev.com.protactic.dominio.principal.dispensa;
+package dev.com.protactic.mocks;
 
 import java.util.*;
 
 import dev.com.protactic.dominio.principal.Contrato;
+import dev.com.protactic.dominio.principal.dispensa.ContratoRepository;
 
 public class ContratoMock implements ContratoRepository {
     private final Map<Integer, Contrato> storage = new HashMap<>();
