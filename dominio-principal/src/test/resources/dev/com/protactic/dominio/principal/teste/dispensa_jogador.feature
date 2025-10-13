@@ -1,6 +1,8 @@
 # language: pt
 
-Funcionalidade: Abrir processos de dispensa/rescisão
+Funcionalidade: 12 - Abrir processos de dispensa/rescisão
+
+Regra: O atleta precisa estar com contrato no clube e não estar machucado.
 
   Cenário: "Kieza" está saudável e com contrato ativo no "Sport" mas o clube quer dispensá-lo
     Dado um jogador chamado "Kieza" com contrato ativo com o "Sport" 

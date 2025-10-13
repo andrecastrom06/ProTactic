@@ -1,6 +1,10 @@
 # language: pt
 
-Funcionalidade: Registrar proposta de contratação de novos jogadores
+Funcionalidade: 5 - Registrar proposta de contratação de novos jogadores
+
+Regra: Não se pode registrar uma proposta para um atleta que tenha contrato ativo com o clube, 
+      nem pode fazer propostas para atletas que estão com clubes fora do período de transferência 
+      (dezembro à fevereiro ou junho à agosto)
 
   Cenário: "Kieza" não tem contrato e "Sport" tenta contratá-lo
     Dado um jogador chamado "Kieza" que não tem contrato
