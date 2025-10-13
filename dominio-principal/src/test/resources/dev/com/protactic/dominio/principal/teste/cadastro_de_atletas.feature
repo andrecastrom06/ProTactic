@@ -1,9 +1,15 @@
 # language: pt
 
-Funcionalidade: Cadastro de Atleta
+Funcionalidade: 1 - Cadastro de Atleta
   Como gestor de um clube
   Desejo cadastrar atletas seguindo as regras de transferências
   Para garantir que o elenco respeite as normas
+
+Regra: O Contrato só pode ser cadastrado em período de transferência 
+      (Junho até Agosto ou Dezembro até Fevereiro) 
+      a menos que ele esteja sem contrato vigente, 
+      com isso poderia cadastrar contrato a qualquer momento.
+
 
   Contexto:
     Dado que o ano atual é 2025
