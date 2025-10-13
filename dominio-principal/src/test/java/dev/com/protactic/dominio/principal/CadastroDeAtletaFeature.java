@@ -2,17 +2,18 @@ package dev.com.protactic.dominio.principal;
 
 import dev.com.protactic.dominio.principal.cadastroAtleta.*;
 import io.cucumber.java.pt.*;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.*;
 
 public class CadastroDeAtletaFeature {
 
     private Clube meuClube;
     private Clube outroClube;
     private Jogador jogador;
-    private boolean janelaAberta;
     private CadastroDeAtletaService cadastroDeAtletaService;
     private boolean resultadoContratacao;
+    private Date dataAtual;
 
     private IJogadorRepository jogadorRepo;
     private IClubeRepository clubeRepo;
@@ -49,19 +50,41 @@ public class CadastroDeAtletaFeature {
 
     @Dado("estamos em {int} de {word} \\(dentro da janela de transferências)")
     public void estamos_dentro_da_janela(Integer dia, String mes) {
-        this.janelaAberta = true;
+        this.dataAtual = criarData(dia, mes, 2025);
         System.out.println("Data: " + dia + " de " + mes + " (dentro da janela)");
     }
 
     @Dado("estamos em {int} de {word} \\(fora da janela de transferências)")
     public void estamos_fora_da_janela(Integer dia, String mes) {
-        this.janelaAberta = false;
+        this.dataAtual = criarData(dia, mes, 2025);
         System.out.println("Data: " + dia + " de " + mes + " (fora da janela)");
+    }
+
+    private Date criarData(int dia, String mesNome, int ano) {
+        Map<String, Integer> meses = new HashMap<>();
+        meses.put("janeiro", 1);
+        meses.put("fevereiro", 2);
+        meses.put("março", 3);
+        meses.put("abril", 4);
+        meses.put("maio", 5);
+        meses.put("junho", 6);
+        meses.put("julho", 7);
+        meses.put("agosto", 8);
+        meses.put("setembro", 9);
+        meses.put("outubro", 10);
+        meses.put("novembro", 11);
+        meses.put("dezembro", 12);
+
+        int mes = meses.get(mesNome.toLowerCase());
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(ano, mes - 1, dia, 0, 0, 0);
+        return cal.getTime();
     }
 
     @Quando("eu tentar cadastrar esse atleta no meu clube")
     public void eu_tentar_cadastrar_esse_atleta_no_meu_clube() {
-        this.resultadoContratacao = cadastroDeAtletaService.contratar(meuClube, jogador, this.janelaAberta);
+        this.resultadoContratacao = cadastroDeAtletaService.contratar(meuClube, jogador, this.dataAtual);
     }
 
     @Então("não conseguirei realizar a contratação")
