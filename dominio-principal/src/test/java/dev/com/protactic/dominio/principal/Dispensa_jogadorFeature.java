@@ -36,9 +36,6 @@ public class Dispensa_jogadorFeature {
     @Quando("o analista do {string} solicitar a rescisão do seu contrato")
     public void o_analista_do_solicitar_a_rescisao_do_seu_contrato(String clube) {
         try {
-            if (!estaSaudavel) {
-                throw new Exception("Não é permitido dispensar jogadores que estão lesionados.");
-            }
             dispensaService.dispensarJogador(jogador);
         } catch (Exception e) {
             this.mensagemErro = e.getMessage();
