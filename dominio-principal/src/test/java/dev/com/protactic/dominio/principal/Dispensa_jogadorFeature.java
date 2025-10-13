@@ -10,7 +10,6 @@ public class Dispensa_jogadorFeature {
 
     private Jogador jogador;
     private Clube clube;
-    private boolean estaSaudavel;
     private String mensagemErro;
 
     private DispensaService dispensaService = new DispensaService(new ContratoMock());
@@ -25,12 +24,12 @@ public class Dispensa_jogadorFeature {
 
     @E("o jogador está saudável")
     public void o_jogador_esta_saudavel() {
-        this.estaSaudavel = true;
+        jogador.setSaudavel(true);
     }
 
     @E("o jogador está machucado")
     public void o_jogador_esta_machucado() {
-        this.estaSaudavel = false;
+        jogador.setSaudavel(false);
     }
 
     @Quando("o analista do {string} solicitar a rescisão do seu contrato")

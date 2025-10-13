@@ -28,6 +28,6 @@ public class DispensaService {
     }
 
     private boolean jogadorSaudavel(Jogador jogador) {
-        return true;
+        return jogador.isSaudavel();
     }
 }

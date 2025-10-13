@@ -2,7 +2,6 @@ package dev.com.protactic.dominio.principal;
 
 public class Jogador {
 
-    // --- Campos principais ---
     private int id;
     private Contrato contrato;
     private Clube clube;
@@ -21,7 +20,8 @@ public class Jogador {
     private boolean capitao;    
     private boolean viceCapitao; 
     private int grauLesao = -1;         
-    private boolean contratoAtivo = false; 
+    private boolean contratoAtivo = false;
+    private boolean saudavel;
 
     public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias,
@@ -138,7 +138,6 @@ public class Jogador {
     public boolean isViceCapitao() { return viceCapitao; }
     public void setViceCapitao(boolean viceCapitao) { this.viceCapitao = viceCapitao; }
 
-    // --- Getters e setters adicionados ---
     public int getGrauLesao() {
         return grauLesao;
     }
@@ -153,5 +152,13 @@ public class Jogador {
 
     public void setContratoAtivo(boolean contratoAtivo) {
         this.contratoAtivo = contratoAtivo;
+    }
+
+    public boolean isSaudavel() {
+        return saudavel;
+    }
+
+    public void setSaudavel(boolean saudavel) {
+        this.saudavel = saudavel;
     }
 }
