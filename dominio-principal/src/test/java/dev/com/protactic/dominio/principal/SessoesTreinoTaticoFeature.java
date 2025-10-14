@@ -15,22 +15,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SessoesTreinoTaticoFeature {
 
-    private SessaoTreinoMock repo;
-    private SessaoTreinoService service;
+    private SessaoTreinoMock repo = new SessaoTreinoMock();
+    private SessaoTreinoService service = new SessaoTreinoService(repo);
+    private List<Jogador> jogadores = new ArrayList<>();
+
     private SessaoTreino sessaoCriada;
     private Partida partidaAtual;
     private Jogador jogadorAtual;
-    private List<Jogador> jogadores = new ArrayList<>();
     private Exception excecao;
 
     @Dado("que o treinador está na área de planejamento de treinos")
-    public void que_o_treinador_está_na_área_de_planejamento_de_treinos() {
-        repo = new SessaoTreinoMock();
-        service = new SessaoTreinoService(repo);
+
+    // Inicializa o estado antes de cada cenário(inicia testes com tudo limpo)
+    public void iniciarPlanejamento() {
+        sessaoCriada = null;
+        excecao = null;
+        jogadores.clear();
+        partidaAtual = null;
+        jogadorAtual = null;
     }
 
     @Dado("que existe o jogo {string} no calendário")
-    public void que_existe_o_jogo_no_calendário(String nomeJogo) {
+    //Cria uma partida com os clubes extraídos do nome do jogo
+    public void criarPartida(String nomeJogo) {
         String[] clubes = nomeJogo.split(" vs ");
         partidaAtual = new Partida(
                 1,
@@ -44,25 +51,40 @@ public class SessoesTreinoTaticoFeature {
     }
 
     @Dado("que o jogador {string} tem o status {string}")
-    public void que_o_jogador_tem_o_status(String nomeJogador, String status) {
+    //Cria um jogador com o nome e status fornecidos e o adiciona à lista de jogadores
+    public void criarJogador(String nomeJogador, String status) {
         jogadorAtual = new Jogador(nomeJogador);
         jogadorAtual.setStatus(status);
         jogadores.add(jogadorAtual);
     }
 
     @Dado("que já existe a sessão de treino {string} para o jogo {string}")
-    public void que_já_existe_a_sessão_de_treino_para_o_jogo(String nomeSessao, String nomeJogo) {
+    //Cria uma sessão de treino existente para o jogo atual
+    public void criarSessaoExistente(String nomeSessao, String nomeJogo) {
+        if (partidaAtual == null) {
+            String[] clubes = nomeJogo.split(" vs ");
+            partidaAtual = new Partida(
+                    1,
+                    new Clube(clubes[0].trim()),
+                    new Clube(clubes[1].trim()),
+                    new Date(),
+                    "19:00",
+                    0,
+                    0
+            );
+        }
         SessaoTreino sessaoExistente = new SessaoTreino(nomeSessao, partidaAtual);
         repo.salvar(sessaoExistente);
     }
 
     @Dado("que não existem jogos no calendário")
-    public void que_não_existem_jogos_no_calendário() {
+    //Garante que não há partidas no calendário
+    public void limparPartidas() {
         partidaAtual = null;
     }
 
     @Quando("o treinador cria a sessão de treino {string} para o jogo {string}")
-    public void o_treinador_cria_a_sessão_de_treino_para_o_jogo(String nomeSessao, String nomeJogo) {
+    public void criarSessao(String nomeSessao, String nomeJogo) {
         try {
             sessaoCriada = service.criarSessao(nomeSessao, partidaAtual, jogadores);
         } catch (Exception e) {
@@ -71,7 +93,7 @@ public class SessoesTreinoTaticoFeature {
     }
 
     @Quando("o treinador cria uma sessão de treino para o jogo {string}")
-    public void o_treinador_cria_uma_sessão_de_treino_para_o_jogo(String nomeJogo) {
+    public void criarSessaoAuto(String nomeJogo) {
         try {
             sessaoCriada = service.criarSessao("SessaoAuto", partidaAtual, jogadores);
         } catch (Exception e) {
@@ -80,7 +102,7 @@ public class SessoesTreinoTaticoFeature {
     }
 
     @Quando("o treinador tenta criar uma sessão de treino tático")
-    public void o_treinador_tenta_criar_uma_sessão_de_treino_tático() {
+    public void criarSessaoTatica() {
         try {
             sessaoCriada = service.criarSessao("TreinoTeste", partidaAtual, jogadores);
         } catch (Exception e) {
@@ -89,44 +111,41 @@ public class SessoesTreinoTaticoFeature {
     }
 
     @Então("o sistema deve permitir a criação da sessão")
-    public void o_sistema_deve_permitir_a_criação_da_sessão() {
+    public void verificarSessaoCriada() {
         assertNotNull(sessaoCriada);
-
-        //verifica se a sessão está realmente no repositório
         List<SessaoTreino> sessoes = repo.listarPorPartida(partidaAtual.getDescricao());
         assertTrue(sessoes.stream()
                 .anyMatch(s -> s.getNome().equalsIgnoreCase(sessaoCriada.getNome())));
     }
 
     @Então("o sistema deve impedir a criação da sessão")
-    public void o_sistema_deve_impedir_a_criação_da_sessão() {
+    public void verificarFalhaCriacao() {
         assertNull(sessaoCriada);
         assertNotNull(excecao);
     }
 
     @Então("o jogador {string} deve aparecer na lista de convocação")
-    public void o_jogador_deve_aparecer_na_lista_de_convocação(String nomeJogador) {
+    public void jogadorConvocado(String nomeJogador) {
         assertTrue(sessaoCriada.getConvocados().stream()
                 .anyMatch(j -> j.getNome().equalsIgnoreCase(nomeJogador)));
     }
 
     @Então("o jogador {string} não deve aparecer na lista de convocação")
-    public void o_jogador_não_deve_aparecer_na_lista_de_convocação(String nomeJogador) {
+    public void jogadorNaoConvocado(String nomeJogador) {
         assertTrue(sessaoCriada.getConvocados().stream()
                 .noneMatch(j -> j.getNome().equalsIgnoreCase(nomeJogador)));
     }
 
     @Então("a sessão de treino {string} deve estar vinculada ao jogo {string}")
-    public void a_sessão_de_treino_deve_estar_vinculada_ao_jogo(String nomeSessao, String nomeJogo) {
+    public void verificarSessaoVinculada(String nomeSessao, String nomeJogo) {
         List<SessaoTreino> sessoes = repo.listarPorPartida(nomeJogo);
-
         assertTrue(sessoes.stream()
                 .anyMatch(s -> s.getNome().equalsIgnoreCase(nomeSessao)
                         && s.getPartida().getDescricao().equalsIgnoreCase(nomeJogo)));
     }
 
     @Então("o sistema deve exibir a mensagem {string}")
-    public void o_sistema_deve_exibir_a_mensagem(String mensagemEsperada) {
+    public void verificarMensagem(String mensagemEsperada) {
         assertNotNull(excecao);
         assertEquals(mensagemEsperada, excecao.getMessage());
     }

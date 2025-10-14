@@ -2,8 +2,7 @@
 
 Funcionalidade: Criar sessões de treinos táticos
 
-  Contexto:
-    Dado que o treinador está na área de planejamento de treinos
+  Regra: Criação de treinos táticos, que serão únicos, voltados exclusivamente para jogos específicos e participarão apenas os atletas disponíveis para a partida.
 
   Cenário: Criar treino tático com jogo existente e atletas disponíveis
     Dado que existe o jogo "PSG vs Lyon" no calendário
