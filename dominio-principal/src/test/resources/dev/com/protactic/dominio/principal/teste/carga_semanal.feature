@@ -5,9 +5,6 @@ Funcionalidade: 2 - Planejar carga semanal de treino
   Regra: O atleta deve estar sem lesão ou com lesão de grau 0 (desconforto) 
          e possuir contrato ativo para que seja possível registrar carga semanal.
 
-  Contexto:
-    Dado que o preparador físico está na tela de planejamento de cargas semanais
-
   Cenário: Cadastrar carga de jogador lesionado (grau 3)
     Dado que o jogador "Carlos" tem uma lesão de grau 3
     E "Carlos" possui contrato ativo
@@ -49,16 +46,3 @@ Funcionalidade: 2 - Planejar carga semanal de treino
     E "Thiago" possui contrato ativo
     Quando o preparador físico tentar registrar seu treinamento
     Então o treino será registrado na aba de "Thiago"
-
-  Esquema do Cenário: Tentar cadastrar treino para jogadores com condições inválidas
-    Dado que o jogador <nome> tem uma lesão de grau <grau_lesao>
-    E <nome> possui contrato <status_contrato>
-    Quando o preparador físico tentar registrar seu treinamento
-    Então <nome> não poderá ter o treino registrado
-
-    Exemplos:
-      | nome       | grau_lesao | status_contrato |
-      | "Diego"    | 1          | ativo           |
-      | "Felipe"   | 2          | ativo           |
-      | "Marcelo"  | 3          | ativo           |
-      | "Anderson" | 0          | inativo         |

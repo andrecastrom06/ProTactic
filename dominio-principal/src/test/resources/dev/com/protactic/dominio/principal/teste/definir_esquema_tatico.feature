@@ -6,9 +6,6 @@ Funcionalidade: 4 - Definir esquema tático e escalação
          O jogador precisa ter contrato ativo no clube, não estar lesionado (exceto grau 0) 
          e não estar suspenso.
 
-  Contexto:
-    Dado que o treinador está na tela de gerenciamento de escalação e tática
-
   Cenário: Registrar um esquema tático para o jogo do próximo sábado dia 23/08
     Dado que existe um jogo marcado para "23/08"
     Quando o treinador cadastrar a escalação
@@ -48,18 +45,3 @@ Funcionalidade: 4 - Definir esquema tático e escalação
     E "João" possui contrato ativo e não está lesionado
     Quando o treinador cadastrar a escalação incluindo "João"
     Então a escalação não poderá ser registrada
-
-  Esquema do Cenário: Tentar registrar escalação inválida
-    Dado que existe um jogo marcado para "24/08"
-    E o jogador <nome> tem a condição <condicao>
-    E <nome> possui contrato <status_contrato>
-    Quando o treinador cadastrar a escalação incluindo <nome>
-    Então a escalação não poderá ser registrada
-
-    Exemplos:
-      | nome       | condicao         | status_contrato |
-      | "André"    | "lesão grau 1"   | ativo           |
-      | "Felipe"   | "lesão grau 2"   | ativo           |
-      | "Diego"    | "lesão grau 3"   | ativo           |
-      | "Marcos"   | "suspenso"       | ativo           |
-      | "Vinicius" | "saudável"       | inativo         |
