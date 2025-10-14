@@ -19,7 +19,7 @@ public class CapitaoService {
                           || jogador.getContrato().getStatus().equalsIgnoreCase("ativo");
         }
 
-        boolean tempoClubeOk = jogador.getAnosDeClube() >= 1;
+        boolean tempoClubeOk = jogador.getAnosDeClube() >= 12;  //Requisito alterado de 1 para 12 meses(criterio de desempate)
         boolean minutagemOk = jogador.getMinutagem() != null &&
                               jogador.getMinutagem().equalsIgnoreCase("constante");
 
@@ -32,4 +32,15 @@ public class CapitaoService {
             return false;
         }
     }
+
+    public boolean podeSerCapitao(Jogador jogador) {
+        if (jogador == null) return false;
+        boolean contratoAtivo = jogador.getContrato() != null &&
+                "ATIVO".equalsIgnoreCase(jogador.getContrato().getStatus());
+        boolean tempoOk = jogador.getAnosDeClube() >= 12; //Requisito alterado de 1 para 12 meses(criterio de desempate)
+        
+        boolean minutagemOk = "constante".equalsIgnoreCase(jogador.getMinutagem());
+        return contratoAtivo && tempoOk && minutagemOk;
+    }
+
 }

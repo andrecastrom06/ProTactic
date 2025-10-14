@@ -1,9 +1,11 @@
-package dev.com.protactic.dominio.principal.cadastroAtleta;
+package dev.com.protactic.mocks;
 
 import dev.com.protactic.dominio.principal.Jogador;
+import dev.com.protactic.dominio.principal.cadastroAtleta.IJogadorRepository;
+
 import java.util.*;
 
-public class JogadorRepository implements IJogadorRepository {
+public class JogadorMock implements IJogadorRepository {
     private final Map<String, Jogador> jogadores = new HashMap<>();
 
     @Override

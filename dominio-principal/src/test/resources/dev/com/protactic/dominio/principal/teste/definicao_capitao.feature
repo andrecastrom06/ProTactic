@@ -1,6 +1,11 @@
 # language: pt
 
-Funcionalidade: Definição de Capitão e Vice-Capitão
+Funcionalidade: Definição de Capitão
+
+  Regra:
+  Para ser capitão, o jogador precisa atender a todos os requisitos necessários, que são: minimo de 1 ano de clube, minutagem "constante" e contrato ativo. 
+  O critério de desempate entre dois ou mais possíveis capitães será o tempo de clube, no qual o com mais tempo de clube será o escolhido. 
+  Caso haja empate em todos os requisitos entre dois ou mais possíveis capitães, o treinador deverá escolher o capitão manualmente.
 
   Cenário: "Rodrigo" cumpre todos os requisitos para ser capitão do "PSG"
     Dado um jogador chamado "Rodrigo"
@@ -34,30 +39,6 @@ Funcionalidade: Definição de Capitão e Vice-Capitão
     Quando o treinador tenta definir "Vinicius" como capitão
     Então "Vinicius" não deve ser definido como capitão do "PSG"
 
-  Cenário: "Thiagão" não cumpre os critérios de tempo de clube e minutagem para ser capitão
-    Dado um jogador chamado "Thiagão"
-    E ele possui contrato "ativo" com o "PSG"
-    E ele tem "6 meses" de clube
-    E sua minutagem é "inconstante"
-    Quando o treinador tenta definir "Thiagão" como capitão
-    Então "Thiagão" não deve ser definido como capitão do "PSG"
-
-  Cenário: "João Lucas" não cumpre os critérios de contrato e tempo de clube para ser capitão
-    Dado um jogador chamado "João Lucas"
-    E ele possui contrato "inativo" com o "PSG"
-    E ele tem "6 meses" de clube
-    E sua minutagem é "constante"
-    Quando o treinador tenta definir "João Lucas" como capitão
-    Então "João Lucas" não deve ser definido como capitão do "PSG"
-
-  Cenário: "André" não cumpre os critérios de contrato e minutagem para ser capitão
-    Dado um jogador chamado "André"
-    E ele possui contrato "inativo" com o "PSG"
-    E ele tem "4 anos" de clube
-    E sua minutagem é "inconstante"
-    Quando o treinador tenta definir "André" como capitão
-    Então "André" não deve ser definido como capitão do "PSG"
-
   Cenário: "Luiz Felipe" não cumpre nenhum dos critérios para ser capitão
     Dado um jogador chamado "Luiz Felipe"
     E ele possui contrato "inativo" com o "PSG"
@@ -65,3 +46,19 @@ Funcionalidade: Definição de Capitão e Vice-Capitão
     E sua minutagem é "inconstante"
     Quando o treinador tenta definir "Luiz Felipe" como capitão
     Então "Luiz Felipe" não deve ser definido como capitão do "PSG"
+
+  Cenário: Desempate pelo tempo de clube
+    Dado dois jogadores "Rodrigo" e "Vitinha"
+    E ambos possuem contrato "ativo" com o "PSG"
+    E ambos têm minutagem "constante"
+    E "Rodrigo" tem "5 anos" de clube e "Vitinha" tem "3 anos" de clube
+    Quando o treinador tenta definir o capitão
+    Então "Rodrigo" deve ser definido como capitão do "PSG" por ter mais tempo de clube
+
+  Cenário: Empate total em todos os critérios
+    Dado dois jogadores "Rodrigo" e "Vitinha"
+    E ambos possuem contrato "ativo" com o "PSG"
+    E ambos têm minutagem "constante"
+    E ambos têm "4 anos" de clube
+    Quando o treinador tenta definir o capitão
+    Então o treinador deve escolher manualmente quem será o capitão do "PSG"

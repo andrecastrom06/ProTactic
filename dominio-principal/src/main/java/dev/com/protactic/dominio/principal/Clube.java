@@ -13,13 +13,12 @@ public class Clube {
     private String cidadeEstado;
     private String estadio;
     private Jogador capitao;
-    private Jogador viceCapitao;
     
     private List<Jogador> jogadores;
 
     public Clube(int id, Treinador treinador, Analista analista, Preparador preparador,
                  Competicao competicao, String nome, String cidadeEstado, String estadio,
-                 Jogador capitao, Jogador viceCapitao) {
+                 Jogador capitao) {
         this.id = id;
         this.treinador = treinador;
         this.analista = analista;
@@ -29,7 +28,6 @@ public class Clube {
         this.cidadeEstado = cidadeEstado;
         this.estadio = estadio;
         this.capitao = capitao;
-        this.viceCapitao = viceCapitao;
         this.jogadores = new ArrayList<>();
     }
 
@@ -92,9 +90,6 @@ public class Clube {
 
     public Jogador getCapitao() { return capitao; }
     public void setCapitao(Jogador capitao) { this.capitao = capitao; }
-
-    public Jogador getViceCapitao() { return viceCapitao; }
-    public void setViceCapitao(Jogador viceCapitao) { this.viceCapitao = viceCapitao; }
 
     @Override
     public boolean equals(Object o) {

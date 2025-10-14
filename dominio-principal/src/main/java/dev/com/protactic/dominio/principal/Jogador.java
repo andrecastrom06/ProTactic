@@ -18,14 +18,13 @@ public class Jogador {
     private String minutagem;   
     private int anosDeClube;     
     private boolean capitao;    
-    private boolean viceCapitao; 
     private int grauLesao = -1;         
     private boolean contratoAtivo = false;
     private boolean saudavel;
 
     public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias,
-                   String minutagem, int anosDeClube, boolean capitao, boolean viceCapitao) {
+                   String minutagem, int anosDeClube, boolean capitao) {
         this.id = id;
         this.contrato = contrato;
         this.clube = clube;
@@ -41,13 +40,12 @@ public class Jogador {
         this.minutagem = minutagem;
         this.anosDeClube = anosDeClube;
         this.capitao = capitao;
-        this.viceCapitao = viceCapitao;
     }
 
     public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias) {
         this(id, contrato, clube, competicao, nome, idade, posicao, perna, nota, jogos, gols, assistencias,
-             null, 0, false, false);
+             null, 0, false);
     }
 
     public Jogador(String nome, Clube clube) {
@@ -59,7 +57,6 @@ public class Jogador {
         this.minutagem = null;
         this.anosDeClube = 0;
         this.capitao = false;
-        this.viceCapitao = false;
     }
 
     public Jogador(Contrato contrato) {
@@ -67,7 +64,6 @@ public class Jogador {
         this.minutagem = null;
         this.anosDeClube = 0;
         this.capitao = false;
-        this.viceCapitao = false;
     }
 
     public Jogador(String nome) {
@@ -75,7 +71,6 @@ public class Jogador {
         this.minutagem = null;
         this.anosDeClube = 0;
         this.capitao = false;
-        this.viceCapitao = false;
     }
 
     public int getId() { return id; }
@@ -134,9 +129,6 @@ public class Jogador {
 
     public boolean isCapitao() { return capitao; }
     public void setCapitao(boolean capitao) { this.capitao = capitao; }
-
-    public boolean isViceCapitao() { return viceCapitao; }
-    public void setViceCapitao(boolean viceCapitao) { this.viceCapitao = viceCapitao; }
 
     public int getGrauLesao() {
         return grauLesao;
