@@ -6,6 +6,7 @@ import io.cucumber.java.Before;
 import static org.junit.jupiter.api.Assertions.*;
 
 import dev.com.protactic.dominio.principal.premiacaoInterna.*;
+import dev.com.protactic.mocks.PremiacaoMock;
 
 public class PremiacaoInternaFeature {
 
@@ -19,7 +20,7 @@ public class PremiacaoInternaFeature {
     @Before
     public void setup() {
         // Usa a implementação concreta, mas acessa via interface
-        this.premiacaoRepo = new PremiacaoRepository();
+        this.premiacaoRepo = new PremiacaoMock();
         this.premiacaoService = new PremiacaoService(premiacaoRepo);
     }
 
