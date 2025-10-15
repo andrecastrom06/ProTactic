@@ -15,7 +15,7 @@ BoundedContext Protactic implements Protactic {
 			String cidadeEstado;
 			String estadio;
 			-Jogador capitao;
-			List<@Jogador> jogadores;
+			List<Jogador> jogadores;
 		}
 	
 		Entity Jogador {
@@ -42,14 +42,14 @@ BoundedContext Protactic implements Protactic {
 		Repository ClubeRepository {
 			salvar(@Clube clube);
 			buscarPorNome(String nome);
-			List<@Clube> listarTodos();
+			List<Clube> listarTodos();
 		}
 		
 		Repository JogadorRepository {
 			salvar(@Jogador jogador);
 			buscarPorNome(String nome);
 			existe(String nome);
-			List<@Jogador> listarTodos();
+			List<Jogador> listarTodos();
 		}
 		
 		Service CadastroDeAtletaService {
