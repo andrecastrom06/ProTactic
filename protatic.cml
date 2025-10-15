@@ -168,7 +168,7 @@ BoundedContext Protactic implements Protactic {
 		}
 		
 		Repository NotaRepository {
-			Optional<Nota> buscar(String jogoId, String jogadorId);
+			buscar(String jogoId, String jogadorId);
 			salvar(Nota nota);
 			registrarParticipacao(String jogoId, String jogadorId, boolean atuou);
 			atuouNoJogo(String jogoId, String jogadorId);
