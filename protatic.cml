@@ -15,7 +15,6 @@ BoundedContext Protactic implements Protactic {
 			String cidadeEstado;
 			String estadio;
 			-Jogador capitao;
-			-Jogador viceCapitao;
 			List<@Jogador> jogadores;
 		}
 	
@@ -35,8 +34,7 @@ BoundedContext Protactic implements Protactic {
 			String status;
 			String minutagem;
 			int anosDeClube;
-			boolean capitão;
-			boolean viceCapitao;
+			boolean capitao;
 			int grauDeLesao;
 			boolean contratoAtivo;
 		}
