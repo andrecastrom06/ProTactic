@@ -2,26 +2,27 @@ package dev.com.protactic.dominio.principal.premiacaoInterna;
 
 import dev.com.protactic.dominio.principal.*;
 import java.util.Date;
+import java.util.List;
 
 public class PremiacaoService {
 
-    private final IPremiacaoRepository premiacaoRepo;
+    public Premiacao definirVencedor(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores) {
+        Jogador vencedor = null;
 
-    public PremiacaoService(IPremiacaoRepository premiacaoRepo) {
-        this.premiacaoRepo = premiacaoRepo;
-    }
-
-    public Premiacao criarPremiacaoMelhorJogador(Jogador jogadorMaiorPontuacao) {
-        if (jogadorMaiorPontuacao != null && jogadorMaiorPontuacao.getNota() >= 6.0) {
-            Premiacao premiacao = new Premiacao(
-                1,
-                jogadorMaiorPontuacao,
-                "Melhor Jogador do Time",
-                new Date()
-            );
-            premiacaoRepo.salvar(premiacao);
-            return premiacao;
+        for (Jogador j : jogadores) {
+            if (j.getNota() >= 6) { // regra da nota mínima
+                if (vencedor == null || j.getNota() > vencedor.getNota()) {
+                    vencedor = j;
+                }
+            }
         }
-        return null;
+
+        if (vencedor == null) {
+            System.out.println("DEBUG >> Nenhum vencedor definido para " + nomePremiacao);
+            return null; // nenhum vencedor
+        }
+
+        System.out.println("DEBUG >> Vencedor provisório: " + vencedor.getNome() + " (nota " + vencedor.getNota() + ")");
+        return new Premiacao(1, vencedor, nomePremiacao, dataPremiacao);
     }
 }

@@ -1,64 +1,55 @@
 package dev.com.protactic.dominio.principal;
 
 import io.cucumber.java.pt.*;
-import io.cucumber.java.Before;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-import dev.com.protactic.dominio.principal.premiacaoInterna.*;
+import java.util.Date;
+
 import dev.com.protactic.mocks.PremiacaoMock;
 
 public class PremiacaoInternaFeature {
 
-    private Jogador jogadorMaiorPontuacao;
-    private Jogador jogadorSegundoLugar;
-    private Premiacao premiacaoCriada;
+    private PremiacaoMock mock;
+    private Premiacao premiacao;
 
-    private IPremiacaoRepository premiacaoRepo;
-    private PremiacaoService premiacaoService;
+    @Dado("que os jogadores {string} com média {string} e {string} com média {string} existem")
+    public void que_os_jogadores_existem(String nome1, String nota1Str, String nome2, String nota2Str) {
+        double nota1 = Double.parseDouble(nota1Str.replace(",", "."));
+        double nota2 = Double.parseDouble(nota2Str.replace(",", "."));
 
-    @Before
-    public void setup() {
-        // Usa a implementação concreta, mas acessa via interface
-        this.premiacaoRepo = new PremiacaoMock();
-        this.premiacaoService = new PremiacaoService(premiacaoRepo);
-    }
+        mock = new PremiacaoMock();
+        mock.clearJogadores();
+        mock.addJogador(nome1, nota1);
+        mock.addJogador(nome2, nota2);
 
-    @Dado("que um jogador obteve a maior pontuação no mês de setembro, com nota média de {double}")
-    public void jogador_com_maior_pontuacao_setembro(double nota) {
-        this.jogadorMaiorPontuacao = new Jogador("Jogador Top");
-        this.jogadorMaiorPontuacao.setNota(nota);
-    }
-
-    @Dado("que o jogador de maior pontuação no mês de outubro tem uma nota média de {double}")
-    public void jogador_maior_outubro(double nota) {
-        this.jogadorMaiorPontuacao = new Jogador("Jogador Outubro");
-        this.jogadorMaiorPontuacao.setNota(nota);
-    }
-
-    @Dado("que um jogador obteve a segunda maior pontuação no mês de setembro")
-    public void jogador_segunda_maior() {
-        this.jogadorSegundoLugar = new Jogador("Jogador Secundário");
-        this.jogadorSegundoLugar.setNota(7.5);
-    }
-
-    @Quando("o treinador for criar o prêmio de melhor jogador do time")
-    public void criar_premio() {
-        this.premiacaoCriada = premiacaoService.criarPremiacaoMelhorJogador(jogadorMaiorPontuacao);
-    }
-
-    @Então("o prêmio será atribuído a este jogador")
-    public void premio_atribuido() {
-        assertNotNull(premiacaoCriada, "O prêmio deveria ter sido criado.");
-        assertEquals(
-            jogadorMaiorPontuacao,
-            premiacaoCriada.getJogador(),
-            "O prêmio deveria ser atribuído ao jogador com maior pontuação."
+        System.out.println("DEBUG >> Criados jogadores:");
+        mock.getJogadores().forEach(j ->
+            System.out.println(" - " + j.getNome() + " com nota " + j.getNota())
         );
     }
 
-    @Então("o prêmio não será atribuído a este jogador")
-    public void premio_nao_atribuido() {
-        assertNull(premiacaoCriada, "O prêmio não deveria ter sido criado.");
+    @Quando("eu criar a premiação do mês de {string}")
+    public void eu_criar_a_premiacao(String mes) {
+        premiacao = mock.criarPremiacao("Premiação " + mes, new Date());
+        if (premiacao == null) {
+            System.out.println("DEBUG >> Nenhum vencedor definido para o mês de " + mes);
+        } else {
+            System.out.println("DEBUG >> Vencedor provisório: " 
+                + premiacao.getJogador().getNome() 
+                + " (nota " + premiacao.getJogador().getNota() + ")");
+        }
+    }
+
+    @Então("o jogador {string} será definido como vencedor da premiação")
+    public void vencedor_definido(String esperado) {
+        assertNotNull(premiacao, "Deveria existir um vencedor");
+        assertEquals(esperado, premiacao.getJogador().getNome(), "O vencedor não foi o esperado");
+        System.out.println("🏆 Vencedor: " + premiacao.getJogador().getNome());
+    }
+
+    @Então("a premiação ficará sem vencedor")
+    public void premiacao_sem_vencedor() {
+        assertNull(premiacao, "Não deveria haver vencedor");
+        System.out.println("⚠ Nenhum vencedor encontrado");
     }
 }
