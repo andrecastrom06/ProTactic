@@ -1,9 +1,6 @@
 # language: pt
 
-Funcionalidade: Criar premiação interna
-  Como treinador
-  Desejo criar uma premiação para o melhor jogador do time
-  Para reconhecer o atleta com maior desempenho no período
+Funcionalidade: 11 - Criar premiação interna
 
   Regra: O atleta vencedor precisa estar com uma média acima de todos os outros
          e ter nota mínima de 6.
