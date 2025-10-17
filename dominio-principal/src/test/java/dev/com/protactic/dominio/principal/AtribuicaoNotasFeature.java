@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import dev.com.protactic.dominio.principal.Nota;
 import dev.com.protactic.dominio.principal.nota.NotaRepository;
 import dev.com.protactic.dominio.principal.nota.NotaService;
 import dev.com.protactic.mocks.NotaMock;

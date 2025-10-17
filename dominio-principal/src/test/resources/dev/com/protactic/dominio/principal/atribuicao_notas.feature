@@ -11,15 +11,6 @@ Funcionalidade: 9 - Atribuição de nota técnica e observações
     Observações do treinador podem ser registradas com ou sem nota.
     Observações sem nota não entram no cálculo de média de desempenho.
 
-  Contexto:
-    Dado que existe o jogo "Sport x Náutico" identificado por "JOGO-NAUTICO"
-    E existe o elenco de avaliação cadastrado com os jogadores:
-      | nome  | posição   |
-      | João  | atacante  |
-      | Pedro | lateral   |
-      | Lucas | zagueiro  |
-      | Caio  | meia      |
-
   Cenário: Atribuir nota e observação a jogador que atuou
     Dado que João participou do jogo "JOGO-NAUTICO"
     Quando o treinador registrar a nota 8,5 com a observação "boa movimentação e finalização" para João no jogo "JOGO-NAUTICO"
