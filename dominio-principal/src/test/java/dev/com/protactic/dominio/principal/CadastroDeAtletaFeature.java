@@ -2,6 +2,7 @@ package dev.com.protactic.dominio.principal;
 
 import dev.com.protactic.dominio.principal.cadastroAtleta.*;
 import dev.com.protactic.mocks.JogadorMock;
+import io.cucumber.java.Before;
 import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,8 +20,8 @@ public class CadastroDeAtletaFeature {
     private IJogadorRepository jogadorRepo;
     private IClubeRepository clubeRepo;
 
-    @Dado("que o ano atual é {int}")
-    public void que_o_ano_atual_e(Integer ano) {
+    @Before
+    public void setup() {
         this.meuClube = new Clube("Meu Time FC");
         this.outroClube = new Clube("Rival AC");
 
@@ -29,20 +30,19 @@ public class CadastroDeAtletaFeature {
         this.cadastroDeAtletaService = new CadastroDeAtletaService(jogadorRepo, clubeRepo);
     }
 
-    @Dado("que um {string} com contrato ativo em outro clube existe")
-    public void que_um_jogador_com_contrato_em_outro_clube_existe(String posicao) {
-        this.jogador = new Jogador("Jogador_" + posicao);
-        this.jogador.setPosicao(posicao);
+    @Dado("que {string} com contrato ativo em outro clube existe")
+    public void que_jogador_com_contrato_em_outro_clube_existe(String nomeJogador) {
+        this.jogador = new Jogador(nomeJogador);
 
         Contrato contratoExistente = new Contrato(outroClube);
         this.jogador.setContrato(contratoExistente);
+
         outroClube.adicionarJogador(this.jogador);
     }
 
-    @Dado("que um {string} sem contrato existe")
-    public void que_um_jogador_sem_contrato_existe(String posicao) {
-        this.jogador = new Jogador("Jogador_" + posicao);
-        this.jogador.setPosicao(posicao);
+    @Dado("que {string} sem contrato existe")
+    public void que_jogador_sem_contrato_existe(String nomeJogador) {
+        this.jogador = new Jogador(nomeJogador);
     }
 
     @Dado("estamos em {int} de {word} \\(dentro da janela de transferências)")
@@ -96,7 +96,7 @@ public class CadastroDeAtletaFeature {
 
     @Então("o registro do atleta será adicionado à lista de atletas do clube")
     public void o_registro_do_atleta_sera_adicionado_a_lista_de_atletas_do_clube() {
-        // Jogador deveria estar sem contrato antes da tentativa
+        // Jogador deveria estar sem contrato ou com contrato válido para transferência
         if (jogador.getContrato() == null) {
             assertNull(jogador.getContrato(), "O jogador deveria estar sem contrato antes da contratação.");
         }
