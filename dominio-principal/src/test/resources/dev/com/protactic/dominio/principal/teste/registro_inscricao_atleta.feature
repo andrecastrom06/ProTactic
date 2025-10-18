@@ -2,13 +2,7 @@
 
 Funcionalidade: 6 - Registro de inscrição de atletas em competições
 
-Contexto:
-  Dado que existe a competição "Copa Nordeste" identificada por "COMPETICAO-COPA-NE"
-  E existe o elenco cadastrado com os jogadores:
-    | nome  | idade | contrato_ativo |
-    | João  | 17    | sim            |
-    | Pedro | 15    | sim            |
-    | Lucas | 18    | não            |
+Regra: Não se pode registrar um jogador com menos de 16 anos ou que não tenha contrato ativo com o clube
 
 Cenário: Registrar inscrição válida
   Dado que João possui contrato ativo e tem 17 anos

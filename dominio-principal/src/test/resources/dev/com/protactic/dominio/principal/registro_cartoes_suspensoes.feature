@@ -1,6 +1,9 @@
 # language: pt
 
-Funcionalidade: Registro de cartões e suspensões dos atletas
+Funcionalidade: 8 - Registro de cartões e suspensões dos atletas
+
+Regra: O atleta com contrato ativo só ficará suspenso e indisponível para jogos/escalações
+caso tenha acumulado 3 cartões amarelos em diferentes jogos ou recebido 1 cartão vermelho.
 
 Cenário: Jogador recebe primeiro cartão amarelo e permanece disponível
   Dado um atleta chamado "João"
