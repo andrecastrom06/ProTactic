@@ -153,4 +153,17 @@ public class Jogador {
     public void setSaudavel(boolean saudavel) {
         this.saudavel = saudavel;
     }
+
+
+     // Novo atributo
+    private double desvioPadrao = 0.0;
+
+    // Getter e Setter para o desvio padrão
+    public double getDesvioPadrao() {
+        return desvioPadrao;
+    }
+
+    public void setDesvioPadrao(double desvioPadrao) {
+        this.desvioPadrao = desvioPadrao;
+    }
 }
