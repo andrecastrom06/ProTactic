@@ -12,22 +12,25 @@ public class PremiacaoInternaFeature {
     private PremiacaoMock mock;
     private Premiacao premiacao;
 
-    @Dado("que os jogadores {string} com média {string} e {string} com média {string} existem")
-    public void que_os_jogadores_existem(String nome1, String nota1Str, String nome2, String nota2Str) {
-        double nota1 = Double.parseDouble(nota1Str.replace(",", "."));
-        double nota2 = Double.parseDouble(nota2Str.replace(",", "."));
+   
 
-        mock = new PremiacaoMock();
-        mock.clearJogadores();
+    @Dado("que {string} com média {string} no período de {string} existe")
+    @Dado("{string} com média {string} no período de {string} existe")
+    public void jogador_com_media_no_periodo_existe(String nome, String notaStr, String periodo) {
+        double nota = Double.parseDouble(notaStr.replace(",", "."));
 
-        mock.addJogador(nome1, nota1);
-        mock.addJogador(nome2, nota2);
+        if (mock == null) {
+            mock = new PremiacaoMock();
+            mock.clearJogadores();
+        }
 
-        System.out.println("DEBUG >> Criados jogadores:");
-        mock.getJogadores().forEach(j ->
-            System.out.println(" - " + j.getNome() + " com nota " + j.getNota() + " (desvio=" + j.getDesvioPadrao() + ")")
-        );
+        mock.addJogador(nome, nota);
+
+        System.out.println("DEBUG >> Criado jogador: " 
+            + nome + " com média " + nota + " no período de " + periodo);
     }
+
+    
 
     @Quando("eu criar a premiação do mês de {string}")
     public void eu_criar_a_premiacao(String mes) {
@@ -43,17 +46,19 @@ public class PremiacaoInternaFeature {
         }
     }
 
+    
+
     @Então("a premiação ficará sem vencedor")
     public void premiacao_sem_vencedor() {
         assertNull(premiacao, "Não deveria haver vencedor");
-        System.out.println("⚠ Nenhum vencedor encontrado");
+        System.out.println(" Nenhum vencedor encontrado");
     }
 
     @Então("o jogador {string} será definido como vencedor da premiação")
     public void vencedor_definido(String esperado) {
         assertNotNull(premiacao, "Deveria existir um vencedor");
         assertEquals(esperado, premiacao.getJogador().getNome(), "O vencedor não foi o esperado");
-        System.out.println("🏆 Vencedor: " + premiacao.getJogador().getNome());
+        System.out.println(" Vencedor: " + premiacao.getJogador().getNome());
     }
 
     @Então("o jogador com menor desvio padrão será definido como vencedor da premiação")
@@ -68,6 +73,7 @@ public class PremiacaoInternaFeature {
         assertEquals(menorDesvio, premiacao.getJogador().getDesvioPadrao(),
                 "O vencedor não foi o de menor desvio padrão");
 
-        System.out.println("🏆 Vencedor por desempate de desvio padrão: " + premiacao.getJogador().getNome());
+        System.out.println(" Vencedor por desempate de desvio padrão: " 
+            + premiacao.getJogador().getNome());
     }
 }
