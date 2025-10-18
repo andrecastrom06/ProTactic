@@ -154,31 +154,26 @@ public class DefinicaoCapitaoFeature {
 
     //Método auxiliar para converter anos e meses para meses
     private void definirAnos(Jogador j, String tempo) {
-        int meses = 0;
         tempo = tempo.trim().toLowerCase();
+        int meses = 0;
 
-        if (tempo.contains("ano")) {
-            try {
-                String[] partes = tempo.split(" ");
-                int anos = Integer.parseInt(partes[0]);
+        try {
+            // extrai números da string
+            String[] numeros = tempo.replaceAll("[^0-9 ]", "").trim().split("\\s+");
+            if (tempo.contains("ano")) {
+                int anos = Integer.parseInt(numeros[0]);
                 meses += anos * 12;
-
-                //verificação se também tem meses
-                if (partes.length > 2 && partes[2].contains("mes")) {
-                    int m = Integer.parseInt(partes[1]);
-                    meses += m;
-                }
-            } catch (Exception e) {
-                meses = 0;
             }
-        } else if (tempo.contains("mes")) {
-            try {
-                meses = Integer.parseInt(tempo.split(" ")[0]);
-            } catch (Exception e) {
-                meses = 0;
+            if (tempo.contains("mes")) {
+                int ultimoNumero = Integer.parseInt(numeros[numeros.length - 1]);
+                // evita somar o mesmo número se só tem "6 meses"
+                if (!tempo.contains("ano")) meses = ultimoNumero;
+                else meses += ultimoNumero;
             }
+        } catch (Exception e) {
+            meses = 0;
         }
 
-        j.setAnosDeClube(meses); 
+        j.setAnosDeClube(meses);
     }
 }

@@ -10,7 +10,7 @@ Funcionalidade: Definição de Capitão
   Cenário: "Rodrigo" cumpre todos os requisitos para ser capitão do "PSG"
     Dado um jogador chamado "Rodrigo"
     E ele possui contrato "ativo" com o "PSG"
-    E ele tem "4 anos" de clube
+    E ele tem "1 ano" de clube
     E sua minutagem é "constante"
     Quando o treinador tenta definir "Rodrigo" como capitão
     Então "Rodrigo" deve ser definido como capitão do "PSG"
@@ -51,7 +51,7 @@ Funcionalidade: Definição de Capitão
     Dado dois jogadores "Rodrigo" e "Vitinha"
     E ambos possuem contrato "ativo" com o "PSG"
     E ambos têm minutagem "constante"
-    E "Rodrigo" tem "5 anos" de clube e "Vitinha" tem "3 anos" de clube
+    E "Rodrigo" tem "3 anos e 6 meses" de clube e "Vitinha" tem "3 anos" de clube
     Quando o treinador tenta definir o capitão
     Então "Rodrigo" deve ser definido como capitão do "PSG" por ter mais tempo de clube
 
@@ -59,6 +59,6 @@ Funcionalidade: Definição de Capitão
     Dado dois jogadores "Rodrigo" e "Vitinha"
     E ambos possuem contrato "ativo" com o "PSG"
     E ambos têm minutagem "constante"
-    E ambos têm "4 anos" de clube
+    E ambos têm "3 anos e 6 meses" de clube
     Quando o treinador tenta definir o capitão
     Então o treinador deve escolher manualmente quem será o capitão do "PSG"
