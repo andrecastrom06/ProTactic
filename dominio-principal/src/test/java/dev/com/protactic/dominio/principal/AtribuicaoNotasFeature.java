@@ -1,17 +1,12 @@
 package dev.com.protactic.dominio.principal;
 
-import io.cucumber.java.pt.*;
-import io.cucumber.datatable.DataTable;    
+import io.cucumber.java.pt.*;  
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
-import java.util.HashSet;                         
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import dev.com.protactic.dominio.principal.nota.NotaRepository;
 import dev.com.protactic.dominio.principal.nota.NotaService;
@@ -22,9 +17,6 @@ public class AtribuicaoNotasFeature {
     private NotaRepository repo;
     private NotaService service;
     private Exception erroCapturado;
-
-    // opcional: guardar ids de jogos criados no contexto
-    private final Set<String> jogos = new HashSet<>();
 
     @io.cucumber.java.Before
     public void setup() {
@@ -38,37 +30,7 @@ public class AtribuicaoNotasFeature {
         service.registrarJogadorNoElenco("Caio");
     }
 
-    // ========================= DADO (Contexto do seu .feature) =========================
-
-    @Dado("que existe o jogo {string} identificado por {string}")
-    public void que_existe_o_jogo_identificado_por(String descricao, String jogoId) {
-        jogos.add(jogoId);
-    }
-
-    @Dado("existe o elenco de avaliação cadastrado com os jogadores:")
-    public void existe_o_elenco_de_avaliacao_cadastrado_com_os_jogadores(DataTable dataTable) {
-        // Espera colunas: nome | posição
-        List<Map<String, String>> linhas = dataTable.asMaps(String.class, String.class);
-        for (Map<String, String> linha : linhas) {
-            String nome = pega(linha, "nome");
-            String pos  = pega(linha, "posição");
-            if (pos == null || pos.isBlank()) pos = pega(linha, "posicao");
-            if (nome != null && !nome.isBlank()) {
-                service.registrarJogadorNoElenco(nome);
-            }
-        }
-    }
-
-    private String pega(Map<String, String> map, String chave) {
-        for (String k : map.keySet()) {
-            if (k != null && k.trim().equalsIgnoreCase(chave)) {
-                return map.get(k);
-            }
-        }
-        return map.get(chave);
-    }
-
-    // ========================= DADO (snippets anteriores) =========================
+    // ========================= DADO =========================
 
     @Dado("que João participou do jogo {string}")
     public void que_joao_participou_do_jogo(String jogoId) {

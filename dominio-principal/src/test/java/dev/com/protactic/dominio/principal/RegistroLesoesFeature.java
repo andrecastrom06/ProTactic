@@ -12,8 +12,6 @@ public class RegistroLesoesFeature {
     private RegistroLesoesRepository repo;
     private RegistroLesoesServico servico;
     private Exception erro;
-
-    // mantém o atleta do contexto atual (ex.: "AT-001")
     private String atletaCorrente;
 
     @io.cucumber.java.Before
@@ -24,16 +22,7 @@ public class RegistroLesoesFeature {
         atletaCorrente = null;
     }
 
-    // ===================== Contexto =====================
-
-    @Dado("que existe um atleta identificado por {string}")
-    public void que_existe_um_atleta_identificado_por(String atletaId) {
-        repo.cadastrarAtleta(atletaId);
-        atletaCorrente = atletaId;
-        // estado default já é: status="Saudável", disponibilidade="disponível", permissão="liberada"
-    }
-
-    // ===================== Cenário 1 =====================
+    // ===================== DADO =====================
 
     @Dado("que o atleta {string} está saudável e com contrato ativo")
     public void atleta_saudavel_contrato_ativo(String atletaId) {
@@ -44,14 +33,21 @@ public class RegistroLesoesFeature {
         repo.atualizarPermissaoTreino(atletaId, "liberada");
     }
 
-    @Quando("registrar uma lesão de grau {int} para o atleta {string}")
-    public void registrar_lesao_grau_para_atleta(Integer grau, String atletaId) {
+    @Dado("que o atleta {string} está saudável e sem contrato ativo")
+    public void atleta_saudavel_sem_contrato_ativo(String atletaId) {
         atletaCorrente = atletaId;
-        try {
-            servico.registrarLesao(atletaId, grau);
-        } catch (Exception e) {
-            erro = e;
-        }
+        repo.definirContratoAtivo(atletaId, false);
+        repo.atualizarStatusAtleta(atletaId, "Saudável");
+        repo.atualizarDisponibilidade(atletaId, "disponível");
+        repo.atualizarPermissaoTreino(atletaId, "liberada");
+    }
+
+    @Dado("que o atleta {string} possui uma lesão de grau {int} registrada e ativa")
+    public void atleta_possui_lesao_ativa(String atletaId, Integer grau) {
+        atletaCorrente = atletaId;
+        // garantir contrato ativo para poder registrar a lesão
+        repo.definirContratoAtivo(atletaId, true);
+        servico.registrarLesao(atletaId, grau);
     }
 
     @Então("a lesão é registrada com grau {int} e status {string}")
@@ -75,16 +71,7 @@ public class RegistroLesoesFeature {
         assertEquals(esperado, repo.disponibilidadeAtleta(id));
     }
 
-    // ===================== Cenário 2 =====================
-
-    @Dado("que o atleta {string} está saudável e sem contrato ativo")
-    public void atleta_saudavel_sem_contrato_ativo(String atletaId) {
-        atletaCorrente = atletaId;
-        repo.definirContratoAtivo(atletaId, false);
-        repo.atualizarStatusAtleta(atletaId, "Saudável");
-        repo.atualizarDisponibilidade(atletaId, "disponível");
-        repo.atualizarPermissaoTreino(atletaId, "liberada");
-    }
+    // ===================== QUANDO =====================
 
     @Quando("tentar registrar uma lesão de grau {int} para o atleta {string}")
     public void tentar_registrar_lesao(Integer grau, String atletaId) {
@@ -95,6 +82,39 @@ public class RegistroLesoesFeature {
             erro = e;
         }
     }
+
+        @Quando("registrar uma lesão de grau {int} para o atleta {string}")
+    public void registrar_lesao_grau_para_atleta(Integer grau, String atletaId) {
+        atletaCorrente = atletaId;
+        try {
+            servico.registrarLesao(atletaId, grau);
+        } catch (Exception e) {
+            erro = e;
+        }
+    }
+
+    @Quando("cadastrar um plano de recuperação com treinos adaptados por {int} dias")
+    public void cadastrar_plano(int dias) {
+        String id = atletaCorrente != null ? atletaCorrente : "AT-001";
+        try {
+            servico.cadastrarPlanoRecuperacao(id, dias);
+        } catch (Exception e) {
+            erro = e;
+        }
+    }
+    
+    @Quando("tentar registrar uma nova lesão para o atleta {string}")
+    public void tentar_registrar_nova_lesao_para_atleta(String atletaId) {
+        atletaCorrente = atletaId;
+        try {
+            // qualquer grau; deve barrar por já existir uma lesão ativa
+            servico.registrarLesao(atletaId, 1);
+        } catch (Exception e) {
+            erro = e;
+        }
+    }
+
+    // ===================== ENTÃO =====================
 
     @Então("a lesão não é registrada")
     public void lesao_nao_registrada() {
@@ -108,26 +128,6 @@ public class RegistroLesoesFeature {
         assertEquals(mensagem, erro.getMessage());
     }
 
-    // ===================== Cenário 3 =====================
-
-    @Dado("que o atleta {string} possui uma lesão de grau {int} registrada e ativa")
-    public void atleta_possui_lesao_ativa(String atletaId, Integer grau) {
-        atletaCorrente = atletaId;
-        // garantir contrato ativo para poder registrar a lesão
-        repo.definirContratoAtivo(atletaId, true);
-        servico.registrarLesao(atletaId, grau);
-    }
-
-    @Quando("cadastrar um plano de recuperação com treinos adaptados por {int} dias")
-    public void cadastrar_plano(int dias) {
-        String id = atletaCorrente != null ? atletaCorrente : "AT-001";
-        try {
-            servico.cadastrarPlanoRecuperacao(id, dias);
-        } catch (Exception e) {
-            erro = e;
-        }
-    }
-
     @Então("o plano de recuperação é registrado para o atleta {string}")
     public void plano_registrado_para_atleta(String atletaId) {
         assertTrue(repo.planoDias(atletaId).isPresent(), "Plano deveria estar presente");
@@ -137,19 +137,6 @@ public class RegistroLesoesFeature {
     public void permissao_treino_fica(String esperado) {
         String id = atletaCorrente != null ? atletaCorrente : "AT-001";
         assertEquals(esperado, repo.permissaoTreino(id));
-    }
-
-    // ===================== Cenário 4 =====================
-
-    @Quando("tentar registrar uma nova lesão para o atleta {string}")
-    public void tentar_registrar_nova_lesao_para_atleta(String atletaId) {
-        atletaCorrente = atletaId;
-        try {
-            // qualquer grau; deve barrar por já existir uma lesão ativa
-            servico.registrarLesao(atletaId, 1);
-        } catch (Exception e) {
-            erro = e;
-        }
     }
 
     @Então("a nova lesão não é registrada")

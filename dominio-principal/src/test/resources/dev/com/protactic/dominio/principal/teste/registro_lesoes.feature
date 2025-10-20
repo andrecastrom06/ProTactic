@@ -10,9 +10,6 @@ Funcionalidade: 3 - Registro de lesões e planejamento de recuperações
     É preciso ter lesão registrada para planejar recuperação.
     Não é permitido registrar nova lesão enquanto houver lesão ativa.
 
-  Contexto:
-    Dado que existe um atleta identificado por "AT-001"
-
   Cenário: Registro de lesão de um atleta com contrato ativo no clube
     Dado que o atleta "AT-001" está saudável e com contrato ativo
     Quando registrar uma lesão de grau 2 para o atleta "AT-001"
