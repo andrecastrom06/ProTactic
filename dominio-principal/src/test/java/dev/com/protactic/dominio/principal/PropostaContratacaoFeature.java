@@ -1,13 +1,13 @@
 package dev.com.protactic.dominio.principal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import dev.com.protactic.dominio.principal.proposta.PropostaRepository;
 import dev.com.protactic.dominio.principal.proposta.PropostaService;
 import dev.com.protactic.mocks.PropostaMock;
 import io.cucumber.java.pt.Dado;
@@ -21,15 +21,14 @@ public class PropostaContratacaoFeature {
     private Date dataAtual;
     private Proposta proposta;
     private Exception excecao;
-    private PropostaRepository propostaRepository = new PropostaMock();
-    private PropostaService propostaService = new PropostaService(propostaRepository);
+    private PropostaMock propostaMock = new PropostaMock();
+    private PropostaService propostaService = new PropostaService(propostaMock);
 
     @Dado("um jogador chamado {string} que não tem contrato")
     public void um_jogador_chamado_que_não_tem_contrato(String nomeJogador) {
         this.jogador = new Jogador(nomeJogador, null);
         this.jogador.setContrato(null);
     }
-
 
     @Dado("um jogador chamado {string} que tem contrato com o {string}")
     public void um_jogador_chamado_que_tem_contrato_com_o(String nomeJogador, String clube) {
@@ -57,14 +56,21 @@ public class PropostaContratacaoFeature {
 
     @Então("a proposta deve ser registrada com sucesso")
     public void a_proposta_deve_ser_registrada_com_sucesso() {
-        assertEquals(jogador, proposta.getJogador());
-        assertEquals(clubeProponente, proposta.getPropositor());
-        assertEquals(dataAtual, proposta.getData());
+        assertNotNull(proposta, "A proposta não deveria ser nula");
+        assertEquals(jogador, proposta.getJogador(), "Jogador incorreto na proposta");
+        assertEquals(clubeProponente, proposta.getPropositor(), "Clube propositor incorreto");
+        assertEquals(dataAtual, proposta.getData(), "Data incorreta na proposta");
+
+        Proposta persistida = propostaMock.getUltimaProposta();
+        assertNotNull(persistida, "A proposta deveria ter sido salva no repositório");
+        assertEquals(proposta, persistida, "A proposta persistida não corresponde à criada");
     }
 
     @Então("o sistema deve lançar uma exceção com a mensagem {string}")
     public void o_sistema_deve_lançar_uma_exceção_com_a_mensagem(String mensagemEsperada) {
         assertThrows(Exception.class, () -> { throw excecao; });
         assertEquals(mensagemEsperada, excecao.getMessage());
+
+        assertNull(propostaMock.getUltimaProposta(), "Nenhuma proposta deveria ter sido salva no repositório");
     }
 }

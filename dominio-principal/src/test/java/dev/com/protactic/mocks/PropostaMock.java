@@ -6,6 +6,7 @@ import dev.com.protactic.dominio.principal.Proposta;
 import dev.com.protactic.dominio.principal.proposta.PropostaRepository;
 
 public class PropostaMock implements PropostaRepository {
+    private Proposta ultimaProposta;
     private Map<Long, Proposta> storage = new HashMap<>();
     private long sequence = 1L;
 
@@ -13,6 +14,7 @@ public class PropostaMock implements PropostaRepository {
     public Proposta saveProposta(Proposta proposta) {
         proposta.setId((int) sequence++);
         storage.put((long) proposta.getId(), proposta);
+        this.ultimaProposta = proposta;
         return proposta;
     }
 
@@ -24,5 +26,9 @@ public class PropostaMock implements PropostaRepository {
     @Override
     public List<Proposta> findAllPropostas() {
         return new ArrayList<>(storage.values());
+    }
+
+    public Proposta getUltimaProposta() {
+        return ultimaProposta;
     }
 }

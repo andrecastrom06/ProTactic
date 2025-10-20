@@ -11,15 +11,17 @@ public class Dispensa_jogadorFeature {
     private Jogador jogador;
     private Clube clube;
     private String mensagemErro;
-
-    private DispensaService dispensaService = new DispensaService(new ContratoMock());
+    private ContratoMock contratoMock = new ContratoMock();
+    private DispensaService dispensaService = new DispensaService(contratoMock);
 
     @Dado("um jogador chamado {string} com contrato ativo com o {string}")
     public void um_jogador_chamado_com_contrato_ativo_com_o(String nome, String nomeClube) {
         this.clube = new Clube(nomeClube);
         Contrato contrato = new Contrato(clube);
+        contrato.setStatus("ATIVO");
         this.jogador = new Jogador(nome, clube);
         this.jogador.setContrato(contrato);
+        contratoMock.clear(); 
     }
 
     @E("o jogador está saudável")
@@ -43,11 +45,17 @@ public class Dispensa_jogadorFeature {
 
     @Então("o clube do jogador deve ser {string}")
     public void o_clube_do_jogador_deve_ser(String esperado) {
-        assertEquals(esperado, jogador.getClube().getNome());
+        assertEquals(esperado, jogador.getClube().getNome(), "O clube do jogador não foi atualizado corretamente");
+
+        Contrato persistido = contratoMock.getUltimoContrato();
+        assertNotNull(persistido, "O contrato deveria ter sido salvo no repositório");
+        assertEquals("RESCINDIDO", persistido.getStatus(), "O contrato persistido deveria estar rescindido");
     }
 
     @Então("o sistema deve bloquear a rescisão com a mensagem {string}")
     public void o_sistema_deve_bloquear_a_rescisao_com_a_mensagem(String mensagemEsperada) {
-        assertEquals(mensagemEsperada, this.mensagemErro);
+        assertEquals(mensagemEsperada, this.mensagemErro, "Mensagem de erro incorreta");
+
+        assertNull(contratoMock.getUltimoContrato(), "Nenhum contrato deveria ter sido salvo no repositório");
     }
 }

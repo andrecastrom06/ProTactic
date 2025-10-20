@@ -9,12 +9,15 @@ public class ContratoMock implements ContratoRepository {
     private final Map<Integer, Contrato> storage = new HashMap<>();
     private int sequence = 1;
 
+    private Contrato ultimoContrato;
+
     @Override
     public Contrato saveContrato(Contrato contrato) {
         if (contrato.getId() == 0) {
             contrato.setId(sequence++);
         }
         storage.put(contrato.getId(), contrato);
+        this.ultimoContrato = contrato; 
         return contrato;
     }
 
@@ -26,5 +29,15 @@ public class ContratoMock implements ContratoRepository {
     @Override
     public List<Contrato> findAllContratos() {
         return new ArrayList<>(storage.values());
+    }
+
+    public Contrato getUltimoContrato() {
+        return ultimoContrato;
+    }
+
+    public void clear() {
+        storage.clear();
+        sequence = 1;
+        ultimoContrato = null;
     }
 }
