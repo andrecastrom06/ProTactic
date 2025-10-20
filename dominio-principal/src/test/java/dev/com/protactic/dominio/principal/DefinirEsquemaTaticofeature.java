@@ -16,7 +16,7 @@ public class DefinirEsquemaTaticoFeature {
 
     private static class Jogador {
         final String nome;
-        int grauLesao = -1; 
+        int grauLesao = -1;
         boolean contratoAtivo = false;
         boolean suspenso = false;
 
@@ -28,7 +28,6 @@ public class DefinirEsquemaTaticoFeature {
     private final Map<String, Jogador> jogadores = new HashMap<>();
     private String jogoEmContexto;
 
-    // Service + Repository
     private final EscalacaoMock repository = new EscalacaoMock();
     private final DefinirEsquemaTaticoService service = new DefinirEsquemaTaticoService(repository);
 
@@ -45,14 +44,18 @@ public class DefinirEsquemaTaticoFeature {
 
     @Quando("o treinador cadastrar a escalação")
     public void o_treinador_cadastrar_a_escalacao() {
-
         repository.salvarJogadorNaEscalacao(jogoEmContexto, "ESCALAÇÃO_VAZIA");
     }
 
     @Então("a escalação aparecerá vinculada ao jogo do dia {string}")
     public void a_escalacao_aparecera_vinculada_ao_jogo_do_dia(String data) {
-        assertFalse(repository.obterEscalacaoPorData(data).isEmpty(),
-                "Escalação não foi registrada para o jogo do dia " + data);
+        var escalacaoPersistida = repository.obterEscalacaoPorData(data);
+
+        assertNotNull(escalacaoPersistida, "Nenhuma escalação encontrada para o jogo.");
+        assertFalse(escalacaoPersistida.isEmpty(), "Escalação não foi registrada para o jogo do dia " + data);
+
+        assertEquals(escalacaoPersistida, repository.obterEscalacaoPorData(data),
+                "A escalação persistida não corresponde à data esperada.");
     }
 
     @E("o jogador {string} tem uma lesão de grau {int}")
@@ -77,19 +80,38 @@ public class DefinirEsquemaTaticoFeature {
                 jogador.suspenso,
                 jogador.grauLesao
         );
-        jogador.contratoAtivo = sucesso; 
+
+        jogador.contratoAtivo = sucesso;
     }
 
     @Então("a escalação será registrada com sucesso")
     public void a_escalacao_sera_registrada_com_sucesso() {
-        assertFalse(repository.obterEscalacaoPorData(jogoEmContexto).isEmpty(),
-                "A escalação deveria ter sido registrada, mas não foi.");
+        var escalacaoPersistida = repository.obterEscalacaoPorData(jogoEmContexto);
+
+        assertNotNull(escalacaoPersistida,
+                "Nenhuma escalação foi encontrada no repositório para o jogo.");
+        assertFalse(escalacaoPersistida.isEmpty(),
+                "A escalação deveria ter sido registrada, mas está vazia.");
+
+      
+        boolean contemJogador = escalacaoPersistida.stream()
+                .anyMatch(jogador -> jogadores.containsKey(jogador));
+
+        assertTrue(contemJogador,
+                "O jogador escalado não foi persistido na escalação do repositório.");
+
+      
+        assertEquals(escalacaoPersistida, repository.obterEscalacaoPorData(jogoEmContexto),
+                "Os dados persistidos no repositório não correspondem à data do jogo.");
     }
 
     @Então("a escalação não poderá ser registrada")
     public void a_escalacao_nao_podera_ser_registrada() {
-        assertTrue(repository.obterEscalacaoPorData(jogoEmContexto).isEmpty(),
-                "A escalação não deveria ter sido registrada, mas foi.");
+        var escalacaoPersistida = repository.obterEscalacaoPorData(jogoEmContexto);
+
+  
+        assertTrue(escalacaoPersistida == null || escalacaoPersistida.isEmpty(),
+                "A escalação não deveria ter sido persistida, mas há dados salvos no repositório.");
     }
 
     @E("o jogador {string} está suspenso")
@@ -118,7 +140,6 @@ public class DefinirEsquemaTaticoFeature {
             j.suspenso = false;
         }
     }
-
     @E("{string} possui contrato {string}")
     public void possui_contrato(String nome, String statusContrato) {
         jogadores.computeIfAbsent(nome, Jogador::new).contratoAtivo = statusContrato.equalsIgnoreCase("ativo");
