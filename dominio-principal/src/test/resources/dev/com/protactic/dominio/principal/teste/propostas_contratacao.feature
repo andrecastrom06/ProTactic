@@ -13,7 +13,7 @@ Regra: Não se pode registrar uma proposta para um atleta que tenha contrato ati
     Então a proposta deve ser registrada com sucesso
 
   Cenário: "Kieza" já tem contrato com o "Sport" que tenta contratá-lo
-    Dado um jogador chamado "Kieza" que tem contrato ativo com o "Sport"
+    Dado um jogador chamado "Kieza" que tem contrato com o "Sport"
     Quando um analista do "Sport" cria uma proposta de contrato para "Kieza"
     Então o sistema deve lançar uma exceção com a mensagem "Jogador já possui contrato ativo com o clube."
 

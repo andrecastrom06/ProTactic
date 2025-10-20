@@ -30,14 +30,6 @@ public class PropostaContratacaoFeature {
         this.jogador.setContrato(null);
     }
 
-    @Dado("um jogador chamado {string} que tem contrato ativo com o {string}")
-    public void um_jogador_chamado_que_tem_contrato_ativo_com_o(String nomeJogador, String clube) {
-        Clube clubeObj = new Clube(clube);
-        Contrato contrato = new Contrato(clubeObj);
-        contrato.setStatus("ATIVO");
-        this.jogador = new Jogador(nomeJogador, clubeObj);
-        this.jogador.setContrato(contrato);
-    }
 
     @Dado("um jogador chamado {string} que tem contrato com o {string}")
     public void um_jogador_chamado_que_tem_contrato_com_o(String nomeJogador, String clube) {
