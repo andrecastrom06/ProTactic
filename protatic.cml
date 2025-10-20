@@ -229,7 +229,7 @@ BoundedContext Protactic implements Protactic {
 	}
 	
 	Aggregate SuporteTecnico {
-		Entity Analista extends Usuario{}
+		Entity Analista {}
 		Entity Preparador {}
 		Entity Treinador {}
 		Entity Tatico {}
