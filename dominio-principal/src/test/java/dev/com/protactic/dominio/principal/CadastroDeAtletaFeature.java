@@ -1,6 +1,7 @@
 package dev.com.protactic.dominio.principal;
 
 import dev.com.protactic.dominio.principal.cadastroAtleta.*;
+import dev.com.protactic.mocks.ClubeMock;
 import dev.com.protactic.mocks.JogadorMock;
 import io.cucumber.java.Before;
 import io.cucumber.java.pt.*;
@@ -26,7 +27,7 @@ public class CadastroDeAtletaFeature {
         this.outroClube = new Clube("Rival AC");
 
         this.jogadorRepo = new JogadorMock();
-        this.clubeRepo = new ClubeRepository();
+        this.clubeRepo = new ClubeMock();
         this.cadastroDeAtletaService = new CadastroDeAtletaService(jogadorRepo, clubeRepo);
     }
 
