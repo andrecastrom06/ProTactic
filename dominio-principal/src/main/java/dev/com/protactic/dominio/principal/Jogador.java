@@ -1,5 +1,7 @@
 package dev.com.protactic.dominio.principal;
 
+import java.time.LocalDate;
+
 public class Jogador {
 
     private int id;
@@ -16,7 +18,7 @@ public class Jogador {
     private int assistencias;
     private String status;
     private String minutagem;   
-    private int anosDeClube;     
+    private LocalDate chegadaNoClube;     
     private boolean capitao;    
     private int grauLesao = -1;         
     private boolean contratoAtivo = false;
@@ -24,7 +26,7 @@ public class Jogador {
 
     public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias,
-                   String minutagem, int anosDeClube, boolean capitao) {
+                   String minutagem, LocalDate chegadaNoClube, boolean capitao) {
         this.id = id;
         this.contrato = contrato;
         this.clube = clube;
@@ -38,14 +40,14 @@ public class Jogador {
         this.gols = gols;
         this.assistencias = assistencias;
         this.minutagem = minutagem;
-        this.anosDeClube = anosDeClube;
+        this.chegadaNoClube = chegadaNoClube;
         this.capitao = capitao;
     }
 
     public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias) {
         this(id, contrato, clube, competicao, nome, idade, posicao, perna, nota, jogos, gols, assistencias,
-             null, 0, false);
+             null, null, false);
     }
 
     public Jogador(String nome, Clube clube) {
@@ -55,21 +57,21 @@ public class Jogador {
             this.contrato = new Contrato(clube);
         }
         this.minutagem = null;
-        this.anosDeClube = 0;
+        this.chegadaNoClube = null;
         this.capitao = false;
     }
 
     public Jogador(Contrato contrato) {
         this.contrato = contrato;
         this.minutagem = null;
-        this.anosDeClube = 0;
+        this.chegadaNoClube = null;
         this.capitao = false;
     }
 
     public Jogador(String nome) {
         this.nome = nome;
         this.minutagem = null;
-        this.anosDeClube = 0;
+        this.chegadaNoClube = null;
         this.capitao = false;
     }
 
@@ -124,8 +126,8 @@ public class Jogador {
     public String getMinutagem() { return minutagem; }
     public void setMinutagem(String minutagem) { this.minutagem = minutagem; }
 
-    public int getAnosDeClube() { return anosDeClube; }
-    public void setAnosDeClube(int anosDeClube) { this.anosDeClube = anosDeClube; }
+    public LocalDate getChegadaNoClube() { return chegadaNoClube; }
+    public void setChegadaNoClube(LocalDate chegadaNoClube) { this.chegadaNoClube = chegadaNoClube; }
 
     public boolean isCapitao() { return capitao; }
     public void setCapitao(boolean capitao) { this.capitao = capitao; }

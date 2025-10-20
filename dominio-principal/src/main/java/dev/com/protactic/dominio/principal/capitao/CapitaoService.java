@@ -2,6 +2,10 @@ package dev.com.protactic.dominio.principal.capitao;
 
 import dev.com.protactic.dominio.principal.Jogador;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
 public class CapitaoService {
 
     private final CapitaoRepository repository;
@@ -9,38 +13,36 @@ public class CapitaoService {
     public CapitaoService(CapitaoRepository repository) {
         this.repository = repository;
     }
-    
-    public boolean definirCapitao(Jogador jogador) {
-        if (jogador == null) return false;
-
-        boolean contratoAtivo = false;
-        if (jogador.getContrato() != null && jogador.getContrato().getStatus() != null) {
-            contratoAtivo = jogador.getContrato().getStatus().equalsIgnoreCase("ATIVO")
-                          || jogador.getContrato().getStatus().equalsIgnoreCase("ativo");
-        }
-
-        boolean tempoClubeOk = jogador.getAnosDeClube() >= 12;  //Requisito alterado de 1 para 12 meses(criterio de desempate)
-        boolean minutagemOk = jogador.getMinutagem() != null &&
-                              jogador.getMinutagem().equalsIgnoreCase("constante");
-
-        if (contratoAtivo && tempoClubeOk && minutagemOk) {
-            jogador.setCapitao(true);
-            repository.salvarCapitao(jogador);
-            return true;
-        } else {
-            jogador.setCapitao(false);
-            return false;
-        }
-    }
 
     public boolean podeSerCapitao(Jogador jogador) {
-        if (jogador == null) return false;
-        boolean contratoAtivo = jogador.getContrato() != null &&
-                "ATIVO".equalsIgnoreCase(jogador.getContrato().getStatus());
-        boolean tempoOk = jogador.getAnosDeClube() >= 12; //Requisito alterado de 1 para 12 meses(criterio de desempate)
-        
-        boolean minutagemOk = "constante".equalsIgnoreCase(jogador.getMinutagem());
-        return contratoAtivo && tempoOk && minutagemOk;
+        if (!jogador.isContratoAtivo()) return false;
+        if (!"constante".equalsIgnoreCase(jogador.getMinutagem())) return false;
+        return mesesNoClube(jogador) >= 12;
     }
 
+    public long mesesNoClube(Jogador jogador) {
+        if (jogador.getChegadaNoClube() == null) return 0;
+        return ChronoUnit.MONTHS.between(jogador.getChegadaNoClube(), LocalDate.now());
+    }
+
+    public void definirCapitao(Jogador jogador) {
+        jogador.setCapitao(true);
+        repository.salvarCapitao(jogador);
+    }
+
+    public void definirCapitaoEntreJogadores(List<Jogador> jogadores) {
+        Jogador melhor = null;
+        for (Jogador j : jogadores) {
+            if (!podeSerCapitao(j)) continue;
+            if (melhor == null || mesesNoClube(j) > mesesNoClube(melhor)) {
+                melhor = j;
+            } else if (mesesNoClube(j) == mesesNoClube(melhor)) {
+                // empate total -> não define ninguém
+                melhor = null;
+            }
+        }
+        if (melhor != null) {
+            definirCapitao(melhor);
+        }
+    }
 }
