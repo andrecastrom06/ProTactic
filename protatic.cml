@@ -162,9 +162,9 @@ BoundedContext Protactic implements Protactic {
 		Entity Nota {
 			aggregateRoot
 			
-			int jogoId;
+			 String jogoId;
 			String jogadorId;
-			double nota;
+			BigDecimal nota;
 			String observacao;
 		}
 		
@@ -229,9 +229,20 @@ BoundedContext Protactic implements Protactic {
 	}
 	
 	Aggregate SuporteTecnico {
-		Entity Analista {}
+		Entity Analista extends Usuario{}
 		Entity Preparador {}
 		Entity Treinador {}
 		Entity Tatico {}
 	}
+}
+
+Aggregate Escalacao {
+    Entity Escalacao {
+        aggregateRoot
+
+        int id;
+        -Partida partida;
+        String esquema;
+        List<Jogador> jogadores;
+    }
 }
