@@ -33,10 +33,12 @@ BoundedContext Protactic implements Protactic {
 			int assistencias;
 			String status;
 			String minutagem;
-			int anosDeClube;
+			LocalDate chegadaNoClube;
 			boolean capitao;
-			int grauDeLesao;
-			boolean contratoAtivo;
+			int grauLesao;            
+			boolean contratoAtivo;   
+			boolean saudavel;
+			double desvioPadrao;      
 		}
         
 		Repository ClubeRepository {
@@ -53,7 +55,7 @@ BoundedContext Protactic implements Protactic {
 		}
 		
 		Service CadastroDeAtletaService {
-			contratar(@Clube clubeDestino, @Jogador jogador, boolean janelaAberta);
+			contratar(@Clube clubeDestino, @Jogador jogador, Date data);
 		}
 	}
 	
@@ -121,13 +123,12 @@ BoundedContext Protactic implements Protactic {
 
 
 		Repository PremiacaoRepository {
-			salvar(@Premiacao premiacao);
-			buscarPorId(int id);
-			List<@Premiacao> listarTodos();
+			criarPremiacao(String nomePremiacao, Date dataPremiacao);
 		}
 		
 		Service PremiacaoService {
-			criarPremiacaoMelhorJogador(@Jogador jogadorMaiorPontuacao);
+			definirVencedor(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores);
+
 		}
 	}
 	
