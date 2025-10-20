@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlanejamentoCargaSemanalSteps {
+public class PlanejamentoCargaSemanalFeature {
 
     private final PlanejamentoCargaSemanalRepositoryMock repository = new PlanejamentoCargaSemanalRepositoryMock();
     private final PlanejamentoCargaSemanalService service = new PlanejamentoCargaSemanalService(repository);

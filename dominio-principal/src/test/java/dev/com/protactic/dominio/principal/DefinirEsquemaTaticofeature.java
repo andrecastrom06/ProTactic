@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DefinirEsquemaTaticofeature {
+public class DefinirEsquemaTaticoFeature {
 
     private static class Jogador {
         final String nome;
