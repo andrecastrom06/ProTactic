@@ -12,8 +12,6 @@ public class PremiacaoInternaFeature {
     private PremiacaoMock mock;
     private Premiacao premiacao;
 
-   
-
     @Dado("que {string} com média {string} no período de {string} existe")
     @Dado("{string} com média {string} no período de {string} existe")
     public void jogador_com_media_no_periodo_existe(String nome, String notaStr, String periodo) {
@@ -25,40 +23,31 @@ public class PremiacaoInternaFeature {
         }
 
         mock.addJogador(nome, nota);
-
-        System.out.println("DEBUG >> Criado jogador: " 
-            + nome + " com média " + nota + " no período de " + periodo);
     }
-
-    
 
     @Quando("eu criar a premiação do mês de {string}")
     public void eu_criar_a_premiacao(String mes) {
         premiacao = mock.criarPremiacao("Premiação " + mes, new Date());
-
-        if (premiacao == null) {
-            System.out.println("DEBUG >> Nenhum vencedor definido para o mês de " + mes);
-        } else {
-            System.out.println("DEBUG >> Vencedor provisório: "
-                + premiacao.getJogador().getNome()
-                + " (nota " + premiacao.getJogador().getNota()
-                + ", desvio " + premiacao.getJogador().getDesvioPadrao() + ")");
-        }
     }
-
-    
 
     @Então("a premiação ficará sem vencedor")
     public void premiacao_sem_vencedor() {
         assertNull(premiacao, "Não deveria haver vencedor");
-        System.out.println(" Nenhum vencedor encontrado");
+
+        // 🔎 verificação no repositório
+        assertNull(mock.getUltimaPremiacao(), "Nenhuma premiação deveria ter sido persistida");
     }
 
     @Então("o jogador {string} será definido como vencedor da premiação")
     public void vencedor_definido(String esperado) {
         assertNotNull(premiacao, "Deveria existir um vencedor");
         assertEquals(esperado, premiacao.getJogador().getNome(), "O vencedor não foi o esperado");
-        System.out.println(" Vencedor: " + premiacao.getJogador().getNome());
+
+        // 🔎 verificação no repositório
+        Premiacao persistida = mock.getUltimaPremiacao();
+        assertNotNull(persistida, "A premiação deveria ter sido salva no repositório");
+        assertEquals(esperado, persistida.getJogador().getNome(),
+                "O vencedor persistido não foi o esperado");
     }
 
     @Então("o jogador com menor desvio padrão será definido como vencedor da premiação")
@@ -73,7 +62,10 @@ public class PremiacaoInternaFeature {
         assertEquals(menorDesvio, premiacao.getJogador().getDesvioPadrao(),
                 "O vencedor não foi o de menor desvio padrão");
 
-        System.out.println(" Vencedor por desempate de desvio padrão: " 
-            + premiacao.getJogador().getNome());
+        // 🔎 verificação no repositório
+        Premiacao persistida = mock.getUltimaPremiacao();
+        assertNotNull(persistida, "A premiação deveria ter sido salva no repositório");
+        assertEquals(premiacao.getJogador().getNome(), persistida.getJogador().getNome(),
+                "O vencedor persistido deveria ser o mesmo definido pelo serviço");
     }
 }

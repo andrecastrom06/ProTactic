@@ -9,37 +9,40 @@ import java.util.*;
 
 public class PremiacaoMock implements IPremiacaoRepository {
     private final List<Jogador> jogadores = new ArrayList<>();
-
-    public PremiacaoMock() {
-        // Por padrão, cria alguns jogadores de exemplo
-        jogadores.add(new Jogador("Carlos"));
-        jogadores.get(0).setNota(7.5);
-
-        jogadores.add(new Jogador("Pedro"));
-        jogadores.get(1).setNota(5.9);
-
-        jogadores.add(new Jogador("Lucas"));
-        jogadores.get(2).setNota(8.2);
-    }
+    private final List<Premiacao> premiacoes = new ArrayList<>(); // <- armazena premiações criadas
 
     @Override
     public Premiacao criarPremiacao(String nomePremiacao, Date dataPremiacao) {
         PremiacaoService service = new PremiacaoService();
-        return service.definirVencedor(nomePremiacao, dataPremiacao, jogadores);
+        Premiacao nova = service.definirVencedor(nomePremiacao, dataPremiacao, jogadores);
+        if (nova != null) {
+            premiacoes.add(nova); // persiste no "mock"
+        }
+        return nova;
     }
 
-    // Permite manipular jogadores nos testes
+    // --- Métodos auxiliares para os testes ---
     public List<Jogador> getJogadores() {
         return jogadores;
     }
 
     public void clearJogadores() {
         jogadores.clear();
+        premiacoes.clear();
     }
 
     public void addJogador(String nome, double nota) {
         Jogador j = new Jogador(nome);
         j.setNota(nota);
         jogadores.add(j);
+    }
+
+    public List<Premiacao> getPremiacoes() {
+        return premiacoes;
+    }
+
+    public Premiacao getUltimaPremiacao() {
+        if (premiacoes.isEmpty()) return null;
+        return premiacoes.get(premiacoes.size() - 1);
     }
 }
