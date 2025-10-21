@@ -1,6 +1,7 @@
 package dev.com.protactic.dominio.principal.treinoTatico;
 
 import dev.com.protactic.dominio.principal.Partida;
+import dev.com.protactic.dominio.principal.SessaoTreino;
 import dev.com.protactic.dominio.principal.Jogador;
 import java.util.List;
 

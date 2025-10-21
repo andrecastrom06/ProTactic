@@ -1,6 +1,5 @@
 package dev.com.protactic.dominio.principal;
 
-import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreino;
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoService;
 import dev.com.protactic.mocks.SessaoTreinoMock;
 import io.cucumber.java.pt.Dado;

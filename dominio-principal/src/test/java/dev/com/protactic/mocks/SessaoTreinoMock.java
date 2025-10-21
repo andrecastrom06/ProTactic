@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreino;
+import dev.com.protactic.dominio.principal.SessaoTreino;
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoRepository;
 
 public class SessaoTreinoMock implements SessaoTreinoRepository {

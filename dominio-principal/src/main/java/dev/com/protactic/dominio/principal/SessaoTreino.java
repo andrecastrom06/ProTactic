@@ -1,11 +1,8 @@
-package dev.com.protactic.dominio.principal.treinoTatico;
+package dev.com.protactic.dominio.principal;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.Partida;
 
 public class SessaoTreino {
     private final String nome;
@@ -19,7 +16,6 @@ public class SessaoTreino {
         if (partida == null) {
             throw new IllegalArgumentException("Sessão de treino precisa estar vinculada a uma partida.");
         }
-
         this.nome = nome;
         this.partida = partida;
         this.convocados = new ArrayList<>();
