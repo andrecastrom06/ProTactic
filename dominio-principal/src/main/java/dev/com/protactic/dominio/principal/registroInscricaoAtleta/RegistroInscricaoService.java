@@ -25,4 +25,8 @@ public class RegistroInscricaoService {
         repository.salvar(inscricao);
         return inscricao;
     }
+
+    public RegistroInscricaoRepository getRepository() {
+        return repository;
+    }
 }
