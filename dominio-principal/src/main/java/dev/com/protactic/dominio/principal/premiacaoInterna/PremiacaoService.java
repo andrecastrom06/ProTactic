@@ -55,4 +55,13 @@ public class PremiacaoService {
         System.out.println("DEBUG >> Vencedor definitivo: " + vencedor.getNome() + " (nota " + vencedor.getNota() + ")");
         return new Premiacao(1, vencedor, nomePremiacao, dataPremiacao);
     }
+
+    public boolean verificarSeVencedorTemMenorDesvio(Jogador vencedor, List<Jogador> jogadores) {
+    double menorDesvio = jogadores.stream()
+            .mapToDouble(Jogador::getDesvioPadrao)
+            .min()
+            .orElse(Double.MAX_VALUE);
+    return vencedor.getDesvioPadrao() == menorDesvio;
+}
+
 }

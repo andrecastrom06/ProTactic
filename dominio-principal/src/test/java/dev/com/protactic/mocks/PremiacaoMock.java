@@ -45,4 +45,10 @@ public class PremiacaoMock implements IPremiacaoRepository {
         if (premiacoes.isEmpty()) return null;
         return premiacoes.get(premiacoes.size() - 1);
     }
+
+    public void registrarJogador(String nome, String notaStr) {
+    double nota = Double.parseDouble(notaStr.replace(",", "."));
+    addJogador(nome, nota);
+}
+
 }
