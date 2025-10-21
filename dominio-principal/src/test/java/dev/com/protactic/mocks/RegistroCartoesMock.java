@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartao;
+import dev.com.protactic.dominio.principal.RegistroCartao;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesRepository;
 
 public class RegistroCartoesMock implements RegistroCartoesRepository {

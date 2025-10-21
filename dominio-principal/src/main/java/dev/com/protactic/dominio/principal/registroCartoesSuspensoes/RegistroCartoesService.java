@@ -2,6 +2,9 @@ package dev.com.protactic.dominio.principal.registroCartoesSuspensoes;
 
 import java.util.List;
 
+import dev.com.protactic.dominio.principal.RegistroCartao;
+import dev.com.protactic.dominio.principal.RegistroSuspensao;
+
 public class RegistroCartoesService {
 
     private final RegistroCartoesRepository repository;

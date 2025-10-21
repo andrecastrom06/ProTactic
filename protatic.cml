@@ -15,10 +15,37 @@ BoundedContext Protactic implements Protactic {
 			String cidadeEstado;
 			String estadio;
 			-Jogador capitao;
-			List<Jogador> jogadores;
+			List@Jogador> jogadores;
 		}
 	
+		
+        
+		Repository ClubeRepository {
+			salvar(@Clube clube);
+			buscarPorNome(String nome);
+			List<@Clube> listarTodos();
+		}
+		
+
+
+		Repository RegistroInscricaoRepository {
+			salvar(@InscricaoAtleta inscricao);
+			@InscricaoAtleta buscarPorAtletaECompeticao(@Jogador jogador, @Competicao competicao);
+			List<@InscricaoAtleta> listarTodas();
+}
+		Service RegistroInscricaoService {
+    		@InscricaoAtleta registrarInscricao(@Jogador jogador, @Competicao competicao);
+}
+		
+		Service CadastroDeAtletaService {
+			contratar(@Clube clubeDestino, @Jogador jogador, Date data);
+		}
+	}
+	
+	Aggregate Jogador{
 		Entity Jogador {
+			aggregateRoot
+
 			int id;
 			-Contrato contrato;
 			-Clube clube;
@@ -40,25 +67,31 @@ BoundedContext Protactic implements Protactic {
 			boolean saudavel;
 			double desvioPadrao;      
 		}
-        
-		Repository ClubeRepository {
-			salvar(@Clube clube);
-			buscarPorNome(String nome);
-			List<Clube> listarTodos();
+		Service CapitaoService{
+			podeSerCapitao(@Jogador jogador)
+			mesesNoClube(@Jogador jogador)
+			definirCapitao(@Jogador jogador)
+			definirCapitaoEntreJogadores(@List<Jogador> jogadores)
+		 }
+
+		Repository CapitaoRepository{
+			salvarCapitao(@Jogador jogador)
+			buscarCapitaoPorClube(String clube)
 		}
-		
+
+
 		Repository JogadorRepository {
 			salvar(@Jogador jogador);
 			buscarPorNome(String nome);
 			existe(String nome);
-			List<Jogador> listarTodos();
+			List<@Jogador> listarTodos();
 		}
-		
-		Service CadastroDeAtletaService {
-			contratar(@Clube clubeDestino, @Jogador jogador, Date data);
-		}
+
+
 	}
-	
+
+
+
 	Aggregate Contrato {
 		Entity Contrato {
 			aggregateRoot
@@ -85,6 +118,9 @@ BoundedContext Protactic implements Protactic {
 			registrarAtleta(@Clube clubeDestino, @Jogador jogador, boolean janelaAberta);
 		}
 	}
+
+
+	Aggregate
 	
 	Aggregate Proposta {
 		Entity Proposta {
@@ -127,7 +163,7 @@ BoundedContext Protactic implements Protactic {
 		}
 		
 		Service PremiacaoService {
-			definirVencedor(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores);
+			definirVencedor(String nomePremiacao, Date dataPremiacao, List<@Jogador> jogadores);
 
 		}
 	}
@@ -186,7 +222,7 @@ BoundedContext Protactic implements Protactic {
         }
 	}
 	
-	Aggregate Aptidao {
+	Aggregate Fisico {
 		Entity Fisico {
 			aggregateRoot
 
@@ -207,13 +243,44 @@ BoundedContext Protactic implements Protactic {
 			String plano;
 			int grau;
 		}
-		Entity Suspensao {
+		
+		
+    }
+
+	Aggregate Suspensao{
+		Entity Suspensao{
+			aggregateRoot
+
 			int id;
 			-Jogador jogador;
 			boolean suspenso;
 			int amarelo;
 			int vermelho;
 		}
+
+		Entity RegistroCartao {
+        int id;
+        -Jogador jogador; 
+        String tipo; 
+        
+    	}
+
+
+	 Repository RegistroCartoesRepository{
+		salvarCartao(@RegistroCartao cartao);
+		List<@RegistroCartao> buscarCartoesPorAtleta(String atleta);
+		limparCartoes(@String atleta);
+	 }
+
+	Service RegistroCartoesService {
+		registrarCartao(@Jogador jogador, String tipo);
+		verificarSuspensao(@Jogador jogador);
+		limparCartoes(@Jogador jogador);
+	}
+
+
+	
+
 
 	}
 	
@@ -243,6 +310,30 @@ Aggregate Escalacao {
         int id;
         -Partida partida;
         String esquema;
-        List<Jogador> jogadores;
+        List<@Jogador> jogadores;
     }
 }
+
+
+
+    Aggregate PlanejamentoCargaSemanal {
+        Entity TreinoSemanal {
+            aggregateRoot
+            
+            int id; 
+            -Jogador jogador; 
+            
+            boolean registrado; 
+        }
+
+        Repository PlanejamentoCargaSemanalRepository {
+            salvarTreino(@TreinoSemanal treino);
+            buscarPorJogador(String nomeJogador);
+        }
+
+        Service PlanejamentoCargaSemanalService {
+            registrarTreino(@Jogador jogador);
+        }
+    }
+
+   

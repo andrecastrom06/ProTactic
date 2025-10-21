@@ -3,7 +3,7 @@ package dev.com.protactic.mocks;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.com.protactic.dominio.principal.registroInscricaoAtleta.InscricaoAtleta;
+import dev.com.protactic.dominio.principal.InscricaoAtleta;
 import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoRepository;
 
 public class RegistroInscricaoMock implements RegistroInscricaoRepository {

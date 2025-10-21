@@ -3,6 +3,8 @@ package dev.com.protactic.dominio.principal.planejamentoCargaSemanal;
 import java.util.HashMap;
 import java.util.Map;
 
+import dev.com.protactic.dominio.principal.TreinoSemanal;
+
 public class PlanejamentoCargaSemanalRepositoryMock {
 
     private final Map<String, TreinoSemanal> treinos = new HashMap<>();

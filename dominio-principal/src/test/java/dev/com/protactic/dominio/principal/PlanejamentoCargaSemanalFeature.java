@@ -2,8 +2,6 @@ package dev.com.protactic.dominio.principal;
 
 import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalRepositoryMock;
 import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalService;
-import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.TreinoSemanal;
-
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Então;

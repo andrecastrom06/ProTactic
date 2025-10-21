@@ -1,4 +1,4 @@
-package dev.com.protactic.dominio.principal.registroCartoesSuspensoes;
+package dev.com.protactic.dominio.principal;
 
 public class RegistroSuspensao {
 private final String atleta;

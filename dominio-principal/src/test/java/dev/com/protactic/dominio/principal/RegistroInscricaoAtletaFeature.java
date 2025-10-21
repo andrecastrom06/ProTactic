@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import dev.com.protactic.dominio.principal.registroInscricaoAtleta.InscricaoAtleta;
 import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoService;
 import dev.com.protactic.mocks.RegistroInscricaoMock;
 import io.cucumber.java.pt.Dado;

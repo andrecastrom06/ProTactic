@@ -1,5 +1,7 @@
 package dev.com.protactic.dominio.principal.registroInscricaoAtleta;
 
+import dev.com.protactic.dominio.principal.InscricaoAtleta;
+
 public class RegistroInscricaoService {
 
     private final RegistroInscricaoRepository repository;

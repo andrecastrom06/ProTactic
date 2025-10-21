@@ -4,7 +4,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartao;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesRepository;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
 import dev.com.protactic.mocks.RegistroCartoesMock;

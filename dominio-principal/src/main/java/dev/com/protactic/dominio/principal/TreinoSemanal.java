@@ -1,6 +1,4 @@
-package dev.com.protactic.dominio.principal.planejamentoCargaSemanal;
-
-import dev.com.protactic.dominio.principal.Jogador;
+package dev.com.protactic.dominio.principal;
 
 public class TreinoSemanal {
     private final Jogador jogador;

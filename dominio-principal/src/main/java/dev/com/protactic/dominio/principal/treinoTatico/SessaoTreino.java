@@ -3,6 +3,7 @@ package dev.com.protactic.dominio.principal.treinoTatico;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import dev.com.protactic.dominio.principal.Jogador;
 import dev.com.protactic.dominio.principal.Partida;
 

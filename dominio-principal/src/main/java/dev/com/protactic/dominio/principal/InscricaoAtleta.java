@@ -1,4 +1,4 @@
-package dev.com.protactic.dominio.principal.registroInscricaoAtleta;
+package dev.com.protactic.dominio.principal;
 
 public class InscricaoAtleta {
 

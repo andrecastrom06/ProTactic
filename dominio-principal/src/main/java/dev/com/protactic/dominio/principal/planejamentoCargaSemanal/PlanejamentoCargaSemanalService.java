@@ -1,6 +1,7 @@
 package dev.com.protactic.dominio.principal.planejamentoCargaSemanal;
 
 import dev.com.protactic.dominio.principal.Jogador;
+import dev.com.protactic.dominio.principal.TreinoSemanal;
 
 public class PlanejamentoCargaSemanalService {
 
