@@ -20,9 +20,9 @@ public class DefinicaoCapitaoFeature {
     private CapitaoService service;
     private CapitaoRepository repo;
 
-    private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato de data usado nos testes
+    private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    @Before // Executado antes de cada cenário para evitar interferência entre testes
+    @Before
     public void init() {
         repo = new CapitaoMock();
         ((CapitaoMock) repo).limpar();
@@ -30,9 +30,7 @@ public class DefinicaoCapitaoFeature {
         jogadores = new ArrayList<>();
     }
 
-    // ---------------------------------------------
-    // Cenários com um jogador
-    // ---------------------------------------------
+    //Cenários com um jogador
 
     @Dado("um jogador chamado {string}")
     public void criarJogador(String nome) {
@@ -64,7 +62,6 @@ public class DefinicaoCapitaoFeature {
 
     @Quando("o treinador tenta definir {string} como capitão")
     public void definirCapitaoUnico(String nome) {
-        //Usa o método que respeita os critérios de aptidão
         service.definirCapitaoEntreJogadores(List.of(jogador));
     }
 
@@ -74,6 +71,12 @@ public class DefinicaoCapitaoFeature {
         assertNotNull(c, "Capitão não foi salvo");
         assertTrue(c.isCapitao(), "Flag de capitão falsa");
         assertEquals(nome, c.getNome(), "Nome do capitão não bate");
+
+        //verificação de persistência
+        Jogador persistido = ((CapitaoMock) repo).getUltimoCapitaoSalvo();
+        assertNotNull(persistido, "O capitão não foi persistido no mock");
+        assertEquals(nome, persistido.getNome(), "O capitão persistido não corresponde ao esperado");
+        assertEquals(clube, persistido.getClube().getNome(), "O capitão persistido está associado ao clube errado");
     }
 
     @Então("{string} não deve ser definido como capitão do {string}")
@@ -85,11 +88,13 @@ public class DefinicaoCapitaoFeature {
         } else {
             assertNull(c);
         }
+
+        //persistência: nenhum capitão deve ter sido salvo
+        assertNull(((CapitaoMock) repo).getUltimoCapitaoSalvo(),
+                "Nenhum capitão deveria ter sido persistido");
     }
 
-    // ---------------------------------------------
     // Cenários com dois ou mais jogadores (desempate)
-    // ---------------------------------------------
 
     @Dado("dois jogadores {string} e {string}")
     public void criarJogadores(String n1, String n2) {
@@ -135,23 +140,28 @@ public class DefinicaoCapitaoFeature {
 
     @Quando("o treinador tenta definir o capitão")
     public void definirCapitaoTodos() {
-        // Usa o método do service que já aplica critérios e desempate
         service.definirCapitaoEntreJogadores(jogadores);
     }
 
-    // Empate total, nenhum capitão definido
     @Então("o treinador deve escolher manualmente quem será o capitão do {string}")
     public void escolhaManual(String clube) {
         Jogador c = repo.buscarCapitaoPorClube(clube);
         assertNull(c, "Nenhum capitão deve ser definido em empate total");
+        //persistência: nenhum capitão deve ter sido salvo
+        assertNull(((CapitaoMock) repo).getUltimoCapitaoSalvo(),
+                "Nenhum capitão deveria ter sido persistido no mock");
     }
 
-    // Desempate por tempo de clube
     @Então("{string} deve ser definido como capitão do {string} por ter mais tempo de clube")
     public void verificaCapitaoTempo(String nome, String clube) {
         Jogador c = repo.buscarCapitaoPorClube(clube);
         assertNotNull(c, "Capitão deveria ser definido");
         assertTrue(c.isCapitao(), "Flag de capitão falsa");
         assertEquals(nome, c.getNome(), "Capitão com mais tempo não definido corretamente");
+        //persistencia: verifica o capitão persistido
+        Jogador persistido = ((CapitaoMock) repo).getUltimoCapitaoSalvo();
+        assertNotNull(persistido, "O capitão não foi persistido no mock");
+        assertEquals(nome, persistido.getNome(), "O capitão persistido não corresponde ao esperado");
+        assertEquals(clube, persistido.getClube().getNome(), "O capitão persistido está associado ao clube errado");
     }
 }
