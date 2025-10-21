@@ -25,18 +25,16 @@ public class SessoesTreinoTaticoFeature {
     private Exception excecao;
 
     @Dado("que o treinador está na área de planejamento de treinos")
-
-    // Inicializa o estado antes de cada cenário(inicia testes com tudo limpo)
     public void iniciarPlanejamento() {
         sessaoCriada = null;
         excecao = null;
         jogadores.clear();
         partidaAtual = null;
         jogadorAtual = null;
+        repo.limpar(); //garante repositório limpo entre cenários
     }
 
     @Dado("que existe o jogo {string} no calendário")
-    //Cria uma partida com os clubes extraídos do nome do jogo
     public void criarPartida(String nomeJogo) {
         String[] clubes = nomeJogo.split(" vs ");
         partidaAtual = new Partida(
@@ -51,7 +49,6 @@ public class SessoesTreinoTaticoFeature {
     }
 
     @Dado("que o jogador {string} tem o status {string}")
-    //Cria um jogador com o nome e status fornecidos e o adiciona à lista de jogadores
     public void criarJogador(String nomeJogador, String status) {
         jogadorAtual = new Jogador(nomeJogador);
         jogadorAtual.setStatus(status);
@@ -59,7 +56,6 @@ public class SessoesTreinoTaticoFeature {
     }
 
     @Dado("que já existe a sessão de treino {string} para o jogo {string}")
-    //Cria uma sessão de treino existente para o jogo atual
     public void criarSessaoExistente(String nomeSessao, String nomeJogo) {
         if (partidaAtual == null) {
             String[] clubes = nomeJogo.split(" vs ");
@@ -78,7 +74,6 @@ public class SessoesTreinoTaticoFeature {
     }
 
     @Dado("que não existem jogos no calendário")
-    //Garante que não há partidas no calendário
     public void limparPartidas() {
         partidaAtual = null;
     }
@@ -112,28 +107,42 @@ public class SessoesTreinoTaticoFeature {
 
     @Então("o sistema deve permitir a criação da sessão")
     public void verificarSessaoCriada() {
-        assertNotNull(sessaoCriada);
+        assertNotNull(sessaoCriada, "A sessão deveria ter sido criada");
         List<SessaoTreino> sessoes = repo.listarPorPartida(partidaAtual.getDescricao());
         assertTrue(sessoes.stream()
-                .anyMatch(s -> s.getNome().equalsIgnoreCase(sessaoCriada.getNome())));
+                .anyMatch(s -> s.getNome().equalsIgnoreCase(sessaoCriada.getNome())),
+                "A sessão criada não foi encontrada no repositório");
+
+        //verificação de persistência
+        SessaoTreino persistida = repo.getUltimaSessaoSalva();
+        assertNotNull(persistida, "A sessão não foi persistida no mock");
+        assertEquals(sessaoCriada.getNome(), persistida.getNome(), "Sessão persistida incorreta");
+        assertEquals(partidaAtual.getDescricao(), persistida.getPartida().getDescricao(),
+                "A sessão persistida não está vinculada ao jogo correto");
     }
 
     @Então("o sistema deve impedir a criação da sessão")
     public void verificarFalhaCriacao() {
-        assertNull(sessaoCriada);
-        assertNotNull(excecao);
+        assertNull(sessaoCriada, "Nenhuma sessão deveria ser criada");
+        assertNotNull(excecao, "Uma exceção deveria ter sido lançada");
+
+        //persistência: não deve haver nenhuma sessão salva
+        assertNull(repo.getUltimaSessaoSalva(),
+                "Nenhuma sessão deveria ter sido persistida no mock");
     }
 
     @Então("o jogador {string} deve aparecer na lista de convocação")
     public void jogadorConvocado(String nomeJogador) {
         assertTrue(sessaoCriada.getConvocados().stream()
-                .anyMatch(j -> j.getNome().equalsIgnoreCase(nomeJogador)));
+                .anyMatch(j -> j.getNome().equalsIgnoreCase(nomeJogador)),
+                "O jogador " + nomeJogador + " deveria estar convocado");
     }
 
     @Então("o jogador {string} não deve aparecer na lista de convocação")
     public void jogadorNaoConvocado(String nomeJogador) {
         assertTrue(sessaoCriada.getConvocados().stream()
-                .noneMatch(j -> j.getNome().equalsIgnoreCase(nomeJogador)));
+                .noneMatch(j -> j.getNome().equalsIgnoreCase(nomeJogador)),
+                "O jogador " + nomeJogador + " não deveria estar convocado");
     }
 
     @Então("a sessão de treino {string} deve estar vinculada ao jogo {string}")
@@ -141,12 +150,21 @@ public class SessoesTreinoTaticoFeature {
         List<SessaoTreino> sessoes = repo.listarPorPartida(nomeJogo);
         assertTrue(sessoes.stream()
                 .anyMatch(s -> s.getNome().equalsIgnoreCase(nomeSessao)
-                        && s.getPartida().getDescricao().equalsIgnoreCase(nomeJogo)));
+                        && s.getPartida().getDescricao().equalsIgnoreCase(nomeJogo)),
+                "Sessão não encontrada ou vinculada incorretamente ao jogo");
+        //persistência: confirma que a última salva pertence ao jogo certo
+        SessaoTreino persistida = repo.getUltimaSessaoSalva();
+        assertNotNull(persistida, "Nenhuma sessão persistida");
+        assertEquals(nomeJogo, persistida.getPartida().getDescricao(),
+                "A última sessão persistida não está associada ao jogo correto");
     }
 
     @Então("o sistema deve exibir a mensagem {string}")
     public void verificarMensagem(String mensagemEsperada) {
-        assertNotNull(excecao);
-        assertEquals(mensagemEsperada, excecao.getMessage());
+        assertNotNull(excecao, "Era esperada uma exceção");
+        assertEquals(mensagemEsperada, excecao.getMessage(), "Mensagem de erro incorreta");
+        //persistência: não deve haver sessão salva em erro
+        assertNull(repo.getUltimaSessaoSalva(),
+                "Nenhuma sessão deveria ter sido persistida em caso de erro");
     }
 }

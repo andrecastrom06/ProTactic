@@ -1,6 +1,6 @@
 # language: pt
 
-Funcionalidade: Criar sessões de treinos táticos
+Funcionalidade: 10 - Criar sessões de treinos táticos
 
   Regra: Criação de treinos táticos, voltados exclusivamente para jogos específicos e participarão apenas os atletas disponíveis para a partida.
 

@@ -1,6 +1,6 @@
 # language: pt
 
-Funcionalidade: Definição de Capitão
+Funcionalidade: 7 - Definição de Capitão
 
   Regra:
   Para ser capitão, o jogador precisa atender a todos os requisitos necessários, que são: mínimo de 1 ano de clube, minutagem "constante" e contrato ativo. 
