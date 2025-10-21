@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import dev.com.protactic.mocks.ContratoMock;
 import dev.com.protactic.dominio.principal.dispensa.DispensaService;
 
-public class Dispensa_jogadorFeature {
+public class DispensaJogadorFeature {
 
     private Jogador jogador;
     private Clube clube;
