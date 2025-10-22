@@ -22,13 +22,11 @@ O projeto foi desenvolvido utilizando as seguintes tecnologias:
 - **Spring Boot:** Framework para a construção da aplicação e da API REST.
 - **Cucumber:** Ferramenta para a execução de testes automatizados baseados em comportamento (BDD).
 
-## 📂 Link para a Documentação
+## 📂 Links Gerais
 
 Toda a documentação, diagramas e materiais de apoio do projeto podem ser acessados através do seguinte link no Google Drive:
 
 - [Acessar a pasta do projeto no Google Drive](https://drive.google.com/drive/folders/1k9-0tigjAd0PqVPGRPTcqs9yJQRKscC2?hl=pt-br)
-
-## 📂 Links Gerais
 
 - [Consultar a nossa apresentação - Canva](https://www.canva.com/design/DAG1tjKZ-5E/H20j4kY2omdmxjNk6OAmgg/edit)
 
@@ -39,3 +37,12 @@ Toda a documentação, diagramas e materiais de apoio do projeto podem ser acess
 - [Mapa de Histórias do usuário](https://drive.google.com/file/d/1TPf4yLYjUCTT9DA1i4kEEc0pHZHMgB9p/view?usp=sharing)
 
 - [Especificação de testes - em detalhes](https://docs.google.com/document/d/1bZ1PD_DOSvSzZrYs00m9NwxvQ8MH8e2Lj591lqn0lyw/edit?usp=sharing)
+
+## Como rodar
+
+Para usufruir da automação de testes do nosso projeto, siga essas etapas:
+
+1. mvn clean install
+2. mvn test
+
+Esses comandos garantem que o projeto seja recompilado a partir do zero e que todos os testes sejam executados em um ambiente atualizado.
