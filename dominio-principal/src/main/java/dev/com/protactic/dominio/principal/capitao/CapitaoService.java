@@ -37,7 +37,6 @@ public class CapitaoService {
             if (melhor == null || mesesNoClube(j) > mesesNoClube(melhor)) {
                 melhor = j;
             } else if (mesesNoClube(j) == mesesNoClube(melhor)) {
-                // empate total -> não define ninguém
                 melhor = null;
             }
         }

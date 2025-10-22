@@ -1,7 +1,7 @@
 package dev.com.protactic.mocks;
 
 import dev.com.protactic.dominio.principal.Clube;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IClubeRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ClubeMock implements IClubeRepository {
+public class ClubeMock implements ClubeRepository {
     
     private final Map<Integer, Clube> clubes = new ConcurrentHashMap<>();
     

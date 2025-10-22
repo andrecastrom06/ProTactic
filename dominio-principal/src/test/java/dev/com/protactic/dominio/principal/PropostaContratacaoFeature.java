@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import dev.com.protactic.dominio.principal.proposta.PropostaService;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IClubeRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IContratoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IJogadorRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.mocks.PropostaMock;
 import dev.com.protactic.mocks.ClubeMock;
 import dev.com.protactic.mocks.ContratoMock;
@@ -32,9 +32,9 @@ public class PropostaContratacaoFeature {
     private Exception excecao;
 
     private PropostaMock propostaMock; 
-    private IContratoRepository contratoRepo;
-    private IJogadorRepository jogadorRepo;
-    private IClubeRepository clubeRepo;
+    private ContratoRepository contratoRepo;
+    private JogadorRepository jogadorRepo;
+    private ClubeRepository clubeRepo;
     
     private PropostaService propostaService;
     

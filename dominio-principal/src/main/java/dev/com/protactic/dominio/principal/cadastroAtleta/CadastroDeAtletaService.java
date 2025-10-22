@@ -6,13 +6,13 @@ import java.util.Date;
 
 public class CadastroDeAtletaService {
 
-    private final IJogadorRepository jogadorRepo;
-    private final IClubeRepository clubeRepo;
+    private final JogadorRepository jogadorRepo;
+    private final ClubeRepository clubeRepo;
     
     
-    private final IContratoRepository contratoRepo; 
+    private final ContratoRepository contratoRepo; 
 
-    public CadastroDeAtletaService(IJogadorRepository jogadorRepo, IClubeRepository clubeRepo, IContratoRepository contratoRepo) {
+    public CadastroDeAtletaService(JogadorRepository jogadorRepo, ClubeRepository clubeRepo, ContratoRepository contratoRepo) {
         this.jogadorRepo = jogadorRepo;
         this.clubeRepo = clubeRepo;
         this.contratoRepo = contratoRepo;

@@ -10,9 +10,9 @@ import dev.com.protactic.mocks.CapitaoMock;
 import dev.com.protactic.mocks.ClubeMock;
 import dev.com.protactic.mocks.ContratoMock;
 import dev.com.protactic.mocks.JogadorMock;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IClubeRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IContratoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IJogadorRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 
 
 import java.time.LocalDate;
@@ -27,9 +27,9 @@ public class DefinicaoCapitaoFeature {
     private CapitaoService service;
     private CapitaoRepository repo;
 
-    private IClubeRepository clubeRepo;
-    private IJogadorRepository jogadorRepo;
-    private IContratoRepository contratoRepo;
+    private ClubeRepository clubeRepo;
+    private JogadorRepository jogadorRepo;
+    private ContratoRepository contratoRepo;
     
     private Clube clubeDoTeste; 
 
@@ -42,18 +42,15 @@ public class DefinicaoCapitaoFeature {
         
         clubeRepo = new ClubeMock();
         jogadorRepo = new JogadorMock();
-        contratoRepo = new ContratoMock(); // Mock que criamos antes
+        contratoRepo = new ContratoMock();
 
         service = new CapitaoService(repo); 
         jogadores = new ArrayList<>();
     }
 
-    //Cenários com um jogador
-
     @Dado("um jogador chamado {string}")
     public void criarJogador(String nome) {
         jogador = new Jogador(nome);
-        // MUDANÇA: Salvar o jogador no mock para ele ganhar um ID
         jogadorRepo.salvar(jogador); 
         jogadores.clear();
         jogadores.add(jogador);
@@ -63,18 +60,16 @@ public class DefinicaoCapitaoFeature {
     public void setContrato(String status, String clubeNome) {
         
         clubeDoTeste = new Clube(clubeNome);
-        clubeRepo.salvar(clubeDoTeste); // Agora o clubeDoTeste tem um ID
+        clubeRepo.salvar(clubeDoTeste);
 
         Contrato contrato = new Contrato(clubeDoTeste.getId());
         contrato.setStatus("ativo".equalsIgnoreCase(status) ? "ATIVO" : "INATIVO");
-        contratoRepo.salvar(contrato); // Agora o contrato tem um ID
+        contratoRepo.salvar(contrato);
 
-        // 3. Ligar os IDs ao jogador
         jogador.setClubeId(clubeDoTeste.getId());
         jogador.setContratoId(contrato.getId());
         jogador.setContratoAtivo("ativo".equalsIgnoreCase(status));
         
-        // 4. Salvar o jogador atualizado
         jogadorRepo.salvar(jogador);
     }
 
@@ -82,13 +77,13 @@ public class DefinicaoCapitaoFeature {
     public void setDataChegada(String dataTexto) {
         LocalDate data = LocalDate.parse(dataTexto, DF);
         jogador.setChegadaNoClube(data);
-        jogadorRepo.salvar(jogador); // Salvar a mudança
+        jogadorRepo.salvar(jogador);
     }
 
     @E("sua minutagem é {string}")
     public void setMinutagem(String minutagem) {
         jogador.setMinutagem(minutagem);
-        jogadorRepo.salvar(jogador); // Salvar a mudança
+        jogadorRepo.salvar(jogador);
     }
 
     @Quando("o treinador tenta definir {string} como capitão")
@@ -98,24 +93,20 @@ public class DefinicaoCapitaoFeature {
 
     @Então("{string} deve ser definido como capitão do {string}")
     public void verificaCapitao(String nome, String clube) {
-        // MUDANÇA: Buscar o capitão pelo ID do clube, não pelo nome
         Jogador c = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
         assertNotNull(c, "Capitão não foi salvo");
         assertTrue(c.isCapitao(), "Flag de capitão falsa");
         assertEquals(nome, c.getNome(), "Nome do capitão não bate");
 
-        //verificação de persistência
         Jogador persistido = ((CapitaoMock) repo).getUltimoCapitaoSalvo();
         assertNotNull(persistido, "O capitão não foi persistido no mock");
         assertEquals(nome, persistido.getNome(), "O capitão persistido não corresponde ao esperado");
         
-        // MUDANÇA: Verificar o ID do clube, não o nome
         assertEquals(clubeDoTeste.getId(), persistido.getClubeId(), "O capitão persistido está associado ao clube errado");
     }
 
     @Então("{string} não deve ser definido como capitão do {string}")
     public void verificaNaoCapitao(String nome, String clube) {
-        // MUDANÇA: Buscar o capitão pelo ID do clube
         Jogador c = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
         if (c != null) {
             assertFalse(c.getNome().equals(nome) && c.isCapitao(),
@@ -124,19 +115,15 @@ public class DefinicaoCapitaoFeature {
             assertNull(c);
         }
 
-        //persistência: nenhum capitão deve ter sido salvo
         assertNull(((CapitaoMock) repo).getUltimoCapitaoSalvo(),
                 "Nenhum capitão deveria ter sido persistido");
     }
-
-    // Cenários com dois ou mais jogadores (desempate)
 
     @Dado("dois jogadores {string} e {string}")
     public void criarJogadores(String n1, String n2) {
         jogadores.clear();
         Jogador j1 = new Jogador(n1);
         Jogador j2 = new Jogador(n2);
-        // MUDANÇA: Salvar ambos para terem IDs
         jogadorRepo.salvar(j1);
         jogadorRepo.salvar(j2);
         jogadores.add(j1);
@@ -145,22 +132,19 @@ public class DefinicaoCapitaoFeature {
 
     @E("ambos possuem contrato {string} com o {string}")
     public void setContratoTodos(String status, String clube) {
-        // MUDANÇA: Criar UM clube e persistir
         clubeDoTeste = new Clube(clube);
-        clubeRepo.salvar(clubeDoTeste); // clubeDoTeste tem ID
+        clubeRepo.salvar(clubeDoTeste);
 
         for (Jogador j : jogadores) {
-            // Criar um contrato NOVO para cada jogador
             Contrato contrato = new Contrato(clubeDoTeste.getId());
             contrato.setStatus("ativo".equalsIgnoreCase(status) ? "ATIVO" : "INATIVO");
-            contratoRepo.salvar(contrato); // contrato tem ID
+            contratoRepo.salvar(contrato);
 
-            // Ligar IDs
             j.setClubeId(clubeDoTeste.getId());
             j.setContratoId(contrato.getId());
             j.setContratoAtivo("ativo".equalsIgnoreCase(status));
             
-            jogadorRepo.salvar(j); // Salvar jogador
+            jogadorRepo.salvar(j);
         }
     }
 
@@ -182,7 +166,7 @@ public class DefinicaoCapitaoFeature {
             } else if (j.getNome().equals(n2)) {
                 j.setChegadaNoClube(data2);
             }
-            jogadorRepo.salvar(j); // Salvar mudança
+            jogadorRepo.salvar(j);
         }
     }
 
@@ -191,7 +175,7 @@ public class DefinicaoCapitaoFeature {
         LocalDate data = LocalDate.parse(dataTexto, DF);
         for (Jogador j : jogadores) {
             j.setChegadaNoClube(data);
-            jogadorRepo.salvar(j); // Salvar mudança
+            jogadorRepo.salvar(j);
         }
     }
 
@@ -202,28 +186,23 @@ public class DefinicaoCapitaoFeature {
 
     @Então("o treinador deve escolher manualmente quem será o capitão do {string}")
     public void escolhaManual(String clube) {
-        // MUDANÇA: Buscar pelo ID
         Jogador c = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
         assertNull(c, "Nenhum capitão deve ser definido em empate total");
-        //persistência: nenhum capitão deve ter sido salvo
         assertNull(((CapitaoMock) repo).getUltimoCapitaoSalvo(),
                 "Nenhum capitão deveria ter sido persistido no mock");
     }
 
     @Então("{string} deve ser definido como capitão do {string} por ter mais tempo de clube")
     public void verificaCapitaoTempo(String nome, String clube) {
-        // MUDANÇA: Buscar pelo ID
         Jogador c = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
         assertNotNull(c, "Capitão deveria ser definido");
         assertTrue(c.isCapitao(), "Flag de capitão falsa");
         assertEquals(nome, c.getNome(), "Capitão com mais tempo não definido corretamente");
         
-        //persistencia: verifica o capitão persistido
         Jogador persistido = ((CapitaoMock) repo).getUltimoCapitaoSalvo();
         assertNotNull(persistido, "O capitão não foi persistido no mock");
         assertEquals(nome, persistido.getNome(), "O capitão persistido não corresponde ao esperado");
         
-        // MUDANÇA: Verificar o ID do clube
         assertEquals(clubeDoTeste.getId(), persistido.getClubeId(), "O capitão persistido está associado ao clube errado");
     }
 }

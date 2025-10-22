@@ -24,15 +24,6 @@ public class CapitaoMock implements CapitaoRepository {
     public Jogador buscarCapitaoPorClube(Integer clubeId) {
         return capitoes.get(clubeId);
     }
-    
-   
-    /*
-    @Override
-    public Jogador buscarCapitaoPorClube(String clube) {
-        System.err.println("AVISO: buscarCapitaoPorClube(String) não é suportado com o novo design de ID.");
-        return null;
-    }
-    */
 
     public Jogador getUltimoCapitaoSalvo() { 
         return ultimoCapitaoSalvo;

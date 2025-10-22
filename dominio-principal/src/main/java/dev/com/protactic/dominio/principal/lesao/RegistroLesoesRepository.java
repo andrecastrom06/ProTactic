@@ -13,14 +13,10 @@ public interface RegistroLesoesRepository {
     void atualizarPermissaoTreino(String atletaId, String permissao);  
     String permissaoTreino(String atletaId);
 
-    // --- Lesão ativa (somente o que a feature precisa) ---
-    /** @return grau da lesão ativa, se existir */
     Optional<Integer> grauLesaoAtiva(String atletaId);
 
-    /** @return "ativa" se houver lesão ativa; "encerrada" ou "nenhuma" caso contrário (implementação decide) */
     String lesaoStatus(String atletaId);
 
-    /** Cria/substitui a lesão ativa para o atleta, com status "ativa". */
     void salvarLesaoAtiva(String atletaId, int grau);
 
     void encerrarLesaoAtiva(String atletaId);

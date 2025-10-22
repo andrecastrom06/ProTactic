@@ -50,27 +50,6 @@ public class RegistroLesoesFeature {
         servico.registrarLesao(atletaId, grau);
     }
 
-    @Então("a lesão é registrada com grau {int} e status {string}")
-    public void lesao_registrada_com_grau_e_status(Integer grau, String status) {
-        String id = atletaCorrente != null ? atletaCorrente : "AT-001";
-        var grauOpt = repo.grauLesaoAtiva(id);
-        assertTrue(grauOpt.isPresent(), "Deveria haver lesão ativa");
-        assertEquals(grau.intValue(), grauOpt.get());
-        assertEquals(status, repo.lesaoStatus(id));
-    }
-
-    @Então("o status do atleta passa a ser {string}")
-    public void status_do_atleta_passa_a_ser(String esperado) {
-        String id = atletaCorrente != null ? atletaCorrente : "AT-001";
-        assertEquals(esperado, repo.statusAtleta(id));
-    }
-
-    @Então("a disponibilidade do atleta para jogos e treinos fica {string}")
-    public void disponibilidade_fica(String esperado) {
-        String id = atletaCorrente != null ? atletaCorrente : "AT-001";
-        assertEquals(esperado, repo.disponibilidadeAtleta(id));
-    }
-
     // ===================== QUANDO =====================
 
     @Quando("tentar registrar uma lesão de grau {int} para o atleta {string}")
@@ -107,7 +86,6 @@ public class RegistroLesoesFeature {
     public void tentar_registrar_nova_lesao_para_atleta(String atletaId) {
         atletaCorrente = atletaId;
         try {
-            // qualquer grau; deve barrar por já existir uma lesão ativa
             servico.registrarLesao(atletaId, 1);
         } catch (Exception e) {
             erro = e;
@@ -151,5 +129,26 @@ public class RegistroLesoesFeature {
             erro.getMessage().contains("lesão ativa de grau " + grau),
             "Mensagem deveria indicar grau ativo: " + erro.getMessage()
         );
+    }
+
+    @Então("a lesão é registrada com grau {int} e status {string}")
+    public void lesao_registrada_com_grau_e_status(Integer grau, String status) {
+        String id = atletaCorrente != null ? atletaCorrente : "AT-001";
+        var grauOpt = repo.grauLesaoAtiva(id);
+        assertTrue(grauOpt.isPresent(), "Deveria haver lesão ativa");
+        assertEquals(grau.intValue(), grauOpt.get());
+        assertEquals(status, repo.lesaoStatus(id));
+    }
+
+    @Então("o status do atleta passa a ser {string}")
+    public void status_do_atleta_passa_a_ser(String esperado) {
+        String id = atletaCorrente != null ? atletaCorrente : "AT-001";
+        assertEquals(esperado, repo.statusAtleta(id));
+    }
+
+    @Então("a disponibilidade do atleta para jogos e treinos fica {string}")
+    public void disponibilidade_fica(String esperado) {
+        String id = atletaCorrente != null ? atletaCorrente : "AT-001";
+        assertEquals(esperado, repo.disponibilidadeAtleta(id));
     }
 }

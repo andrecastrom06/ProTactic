@@ -8,9 +8,9 @@ import dev.com.protactic.mocks.ContratoMock;
 import dev.com.protactic.mocks.JogadorMock;
 import dev.com.protactic.mocks.ClubeMock;
 
-import dev.com.protactic.dominio.principal.cadastroAtleta.IClubeRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IContratoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.IJogadorRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.dominio.principal.dispensa.DispensaService;
 
 public class DispensaJogadorFeature {
@@ -19,9 +19,9 @@ public class DispensaJogadorFeature {
     private Clube clube;
     private String mensagemErro;
     
-    private IContratoRepository contratoRepo;
-    private IJogadorRepository jogadorRepo;
-    private IClubeRepository clubeRepo;
+    private ContratoRepository contratoRepo;
+    private JogadorRepository jogadorRepo;
+    private ClubeRepository clubeRepo;
     private DispensaService dispensaService;
 
     private Integer contratoId;

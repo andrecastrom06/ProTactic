@@ -8,7 +8,6 @@ public class PremiacaoService {
     public Premiacao definirVencedor(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores) {
         Jogador vencedor = null;
 
-        // Primeiro, filtra apenas os que têm nota >= 6
         List<Jogador> candidatos = new ArrayList<>();
         for (Jogador j : jogadores) {
             if (j.getNota() >= 6) {
@@ -21,10 +20,8 @@ public class PremiacaoService {
             return null;
         }
 
-        // Encontra a maior nota
         double maiorNota = candidatos.stream().mapToDouble(Jogador::getNota).max().orElse(0);
 
-        // Filtra apenas os jogadores com essa maior nota
         List<Jogador> empatados = new ArrayList<>();
         for (Jogador j : candidatos) {
             if (j.getNota() == maiorNota) {
@@ -32,17 +29,14 @@ public class PremiacaoService {
             }
         }
 
-        // Caso especial: se a maior média for exatamente 6.0
         if (maiorNota == 6.0) {
-            vencedor = empatados.get(0); // qualquer com 6.0 pode ser o vencedor
+            vencedor = empatados.get(0);
         }
-        // Se houve empate, decide pelo menor desvio padrão
         else if (empatados.size() > 1) {
             vencedor = empatados.stream()
                     .min(Comparator.comparingDouble(Jogador::getDesvioPadrao))
                     .orElse(null);
         } 
-        // Caso normal: apenas um tem a maior nota
         else {
             vencedor = empatados.get(0);
         }

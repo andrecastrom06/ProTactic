@@ -6,7 +6,6 @@ import java.util.Objects;
 public class Proposta {
     private int id;
 
-    // MUDANÇA: Referências diretas a Agregados trocadas por IDs.
     private Integer propositorId; 
     private Integer receptorId;   
     private Integer jogadorId;    
@@ -63,13 +62,11 @@ public class Proposta {
     public Date getData() { return data; }
     public void setData(Date data) { this.data = data; }
 
-    // MUDANÇA: Adicionado equals/hashCode por ID
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Proposta proposta = (Proposta) o;
-        // Se os IDs não foram setados (novos objetos), não podem ser iguais
         if (this.id == 0 || proposta.id == 0) return false;
         return id == proposta.id;
     }

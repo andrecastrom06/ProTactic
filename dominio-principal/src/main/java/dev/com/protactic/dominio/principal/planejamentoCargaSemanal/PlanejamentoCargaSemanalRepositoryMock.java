@@ -10,7 +10,7 @@ public class PlanejamentoCargaSemanalRepositoryMock {
     private final Map<String, TreinoSemanal> treinos = new HashMap<>();
 
     public void salvarTreino(TreinoSemanal treino) {
-        String nome = treino.getJogador().getNome(); // usa getNome() da entidade Jogador
+        String nome = treino.getJogador().getNome();
         treinos.put(nome, treino);
     }
 

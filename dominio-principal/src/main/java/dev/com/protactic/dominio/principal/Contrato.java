@@ -8,11 +8,8 @@ public class Contrato {
     private double salario;
     private String status;
     
-    // MUDANÇA: Referência direta ao Agregado Clube substituída por seu ID.
-    // private Clube clube;
     private Integer clubeId; 
 
-    // MUDANÇA: Construtor atualizado para receber ID.
     public Contrato(int id, int duracaoMeses, double salario, String status, Integer clubeId) {
         this.id = id;
         this.duracaoMeses = duracaoMeses;
@@ -21,14 +18,12 @@ public class Contrato {
         this.clubeId = clubeId;
     }
 
-    // MUDANÇA: Construtor atualizado para receber ID.
     public Contrato(Integer clubeId) {
         this.clubeId = clubeId;
-        this.status = "ATIVO"; // Define um status padrão
+        this.status = "ATIVO";
     }
 
     public boolean isExpirado() {
-        // A lógica de negócio interna permanece a mesma
         return !"ATIVO".equalsIgnoreCase(this.status);
     }
 
@@ -64,7 +59,6 @@ public class Contrato {
         this.status = status;
     }
 
-    // MUDANÇA: Getter e Setter para o ID do clube.
     public Integer getClubeId() {
         return clubeId;
     }
@@ -73,7 +67,6 @@ public class Contrato {
         this.clubeId = clubeId;
     }
 
-    // MUDANÇA: Adicionado equals/hashCode por ID, para consistência de Entidade.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

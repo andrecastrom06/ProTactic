@@ -30,7 +30,7 @@ public class SessoesTreinoTaticoFeature {
         jogadores.clear();
         partidaAtual = null;
         jogadorAtual = null;
-        repo.limpar(); //garante repositório limpo entre cenários
+        repo.limpar();
     }
 
     @Dado("que existe o jogo {string} no calendário")
@@ -112,7 +112,6 @@ public class SessoesTreinoTaticoFeature {
                 .anyMatch(s -> s.getNome().equalsIgnoreCase(sessaoCriada.getNome())),
                 "A sessão criada não foi encontrada no repositório");
 
-        //verificação de persistência
         SessaoTreino persistida = repo.getUltimaSessaoSalva();
         assertNotNull(persistida, "A sessão não foi persistida no mock");
         assertEquals(sessaoCriada.getNome(), persistida.getNome(), "Sessão persistida incorreta");
@@ -125,7 +124,6 @@ public class SessoesTreinoTaticoFeature {
         assertNull(sessaoCriada, "Nenhuma sessão deveria ser criada");
         assertNotNull(excecao, "Uma exceção deveria ter sido lançada");
 
-        //persistência: não deve haver nenhuma sessão salva
         assertNull(repo.getUltimaSessaoSalva(),
                 "Nenhuma sessão deveria ter sido persistida no mock");
     }
@@ -151,7 +149,6 @@ public class SessoesTreinoTaticoFeature {
                 .anyMatch(s -> s.getNome().equalsIgnoreCase(nomeSessao)
                         && s.getPartida().getDescricao().equalsIgnoreCase(nomeJogo)),
                 "Sessão não encontrada ou vinculada incorretamente ao jogo");
-        //persistência: confirma que a última salva pertence ao jogo certo
         SessaoTreino persistida = repo.getUltimaSessaoSalva();
         assertNotNull(persistida, "Nenhuma sessão persistida");
         assertEquals(nomeJogo, persistida.getPartida().getDescricao(),
@@ -162,7 +159,6 @@ public class SessoesTreinoTaticoFeature {
     public void verificarMensagem(String mensagemEsperada) {
         assertNotNull(excecao, "Era esperada uma exceção");
         assertEquals(mensagemEsperada, excecao.getMessage(), "Mensagem de erro incorreta");
-        //persistência: não deve haver sessão salva em erro
         assertNull(repo.getUltimaSessaoSalva(),
                 "Nenhuma sessão deveria ter sido persistida em caso de erro");
     }

@@ -64,7 +64,7 @@ public class RegistroCartoesSuspensoesFeature {
     @Quando("o analista registra um cartão {string} para o atleta")
     public void o_analista_registra_um_cartao_para_o_atleta(String tipoCartao) {
         service.registrarCartao(atleta, tipoCartao);
-        var status = service.verificarSuspensao(atleta); // ✅ regra delegada ao service
+        var status = service.verificarSuspensao(atleta);
         this.suspenso = status.isSuspenso();
         this.disponivel = contratoAtivo && !suspenso;
     }

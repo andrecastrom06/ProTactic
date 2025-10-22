@@ -15,11 +15,9 @@ public class RegistroLesoesMock implements RegistroLesoesRepository {
         String disponibilidade = "disponível";    
         String permissaoTreino = "liberada";      
 
-        // Lesão
         Integer lesaoGrau = null;               
         String  lesaoStatus = "nenhuma";        
 
-        // Plano
         Integer planoDias = null;             
     }
 
@@ -29,7 +27,6 @@ public class RegistroLesoesMock implements RegistroLesoesRepository {
         return atletas.computeIfAbsent(atletaId, k -> new EstadoAtleta());
     }
 
-    // --- Atleta/Contrato/Exibição ---
     @Override public void cadastrarAtleta(String atletaId) { st(atletaId); }
 
     @Override public void definirContratoAtivo(String atletaId, boolean ativo) { st(atletaId).contratoAtivo = ativo; }
@@ -48,7 +45,6 @@ public class RegistroLesoesMock implements RegistroLesoesRepository {
 
     @Override public String permissaoTreino(String atletaId) { return st(atletaId).permissaoTreino; }
 
-    // --- Lesão ---
     @Override public Optional<Integer> grauLesaoAtiva(String atletaId) { return Optional.ofNullable(st(atletaId).lesaoGrau); }
 
     @Override public String lesaoStatus(String atletaId) { return st(atletaId).lesaoStatus; }
@@ -65,11 +61,9 @@ public class RegistroLesoesMock implements RegistroLesoesRepository {
         s.lesaoGrau = null;
     }
 
-    // --- Plano ---
     @Override public Optional<Integer> planoDias(String atletaId) { return Optional.ofNullable(st(atletaId).planoDias); }
 
     @Override public void salvarPlanoDias(String atletaId, int dias) { st(atletaId).planoDias = dias; }
 
-    // --- Util ---
     @Override public void limpar() { atletas.clear(); }
 }
