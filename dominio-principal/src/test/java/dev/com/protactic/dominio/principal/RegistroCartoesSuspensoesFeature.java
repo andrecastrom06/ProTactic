@@ -1,6 +1,5 @@
 package dev.com.protactic.dominio.principal;
 
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -57,7 +56,7 @@ public class RegistroCartoesSuspensoesFeature {
 
     @Dado("a suspensão anterior do atleta foi limpa")
     public void a_suspensao_anterior_do_atleta_foi_limpa() {
-        repository.limparCartoes(atleta);
+        service.limparCartoes(atleta);
         this.suspenso = false;
         this.disponivel = this.contratoAtivo;
     }
@@ -65,7 +64,9 @@ public class RegistroCartoesSuspensoesFeature {
     @Quando("o analista registra um cartão {string} para o atleta")
     public void o_analista_registra_um_cartao_para_o_atleta(String tipoCartao) {
         service.registrarCartao(atleta, tipoCartao);
-        aplicarRegrasSuspensao();
+        var status = service.verificarSuspensao(atleta); // ✅ regra delegada ao service
+        this.suspenso = status.isSuspenso();
+        this.disponivel = contratoAtivo && !suspenso;
     }
 
     @Quando("o analista executa o processo de limpeza de suspensões")
@@ -75,38 +76,20 @@ public class RegistroCartoesSuspensoesFeature {
         this.disponivel = this.contratoAtivo;
     }
 
-    private void aplicarRegrasSuspensao() {
-        List<RegistroCartao> cartoes = repository.buscarCartoesPorAtleta(atleta);
-        long amarelos = cartoes.stream().filter(c -> "amarelo".equals(c.getTipo())).count();
-        long vermelhos = cartoes.stream().filter(c -> "vermelho".equals(c.getTipo())).count();
-
-        if (contratoAtivo) {
-            if (amarelos >= 3 || vermelhos >= 1) {
-                this.suspenso = true;
-                this.disponivel = false;
-            } else {
-                this.suspenso = false;
-                this.disponivel = true;
-            }
-        } else {
-            this.disponivel = false;
-        }
-    }
-
     @Então("o atleta deve ter {int} cartões amarelos acumulados")
     public void validar_cartoes_amarelos(Integer esperado) {
         long amarelos = repository.buscarCartoesPorAtleta(atleta)
-            .stream().filter(c -> "amarelo".equals(c.getTipo())).count();
-        assertEquals(esperado.longValue(), amarelos, 
-            "Quantidade de cartões amarelos não corresponde ao esperado para " + atleta);
+                .stream().filter(c -> "amarelo".equals(c.getTipo())).count();
+        assertEquals(esperado.longValue(), amarelos,
+                "Quantidade de cartões amarelos não corresponde ao esperado para " + atleta);
     }
 
     @Então("o atleta deve ter {int} cartões vermelhos recebidos")
     public void validar_cartoes_vermelhos(Integer esperado) {
         long vermelhos = repository.buscarCartoesPorAtleta(atleta)
-            .stream().filter(c -> "vermelho".equals(c.getTipo())).count();
+                .stream().filter(c -> "vermelho".equals(c.getTipo())).count();
         assertEquals(esperado.longValue(), vermelhos,
-            "Quantidade de cartões vermelhos não corresponde ao esperado para " + atleta);
+                "Quantidade de cartões vermelhos não corresponde ao esperado para " + atleta);
     }
 
     @Então("o atleta deve permanecer {string} para escalação")
@@ -115,7 +98,7 @@ public class RegistroCartoesSuspensoesFeature {
     public void validar_disponibilidade(String status) {
         boolean esperadoDisponivel = "disponível".equals(status);
         assertEquals(esperadoDisponivel, this.disponivel,
-            "Status de disponibilidade não corresponde ao esperado para " + atleta);
+                "Status de disponibilidade não corresponde ao esperado para " + atleta);
     }
 
     @Então("o atleta deve ficar {string} para a próxima escalação")
@@ -123,13 +106,13 @@ public class RegistroCartoesSuspensoesFeature {
     public void validar_suspensao(String status) {
         boolean esperadoSuspenso = "suspenso".equals(status);
         assertEquals(esperadoSuspenso, this.suspenso,
-            "Status de suspensão não corresponde ao esperado para " + atleta);
+                "Status de suspensão não corresponde ao esperado para " + atleta);
     }
 
     @Então("o atleta deve permanecer {string} por conta do contrato inativo")
     public void validar_indisponibilidade_contrato(String status) {
         boolean esperadoIndisponivel = "indisponível".equals(status);
         assertEquals(esperadoIndisponivel, !this.disponivel,
-            "Status de indisponibilidade por contrato inativo não corresponde ao esperado para " + atleta);
+                "Status de indisponibilidade por contrato inativo não corresponde ao esperado para " + atleta);
     }
 }
