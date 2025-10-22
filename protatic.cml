@@ -1,9 +1,5 @@
 Domain Protactic {}
 
-
-ContextMap {
-    contains Protactic
-}
 BoundedContext Protactic implements Protactic {
 
 	Aggregate Clube {
