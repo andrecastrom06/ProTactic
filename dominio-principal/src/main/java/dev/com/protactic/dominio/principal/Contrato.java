@@ -1,29 +1,36 @@
 package dev.com.protactic.dominio.principal;
 
+import java.util.Objects;
+
 public class Contrato {
     private int id;
     private int duracaoMeses;
     private double salario;
     private String status;
-    private Clube clube;
+    
+    // MUDANÇA: Referência direta ao Agregado Clube substituída por seu ID.
+    // private Clube clube;
+    private Integer clubeId; 
 
-    public Contrato(int id, int duracaoMeses, double salario, String status, Clube clube) {
+    // MUDANÇA: Construtor atualizado para receber ID.
+    public Contrato(int id, int duracaoMeses, double salario, String status, Integer clubeId) {
         this.id = id;
         this.duracaoMeses = duracaoMeses;
         this.salario = salario;
         this.status = status;
-        this.clube = clube;
+        this.clubeId = clubeId;
     }
 
-    public Contrato(Clube clube) {
-        this.clube = clube;
-        this.status = "ATIVO";
+    // MUDANÇA: Construtor atualizado para receber ID.
+    public Contrato(Integer clubeId) {
+        this.clubeId = clubeId;
+        this.status = "ATIVO"; // Define um status padrão
     }
 
     public boolean isExpirado() {
+        // A lógica de negócio interna permanece a mesma
         return !"ATIVO".equalsIgnoreCase(this.status);
     }
-
 
     public int getId() {
         return id;
@@ -57,12 +64,27 @@ public class Contrato {
         this.status = status;
     }
 
-    public Clube getClube() {
-        return clube;
-    }
-    public void setClube(Clube clube) {
-        this.clube = clube;
+    // MUDANÇA: Getter e Setter para o ID do clube.
+    public Integer getClubeId() {
+        return clubeId;
     }
 
-    
+    public void setClubeId(Integer clubeId) {
+        this.clubeId = clubeId;
+    }
+
+    // MUDANÇA: Adicionado equals/hashCode por ID, para consistência de Entidade.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contrato contrato = (Contrato) o;
+        if (this.id == 0 || contrato.id == 0) return false;
+        return id == contrato.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

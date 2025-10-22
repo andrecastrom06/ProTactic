@@ -8,19 +8,31 @@ import java.util.Map;
 
 public class CapitaoMock implements CapitaoRepository {
 
-    private final Map<String, Jogador> capitoes = new HashMap<>();
+    private final Map<Integer, Jogador> capitoes = new HashMap<>();
     private Jogador ultimoCapitaoSalvo;
 
     @Override
     public void salvarCapitao(Jogador jogador) {
-        capitoes.put(jogador.getClube().getNome(), jogador);
-        this.ultimoCapitaoSalvo = jogador;
+        if (jogador.getClubeId() != null) {
+            capitoes.put(jogador.getClubeId(), jogador);
+            this.ultimoCapitaoSalvo = jogador;
+        }
     }
 
+    
+    @Override
+    public Jogador buscarCapitaoPorClube(Integer clubeId) {
+        return capitoes.get(clubeId);
+    }
+    
+   
+    /*
     @Override
     public Jogador buscarCapitaoPorClube(String clube) {
-        return capitoes.get(clube);
+        System.err.println("AVISO: buscarCapitaoPorClube(String) não é suportado com o novo design de ID.");
+        return null;
     }
+    */
 
     public Jogador getUltimoCapitaoSalvo() { 
         return ultimoCapitaoSalvo;

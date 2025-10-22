@@ -5,32 +5,32 @@ BoundedContext Protactic implements Protactic {
 	Aggregate Clube {
 		Entity Clube {
 			aggregateRoot
-
 			int id;
-			-Treinador treinador;
-			-Analista analista;
-			-Preparador preparador;
-			-Competicao competicao;
+			Integer treinadorId;
+			Integer analistaId;
+			Integer preparadorId;
+			Integer competicaoId;
 			String nome;
 			String cidadeEstado;
 			String estadio;
-			-Jogador capitao;
-			List@Jogador> jogadores;
+			Integer capitaoId;
+			List<Integer> jogadorIds;
 		}
 	
 		Repository ClubeRepository {
 			salvar(@Clube clube);
 			buscarPorNome(String nome);
 			List<@Clube> listarTodos();
+			@Clube buscarPorId(Integer id);
 		}
 
 		Repository RegistroInscricaoRepository {
 			salvar(@InscricaoAtleta inscricao);
-			@InscricaoAtleta buscarPorAtletaECompeticao(@Jogador jogador, @Competicao competicao);
+			@InscricaoAtleta buscarPorAtletaECompeticao(Integer jogadorId, Integer competicaoId);
 			List<@InscricaoAtleta> listarTodas();
 		}
 		Service RegistroInscricaoService {
-    		@InscricaoAtleta registrarInscricao(@Jogador jogador, @Competicao competicao);
+    		@InscricaoAtleta registrarInscricao(Integer jogadorId, Integer competicaoId);
 		}
 		
 		Service CadastroDeAtletaService {
@@ -38,14 +38,13 @@ BoundedContext Protactic implements Protactic {
 		}
 	}
 	
-	Aggregate Jogador{
+	Aggregate Jogador {
 		Entity Jogador {
 			aggregateRoot
-
 			int id;
-			-Contrato contrato;
-			-Clube clube;
-			-Competicao competicao;
+			Integer contratoId;
+			Integer clubeId;
+			Integer competicaoId;
 			String nome;
 			int idade;
 			String posicao;
@@ -58,22 +57,22 @@ BoundedContext Protactic implements Protactic {
 			String minutagem;
 			LocalDate chegadaNoClube;
 			boolean capitao;
-			int grauLesao;            
-			boolean contratoAtivo;   
+			int grauLesao;
+			boolean contratoAtivo;
 			boolean saudavel;
-			double desvioPadrao;      
+			double desvioPadrao;
 		}
 
-		Service CapitaoService{
-			podeSerCapitao(@Jogador jogador)
-			mesesNoClube(@Jogador jogador)
-			definirCapitao(@Jogador jogador)
-			definirCapitaoEntreJogadores(@List<Jogador> jogadores)
+		Service CapitaoService {
+			podeSerCapitao(@Jogador jogador);
+			mesesNoClube(@Jogador jogador);
+			definirCapitao(@Jogador jogador);
+			definirCapitaoEntreJogadores(@List<Jogador> jogadores);
 		 }
 
-		Repository CapitaoRepository{
-			salvarCapitao(@Jogador jogador)
-			buscarCapitaoPorClube(String clube)
+		Repository CapitaoRepository {
+			salvarCapitao(@Jogador jogador);
+			buscarCapitaoPorClube(Integer clubeId);
 		}
 
 		Repository JogadorRepository {
@@ -81,31 +80,29 @@ BoundedContext Protactic implements Protactic {
 			buscarPorNome(String nome);
 			existe(String nome);
 			List<@Jogador> listarTodos();
+			@Jogador buscarPorId(Integer id);
 		}
-
-
 	}
 
 	Aggregate Contrato {
 		Entity Contrato {
 			aggregateRoot
-			
 			int id;
 			int duracaoMeses;
 			double salario;
 			String status;
-			-Clube clube;
+			Integer clubeId;
 		}
 
 		Repository ContratoRepository {
-            saveContrato(@Contrato contrato);
-            findContratoById(int id);
-            List<@Contrato> findAllContratos();
-        }   
+            saveContrato(@Contrato contrato);
+            findContratoById(Integer id);
+            List<@Contrato> findAllContratos();
+        }   
 		
 		Service DispensaService {
 			jogadorSaudavel(@Jogador jogador);
-            dispensarJogador(@Jogador jogador);
+            dispensarJogador(@Jogador jogador);
 		}
 		
 		Service ContratacaoServico {
@@ -116,24 +113,23 @@ BoundedContext Protactic implements Protactic {
 	Aggregate Proposta {
 		Entity Proposta {
 			aggregateRoot
-
 			int id;
-			-Clube propositor;
-			-Clube receptor;
-			-Jogador jogador;
+			Integer propositorId;
+			Integer receptorId;
+			Integer jogadorId;
 			String status;
 			double valor;
 			Date data;
 		}
 
 		Repository PropostaRepository {
-            saveProposta(@Proposta proposta);
-            findPropostaById(int id);
-            List<@Proposta> findAllPropostas();
-        }
+            saveProposta(@Proposta proposta);
+            findPropostaById(Integer id);
+            List<@Proposta> findAllPropostas();
+        }
 		
 		Service PropostaService {
-            criarProposta(@Jogador jogador, @Clube clube, Date data);
+            criarProposta(@Jogador jogador, @Clube clube, Date data);
 			estaDentroDaJanelaDeTransferencia(Date data);
 		}
 	}
@@ -141,13 +137,11 @@ BoundedContext Protactic implements Protactic {
 	Aggregate Premiacao {
 		Entity Premiacao {
 			aggregateRoot
-			
 			int id;
-			-Jogador jogador;
+			Integer jogadorId;
 			String nome;
 			Date dataPremiacao;
 		}
-
 
 		Repository PremiacaoRepository {
 			criarPremiacao(String nomePremiacao, Date dataPremiacao);
@@ -155,14 +149,12 @@ BoundedContext Protactic implements Protactic {
 		
 		Service PremiacaoService {
 			definirVencedor(String nomePremiacao, Date dataPremiacao, List<@Jogador> jogadores);
-
 		}
 	}
 	
 	Aggregate Competicao {
 		Entity Competicao {
 			aggregateRoot
-			
 			int id;
 			String nome;
 			Date dataInicio;
@@ -173,23 +165,20 @@ BoundedContext Protactic implements Protactic {
 	Aggregate Partida {
 		Entity Partida {
 			aggregateRoot
-			
 			int id;
-			-Clube clubeCasa;
-			-Clube clubeVisitante;
+			Integer clubeCasaId;
+			Integer clubeVisitanteId;
 			Date dataJogo;
 			String hora;
 			int placarClubeCasa;
 			int placarClubeVisitante;
 		}
-
 	}
 	
 	Aggregate Nota {
 		Entity Nota {
 			aggregateRoot
-			
-			 String jogoId;
+			String jogoId;
 			String jogadorId;
 			BigDecimal nota;
 			String observacao;
@@ -201,24 +190,23 @@ BoundedContext Protactic implements Protactic {
 			registrarParticipacao(String jogoId, String jogadorId, boolean atuou);
 			atuouNoJogo(String jogoId, String jogadorId);
 			registrarJogadorNoElenco(String jogadorId);
-			jogadorExisteNoElenco(String jogadorId);			
-        }
+			jogadorExisteNoElenco(String jogadorId);
+        }
 		
 		Service NotaService {
-            atribuirNotaEObservacao(String jogoId, String jogadorId, BigDecimal nota, String observacao);
+            atribuirNotaEObservacao(String jogoId, String jogadorId, BigDecimal nota, String observacao);
 			registrarObservacao(String jogoId, String jogadorId, String observacao);
 			Optional<Nota> obterRegistro(String jogoId, String jogadorId);
 			registrarJogadorNoElenco(String jogadorId);
 			registrarParticipacao(String jogoId, String jogadorId, boolean atuou);
-        }
+        }
 	}
 	
 	Aggregate Fisico {
 		Entity Fisico {
 			aggregateRoot
-
 			int id;
-			-Jogador jogador;
+			Integer jogadorId;
 			String nome;
 			String musculo;
 			String intensidade;
@@ -229,35 +217,31 @@ BoundedContext Protactic implements Protactic {
 
 		Entity Lesao {
 			int id;
-			-Jogador jogador;
+			Integer jogadorId;
 			boolean lesionado;
 			String tempo;
 			String plano;
 			int grau;
 		}
-		
-		
-    }
+    }
 
-	Aggregate Suspensao{
-		Entity Suspensao{
+	Aggregate Suspensao {
+		Entity Suspensao {
 			aggregateRoot
-
 			int id;
-			-Jogador jogador;
+			Integer jogadorId;
 			boolean suspenso;
 			int amarelo;
 			int vermelho;
 		}
 
 		Entity RegistroCartao {
-        int id;
-        -Jogador jogador; 
-        String tipo; 
-        
-    	}
+        	int id;
+        	Integer jogadorId;
+        	String tipo;
+    	}
 
-		Repository RegistroCartoesRepository{
+		Repository RegistroCartoesRepository {
 			salvarCartao(@RegistroCartao cartao);
 			List<@RegistroCartao> buscarCartoesPorAtleta(String atleta);
 			limparCartoes(@String atleta);
@@ -268,13 +252,11 @@ BoundedContext Protactic implements Protactic {
 			verificarSuspensao(@Jogador jogador);
 			limparCartoes(@Jogador jogador);
 		}
-
 	}
 	
 	Aggregate Usuario {
 		Entity Usuario {
 			aggregateRoot
-			
 			int id;
 			String login;
 			String senha;
@@ -282,64 +264,63 @@ BoundedContext Protactic implements Protactic {
 		}
 	}
 	
-	Aggregate SuporteTecnico {
-		Entity Analista {}
-		Entity Preparador {}
-		Entity Treinador {}
-		Entity Tatico {}
+	Aggregate Treinador {
+		Entity Treinador { aggregateRoot int id; }
 	}
-	
+    Aggregate Analista {
+        Entity Analista { aggregateRoot int id; }
+    }
+    Aggregate Preparador {
+        Entity Preparador { aggregateRoot int id; }
+    }
+    Aggregate Tatico {
+        Entity Tatico { aggregateRoot int id; }
+    }
 
 	Aggregate Escalacao {
 		Entity Escalacao {
 			aggregateRoot
-
 			int id;
-			-Partida partida;
+			Integer partidaId;
 			String esquema;
-			List<@Jogador> jogadores;
+			List<Integer> jogadorIds;
 		}
 	}
 
-	Aggregate SessaoTreino{
-		Entity SessaoTreino{
+	Aggregate SessaoTreino {
+		Entity SessaoTreino {
 			aggregateRoot
-
 			String nome;
-			-Partida partida;
-			List<@Jogador> convocados;
+			Integer partidaId;
+			List<Integer> convocadosIds;
 		}
 
-		Service SessaoTreinoService{
-			criarSessao(String nome, @Partida partida, List<@Jogador> jogadores);
+		Service SessaoTreinoService {
+			criarSessao(String nome, Integer partidaId, List<Integer> jogadorIds);
 			List<@SessaoTreino> listarSessoesPorPartida(String partidaNome);
 		}
 
-		Repository SessaoTreinoRepository{
+		Repository SessaoTreinoRepository {
 			salvar(@SessaoTreino sessao);
-    		List<@SessaoTreino> listarPorPartida(String partidaNome);
+    		List<@SessaoTreino> listarPorPartida(String partidaNome);
 		}
 	}
 
-    Aggregate PlanejamentoCargaSemanal {
-        Entity TreinoSemanal {
-            aggregateRoot
-            
-            int id; 
-            -Jogador jogador; 
-            
-            boolean registrado; 
-        }
+    Aggregate PlanejamentoCargaSemanal {
+        Entity TreinoSemanal {
+            aggregateRoot
+            int id;
+            Integer jogadorId;
+            boolean registrado;
+        }
 
-        Repository PlanejamentoCargaSemanalRepository {
-            salvarTreino(@TreinoSemanal treino);
-            buscarPorJogador(String nomeJogador);
-        }
+        Repository PlanejamentoCargaSemanalRepository {
+            salvarTreino(@TreinoSemanal treino);
+            buscarPorJogador(String nomeJogador);
+        }
 
-        Service PlanejamentoCargaSemanalService {
-            registrarTreino(@Jogador jogador);
-        }
-    }
+        Service PlanejamentoCargaSemanalService {
+            registrarTreino(@Jogador jogador);
+        }
+    }
 }
-
-   

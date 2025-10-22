@@ -1,13 +1,21 @@
 package dev.com.protactic.dominio.principal;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Jogador {
 
     private int id;
-    private Contrato contrato;
-    private Clube clube;
-    private Competicao competicao;
+    
+    // MUDANÇA: Referências a outros Agregados (Contrato, Clube, Competicao)
+    // foram trocadas por seus IDs.
+    // private Contrato contrato;
+    // private Clube clube;
+    // private Competicao competicao;
+    private Integer contratoId;
+    private Integer clubeId;
+    private Integer competicaoId;
+
     private String nome;
     private int idade;
     private String posicao;
@@ -24,13 +32,14 @@ public class Jogador {
     private boolean contratoAtivo = false;
     private boolean saudavel;
 
-    public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
+    // MUDANÇA: Construtor atualizado para receber IDs.
+    public Jogador(int id, Integer contratoId, Integer clubeId, Integer competicaoId, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias,
                    String minutagem, LocalDate chegadaNoClube, boolean capitao) {
         this.id = id;
-        this.contrato = contrato;
-        this.clube = clube;
-        this.competicao = competicao;
+        this.contratoId = contratoId;
+        this.clubeId = clubeId;
+        this.competicaoId = competicaoId;
         this.nome = nome;
         this.idade = idade;
         this.posicao = posicao;
@@ -44,25 +53,31 @@ public class Jogador {
         this.capitao = capitao;
     }
 
-    public Jogador(int id, Contrato contrato, Clube clube, Competicao competicao, String nome, int idade,
+    // MUDANÇA: Construtor atualizado para receber IDs.
+    public Jogador(int id, Integer contratoId, Integer clubeId, Integer competicaoId, String nome, int idade,
                    String posicao, String perna, double nota, int jogos, int gols, int assistencias) {
-        this(id, contrato, clube, competicao, nome, idade, posicao, perna, nota, jogos, gols, assistencias,
+        this(id, contratoId, clubeId, competicaoId, nome, idade, posicao, perna, nota, jogos, gols, assistencias,
              null, null, false);
     }
 
-    public Jogador(String nome, Clube clube) {
+    // MUDANÇA: Construtor atualizado para receber IDs.
+    public Jogador(String nome, Integer clubeId) {
         this.nome = nome;
-        this.clube = clube;
-        if (clube != null) {
-            this.contrato = new Contrato(clube);
-        }
+        this.clubeId = clubeId;
+        
+        // REMOVIDO: Lógica perigosa que criava outro Agregado (Contrato)
+        // if (clube != null) {
+        //     this.contrato = new Contrato(clube);
+        // }
+        
         this.minutagem = null;
         this.chegadaNoClube = null;
         this.capitao = false;
     }
 
-    public Jogador(Contrato contrato) {
-        this.contrato = contrato;
+    // MUDANÇA: Construtor atualizado para receber ID.
+    public Jogador(Integer contratoId) {
+        this.contratoId = contratoId;
         this.minutagem = null;
         this.chegadaNoClube = null;
         this.capitao = false;
@@ -78,20 +93,28 @@ public class Jogador {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public Contrato getContrato() { return contrato; }
-    public void setContrato(Contrato contrato) {
-        this.contrato = contrato;
-        if (contrato != null) {
-            this.clube = contrato.getClube();
-        }
+    // MUDANÇA: Getters e Setters para os IDs.
+    public Integer getContratoId() { return contratoId; }
+    public void setContratoId(Integer contratoId) {
+        this.contratoId = contratoId;
+        
+        // REMOVIDO: Lógica perigosa que alterava o estado (clube)
+        // baseado em outro agregado (contrato).
+        // if (contrato != null) {
+        //     this.clube = contrato.getClube();
+        // }
     }
 
-    public Clube getClube() { return clube; }
-    public void setClube(Clube clube) { this.clube = clube; }
+    // MUDANÇA: Getters e Setters para os IDs.
+    public Integer getClubeId() { return clubeId; }
+    public void setClubeId(Integer clubeId) { this.clubeId = clubeId; }
 
-    public Competicao getCompeticao() { return competicao; }
-    public void setCompeticao(Competicao competicao) { this.competicao = competicao; }
+    // MUDANÇA: Getters e Setters para os IDs.
+    public Integer getCompeticaoId() { return competicaoId; }
+    public void setCompeticaoId(Integer competicaoId) { this.competicaoId = competicaoId; }
 
+    // --- Métodos restantes permanecem os mesmos ---
+    
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
@@ -156,16 +179,29 @@ public class Jogador {
         this.saudavel = saudavel;
     }
 
-
-     // Novo atributo
     private double desvioPadrao = 0.0;
 
-    // Getter e Setter para o desvio padrão
     public double getDesvioPadrao() {
         return desvioPadrao;
     }
 
     public void setDesvioPadrao(double desvioPadrao) {
         this.desvioPadrao = desvioPadrao;
+    }
+
+    // MUDANÇA: equals/hashCode agora são baseados no ID (correto para Entidades)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Jogador jogador = (Jogador) o;
+        // Se os IDs não foram setados (novos objetos), não podem ser iguais
+        if (this.id == 0 || jogador.id == 0) return false;
+        return id == jogador.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

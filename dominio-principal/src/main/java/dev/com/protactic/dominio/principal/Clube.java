@@ -2,82 +2,103 @@ package dev.com.protactic.dominio.principal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Clube {
     private int id;
-    private Treinador treinador;
-    private Analista analista;
-    private Preparador preparador;
-    private Competicao competicao;
+    
+    
+    private Integer treinadorId;
+    private Integer analistaId;
+    private Integer preparadorId;
+    private Integer competicaoId;
+
     private String nome;
     private String cidadeEstado;
     private String estadio;
-    private Jogador capitao;
-    
-    private List<Jogador> jogadores;
 
-    public Clube(int id, Treinador treinador, Analista analista, Preparador preparador,
-                 Competicao competicao, String nome, String cidadeEstado, String estadio,
-                 Jogador capitao) {
+    
+    private Integer capitaoId;
+    
+    
+    private List<Integer> jogadorIds;
+
+    
+    public Clube(int id, Integer treinadorId, Integer analistaId, Integer preparadorId,
+                 Integer competicaoId, String nome, String cidadeEstado, String estadio,
+                 Integer capitaoId) {
         this.id = id;
-        this.treinador = treinador;
-        this.analista = analista;
-        this.preparador = preparador;
-        this.competicao = competicao;
+        this.treinadorId = treinadorId;
+        this.analistaId = analistaId;
+        this.preparadorId = preparadorId;
+        this.competicaoId = competicaoId;
         this.nome = nome;
         this.cidadeEstado = cidadeEstado;
         this.estadio = estadio;
-        this.capitao = capitao;
-        this.jogadores = new ArrayList<>();
+        this.capitaoId = capitaoId;
+        this.jogadorIds = new ArrayList<>();
     }
 
     public Clube(String nome) {
         this.nome = nome;
-        this.jogadores = new ArrayList<>();
+        this.jogadorIds = new ArrayList<>();
     }
     
-    public void adicionarJogador(Jogador jogador) {
-        if (jogador != null && !this.jogadores.contains(jogador)) {
-            this.jogadores.add(jogador);
+    // MUDANÇA: Método agora opera sobre IDs.
+    // A lógica perigosa que modificava o 'jogador' (jogador.setClube(this)) foi REMOVIDA.
+    // Isso deve ser feito pelo Application Service, que orquestra os dois agregados.
+    public void adicionarJogadorId(Integer jogadorId) {
+        if (jogadorId != null && !this.jogadorIds.contains(jogadorId)) {
+            this.jogadorIds.add(jogadorId);
         }
-        if (jogador.getClube() != this) {
-            jogador.setClube(this);
+        // REMOVIDO: if (jogador.getClube() != this) { jogador.setClube(this); }
+    }
+    
+    // MUDANÇA: Método agora opera sobre IDs.
+    public void removerJogadorId(Integer jogadorId) {
+        if (jogadorId != null) {
+            // Garante que está removendo o Objeto Integer, não o índice.
+            this.jogadorIds.remove(jogadorId); 
         }
     }
     
-    public void removerJogador(Jogador jogador) {
-        if (jogador != null) {
-            this.jogadores.remove(jogador);
-        }
+    // MUDANÇA: O método 'possuiJogador(String nomeJogador)' foi RENOMEADO.
+    // O Agregado Clube não deve saber o 'nome' de um Jogador, apenas seu ID.
+    // A lógica de "buscar por nome" pertence a um repositório ou serviço.
+    public boolean possuiJogadorId(Integer jogadorId) {
+        return this.jogadorIds.stream()
+                .anyMatch(id -> id.equals(jogadorId));
     }
     
-    public boolean possuiJogador(String nomeJogador) {
-        return this.jogadores.stream()
-                .anyMatch(jogador -> jogador.getNome().equals(nomeJogador));
-    }
-    
-    public List<Jogador> getJogadores() {
-        return jogadores;
+    // MUDANÇA: Getter agora retorna a lista de IDs.
+    public List<Integer> getJogadorIds() {
+        return jogadorIds;
     }
 
-    public void setJogadores(List<Jogador> jogadores) {
-        this.jogadores = jogadores;
+    // MUDANÇA: Setter agora define a lista de IDs.
+    public void setJogadorIds(List<Integer> jogadorIds) {
+        this.jogadorIds = jogadorIds;
     }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public Treinador getTreinador() { return treinador; }
-    public void setTreinador(Treinador treinador) { this.treinador = treinador; }
+    // MUDANÇA: Getters e Setters para os IDs
+    public Integer getTreinadorId() { return treinadorId; }
+    public void setTreinadorId(Integer treinadorId) { this.treinadorId = treinadorId; }
 
-    public Analista getAnalista() { return analista; }
-    public void setAnalista(Analista analista) { this.analista = analista; }
+    public Integer getAnalistaId() { return analistaId; }
+    public void setAnalistaId(Integer analistaId) { this.analistaId = analistaId; }
 
-    public Preparador getPreparador() { return preparador; }
-    public void setPreparador(Preparador preparador) { this.preparador = preparador; }
+    public Integer getPreparadorId() { return preparadorId; }
+    public void setPreparadorId(Integer preparadorId) { this.preparadorId = preparadorId; }
 
-    public Competicao getCompeticao() { return competicao; }
-    public void setCompeticao(Competicao competicao) { this.competicao = competicao; }
+    public Integer getCompeticaoId() { return competicaoId; }
+    public void setCompeticaoId(Integer competicaoId) { this.competicaoId = competicaoId; }
+    
+    // MUDANÇA: Getters e Setters para os IDs
+    public Integer getCapitaoId() { return capitaoId; }
+    public void setCapitaoId(Integer capitaoId) { this.capitaoId = capitaoId; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
@@ -88,19 +109,19 @@ public class Clube {
     public String getEstadio() { return estadio; }
     public void setEstadio(String estadio) { this.estadio = estadio; }
 
-    public Jogador getCapitao() { return capitao; }
-    public void setCapitao(Jogador capitao) { this.capitao = capitao; }
-
+    // MUDANÇA: equals/hashCode agora são baseados no ID (correto para Entidades)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Clube clube = (Clube) o;
-        return nome != null && nome.equalsIgnoreCase(clube.nome);
+        // Se os IDs não foram setados (novos objetos), não podem ser iguais
+        if (this.id == 0 || clube.id == 0) return false;
+        return id == clube.id;
     }
 
     @Override
     public int hashCode() {
-        return nome != null ? nome.toLowerCase().hashCode() : 0;
+        return Objects.hash(id);
     }
 }

@@ -7,4 +7,11 @@ public interface IClubeRepository {
     void salvar(Clube clube);
     Clube buscarPorNome(String nome);
     List<Clube> listarTodos();
+    
+    
+    /**
+     * @param id 
+     * @return 
+     */
+    Clube buscarPorId(Integer id); 
 }

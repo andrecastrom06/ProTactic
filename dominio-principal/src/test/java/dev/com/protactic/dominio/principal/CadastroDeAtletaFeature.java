@@ -3,6 +3,7 @@ package dev.com.protactic.dominio.principal;
 import dev.com.protactic.dominio.principal.cadastroAtleta.*;
 import dev.com.protactic.mocks.ClubeMock;
 import dev.com.protactic.mocks.JogadorMock;
+import dev.com.protactic.mocks.ContratoMock;
 import io.cucumber.java.Before;
 import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,30 +21,55 @@ public class CadastroDeAtletaFeature {
 
     private IJogadorRepository jogadorRepo;
     private IClubeRepository clubeRepo;
+    // MUDANÇA: O serviço agora PRECISA do repositório de Contrato
+    private IContratoRepository contratoRepo;
 
     @Before
     public void setup() {
-        this.meuClube = new Clube("Meu Time FC");
-        this.outroClube = new Clube("Rival AC");
-
+        // MUDANÇA: Instanciar todos os mocks necessários
         this.jogadorRepo = new JogadorMock();
         this.clubeRepo = new ClubeMock();
-        this.cadastroDeAtletaService = new CadastroDeAtletaService(jogadorRepo, clubeRepo);
+        this.contratoRepo = new ContratoMock(); // Criamos este mock
+        
+        // MUDANÇA: O construtor do serviço agora recebe os 3 repositórios
+        this.cadastroDeAtletaService = new CadastroDeAtletaService(jogadorRepo, clubeRepo, contratoRepo);
+
+        // MUDANÇA: Os clubes precisam ser salvos para ganhar um ID
+        this.meuClube = new Clube("Meu Time FC");
+        this.outroClube = new Clube("Rival AC");
+        this.clubeRepo.salvar(meuClube);
+        this.clubeRepo.salvar(outroClube);
     }
 
     @Dado("que {string} com contrato ativo em outro clube existe")
     public void que_jogador_com_contrato_em_outro_clube_existe(String nomeJogador) {
+        // MUDANÇA: A criação de dados de teste agora simula o mundo real (com IDs)
+        
+        // 1. Criar e salvar o Jogador para ele ter um ID
         this.jogador = new Jogador(nomeJogador);
+        this.jogadorRepo.salvar(this.jogador); // Agora o jogador tem um ID (ex: 1)
 
-        Contrato contratoExistente = new Contrato(outroClube);
-        this.jogador.setContrato(contratoExistente);
+        // 2. Criar e salvar o Contrato (usando o ID do outroClube)
+        Contrato contratoExistente = new Contrato(outroClube.getId());
+        this.contratoRepo.salvar(contratoExistente); // Agora o contrato tem um ID (ex: 1)
 
-        outroClube.adicionarJogador(this.jogador);
+        // 3. Ligar os IDs no Agregado Jogador
+        this.jogador.setContratoId(contratoExistente.getId());
+        this.jogador.setClubeId(outroClube.getId());
+
+        // 4. Adicionar o ID do jogador no Agregado Clube
+        this.outroClube.adicionarJogadorId(this.jogador.getId());
+        
+        // 5. Salvar as mudanças nos repositórios
+        this.jogadorRepo.salvar(this.jogador);
+        this.clubeRepo.salvar(this.outroClube);
     }
 
     @Dado("que {string} sem contrato existe")
     public void que_jogador_sem_contrato_existe(String nomeJogador) {
         this.jogador = new Jogador(nomeJogador);
+        // MUDANÇA: Mesmo sem contrato, o jogador precisa ser salvo para ter um ID
+        this.jogadorRepo.salvar(this.jogador);
     }
 
     @Dado("estamos em {int} de {word} \\(dentro da janela de transferências)")
@@ -85,38 +111,45 @@ public class CadastroDeAtletaFeature {
 
     @Então("não conseguirei realizar a contratação")
     public void nao_conseguirei_realizar_a_contratacao() {
-        assertNotNull(jogador.getContrato(), "O jogador deveria ter contrato ativo antes da tentativa.");
+        // MUDANÇA: As asserções agora buscam dos repositórios e verificam IDs
+        
+        // 1. Pega os dados "frescos" do mock (simulando o banco)
+        Jogador jogadorDoRepo = jogadorRepo.buscarPorId(this.jogador.getId());
+        Clube meuClubeDoRepo = clubeRepo.buscarPorId(this.meuClube.getId());
+        
+        assertNotNull(jogadorDoRepo.getContratoId(), "O jogador deveria ter contrato ativo antes da tentativa.");
         assertFalse(this.resultadoContratacao, "A contratação deveria ter falhado.");
-        assertFalse(meuClube.possuiJogador(jogador.getNome()), "O jogador não deveria ter sido adicionado.");
-        assertEquals(outroClube, jogador.getClube(), "O jogador deveria permanecer no clube original.");
-
-        // 🔎 Validação no repositório
-        assertNull(jogadorRepo.buscarPorNome(jogador.getNome()), 
-            "O jogador não deveria ter sido salvo no repositório.");
-        Clube clubePersistido = clubeRepo.buscarPorNome(meuClube.getNome());
-        if (clubePersistido != null) {
-            assertFalse(clubePersistido.possuiJogador(jogador.getNome()), 
-                "O jogador não deveria aparecer no clube persistido.");
-        }
+        
+        // 2. Verifica se o ID do jogador NÃO está na lista de IDs do clube
+        assertFalse(meuClubeDoRepo.possuiJogadorId(jogadorDoRepo.getId()), "O jogador não deveria ter sido adicionado.");
+        
+        // 3. Verifica se o ID do clube no jogador ainda é o do clube antigo
+        assertEquals(outroClube.getId(), jogadorDoRepo.getClubeId(), "O jogador deveria permanecer no clube original.");
     }
 
     @Então("o registro do atleta será adicionado à lista de atletas do clube")
     public void o_registro_do_atleta_sera_adicionado_a_lista_de_atletas_do_clube() {
+        // MUDANÇA: As asserções agora buscam dos repositórios e verificam IDs
+        
+        // 1. Pega os dados "frescos" do mock (simulando o banco)
+        Jogador jogadorDoRepo = jogadorRepo.buscarPorId(this.jogador.getId());
+        Clube meuClubeDoRepo = clubeRepo.buscarPorId(this.meuClube.getId());
+
         assertTrue(this.resultadoContratacao, "A contratação deveria ter sido bem-sucedida.");
-        assertTrue(meuClube.possuiJogador(jogador.getNome()), "O meu clube deveria ter o novo jogador.");
-        assertEquals(meuClube, jogador.getClube(), "O clube do jogador deveria ser agora o meu clube.");
-        assertNotNull(jogador.getContrato(), "Um novo contrato deveria ter sido criado.");
-        assertEquals("ATIVO", jogador.getContrato().getStatus(), "O contrato deveria estar ativo.");
-
-        // 🔎 Validação no repositório
-        Jogador jogadorPersistido = jogadorRepo.buscarPorNome(jogador.getNome());
-        assertNotNull(jogadorPersistido, "O jogador deveria ter sido salvo no repositório.");
-        assertEquals(meuClube, jogadorPersistido.getClube(), 
-            "O clube persistido do jogador deveria ser o meu clube.");
-
-        Clube clubePersistido = clubeRepo.buscarPorNome(meuClube.getNome());
-        assertNotNull(clubePersistido, "O clube deveria ter sido salvo no repositório.");
-        assertTrue(clubePersistido.possuiJogador(jogador.getNome()), 
-            "O clube persistido deveria conter o jogador.");
+        
+        // 2. Verifica se o ID do jogador ESTÁ na lista de IDs do clube
+        assertTrue(meuClubeDoRepo.possuiJogadorId(jogadorDoRepo.getId()), "O meu clube deveria ter o novo jogador.");
+        
+        // 3. Verifica se o ID do clube no jogador agora é o ID do meuClube
+        assertEquals(meuClube.getId(), jogadorDoRepo.getClubeId(), "O clube do jogador deveria ser agora o meu clube.");
+        
+        // 4. Verifica se o jogador tem um ID de contrato
+        assertNotNull(jogadorDoRepo.getContratoId(), "Um novo contrato deveria ter sido criado.");
+        
+        // 5. Busca o NOVO contrato e verifica seu status
+        Contrato novoContrato = contratoRepo.buscarPorId(jogadorDoRepo.getContratoId());
+        assertNotNull(novoContrato, "O novo contrato não foi encontrado no repositório.");
+        assertEquals("ATIVO", novoContrato.getStatus(), "O contrato deveria estar ativo.");
+        assertEquals(meuClube.getId(), novoContrato.getClubeId(), "O novo contrato deveria pertencer ao meu clube.");
     }
 }

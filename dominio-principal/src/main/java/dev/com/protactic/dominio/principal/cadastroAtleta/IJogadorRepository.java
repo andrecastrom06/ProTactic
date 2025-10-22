@@ -8,4 +8,11 @@ public interface IJogadorRepository {
     Jogador buscarPorNome(String nome);
     boolean existe(String nome);
     List<Jogador> listarTodos();
+
+    /**
+     * Busca um Jogador pelo seu ID.
+     * @param id O ID do jogador.
+     * @return O agregado Jogador encontrado ou null se não existir.
+     */
+    Jogador buscarPorId(Integer id);
 }
