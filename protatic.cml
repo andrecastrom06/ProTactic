@@ -1,5 +1,9 @@
 Domain Protactic {}
 
+
+ContextMap {
+    contains Protactic
+}
 BoundedContext Protactic implements Protactic {
 
 	Aggregate Clube {
@@ -15,20 +19,30 @@ BoundedContext Protactic implements Protactic {
 			String estadio;
 			Integer capitaoId;
 			List<Integer> jogadorIds;
+
 		}
-	
+		Entity InscricaoAtleta{
+			String atleta;
+			String competicao;
+			Boolean elegivelParaJogos;
+			Boolean inscrito;
+			String mensagemErro;
+			
+		}
+
 		Repository ClubeRepository {
 			salvar(@Clube clube);
 			buscarPorNome(String nome);
 			List<@Clube> listarTodos();
 			@Clube buscarPorId(Integer id);
-		}
-
+			}
+		
 		Repository RegistroInscricaoRepository {
 			salvar(@InscricaoAtleta inscricao);
 			@InscricaoAtleta buscarPorAtletaECompeticao(Integer jogadorId, Integer competicaoId);
 			List<@InscricaoAtleta> listarTodas();
-		}
+			}
+		
 		Service RegistroInscricaoService {
     		@InscricaoAtleta registrarInscricao(Integer jogadorId, Integer competicaoId);
 		}
