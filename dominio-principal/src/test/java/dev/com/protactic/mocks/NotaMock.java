@@ -1,42 +1,53 @@
 package dev.com.protactic.mocks;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import dev.com.protactic.dominio.principal.Nota;
 import dev.com.protactic.dominio.principal.nota.NotaRepository;
 
 public class NotaMock implements NotaRepository {
-    private final Map<String, Nota> notasPorChave = new HashMap<>();
-    private final Map<String, Set<String>> atuaramPorJogo = new HashMap<>();
-    private final Set<String> elenco = new HashSet<>();
 
-    private static String chave(String jogoId, String jogadorId) {
-        return jogoId + "|" + jogadorId;
+    private Nota ultimaNota;
+    private final Map<String, Nota> store = new ConcurrentHashMap<>();
+    private final Set<String> elenco = ConcurrentHashMap.newKeySet();
+    private final Map<String, Set<String>> participacoesPorJogo = new ConcurrentHashMap<>();
+
+    private String key(String jogoId, String jogadorId) {
+        return jogoId + "##" + jogadorId;
     }
 
     @Override
     public Optional<Nota> buscar(String jogoId, String jogadorId) {
-        return Optional.ofNullable(notasPorChave.get(chave(jogoId, jogadorId)));
+        return Optional.ofNullable(store.get(key(jogoId, jogadorId)));
     }
 
     @Override
     public void salvar(Nota nota) {
-        notasPorChave.put(chave(nota.getJogoId(), nota.getJogadorId()), nota);
+        store.put(key(nota.getJogoId(), nota.getJogadorId()), nota);
+        ultimaNota = nota;
+    }
+
+    public Nota getUltimaNota() {
+        return ultimaNota;
     }
 
     @Override
     public void registrarParticipacao(String jogoId, String jogadorId, boolean atuou) {
-        Set<String> set = atuaramPorJogo.computeIfAbsent(jogoId, k -> new HashSet<>());
+        participacoesPorJogo.computeIfAbsent(jogoId, k -> ConcurrentHashMap.newKeySet());
         if (atuou) {
-            set.add(jogadorId);
+            participacoesPorJogo.get(jogoId).add(jogadorId);
+            store.computeIfAbsent(key(jogoId, jogadorId), k -> new Nota(jogoId, jogadorId, null, null));
         } else {
-            set.remove(jogadorId);
+            participacoesPorJogo.get(jogoId).remove(jogadorId);
         }
     }
 
     @Override
     public boolean atuouNoJogo(String jogoId, String jogadorId) {
-        return atuaramPorJogo.getOrDefault(jogoId, Collections.emptySet()).contains(jogadorId);
+        return participacoesPorJogo
+                .getOrDefault(jogoId, Collections.emptySet())
+                .contains(jogadorId);
     }
 
     @Override
@@ -51,8 +62,12 @@ public class NotaMock implements NotaRepository {
 
     @Override
     public void limpar() {
-        notasPorChave.clear();
-        atuaramPorJogo.clear();
+        store.clear();
         elenco.clear();
+        participacoesPorJogo.clear();
+    }
+
+    public Nota buscarPersistido(String jogoId, String jogadorId) {
+        return store.get(key(jogoId, jogadorId));
     }
 }

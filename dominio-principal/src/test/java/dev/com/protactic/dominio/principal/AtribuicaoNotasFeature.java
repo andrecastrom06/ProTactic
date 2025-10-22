@@ -17,12 +17,15 @@ public class AtribuicaoNotasFeature {
     private NotaRepository repo;
     private NotaService service;
     private Exception erroCapturado;
+    private NotaMock notaMock;
 
     @io.cucumber.java.Before
     public void setup() {
-        repo = new NotaMock();
+        notaMock = new NotaMock();
+        repo = notaMock;
         service = new NotaService(repo);
         erroCapturado = null;
+        notaMock.limpar();
 
         service.registrarJogadorNoElenco("João");
         service.registrarJogadorNoElenco("Pedro");
@@ -98,13 +101,20 @@ public class AtribuicaoNotasFeature {
         assertNotNull(reg.getNota(), "Deveria ter nota técnica");
         assertEquals(0, BigDecimal.valueOf(notaEsperada).compareTo(reg.getNota()));
         assertEquals(observacaoEsperada, reg.getObservacao());
+
+        Nota persistida = notaMock.getUltimaNota();
+        assertNotNull(persistida, "A nota deveria ter sido salva no repositório");
+        assertEquals("João", persistida.getJogadorId(), "Jogador persistido incorreto");
+        assertEquals(jogoId, persistida.getJogoId(), "Jogo persistido incorreto");
+        assertEquals(0, BigDecimal.valueOf(notaEsperada).compareTo(persistida.getNota()), "Nota persistida incorreta");
+        assertEquals(observacaoEsperada, persistida.getObservacao(), "Observação persistida incorreta");
     }
 
     @Então("o registro de desempenho de João no jogo {string} passa a exibir {string} e {string}")
     public void o_registro_de_desempenho_de_joao_no_jogo_passa_a_exibir_e(String jogoId, String campoNota, String campoObs) throws Exception {
         Nota reg = service.obterRegistro(jogoId, "João").orElseThrow();
 
-        String esperadoNotaStr = valorDepoisDoIgual(campoNota); // "8,5"
+        String esperadoNotaStr = valorDepoisDoIgual(campoNota);
         String esperadoObs = valorDepoisDoIgual(campoObs);
 
         BigDecimal esperadoNota = parseBigDecimalPt(esperadoNotaStr);
@@ -112,17 +122,26 @@ public class AtribuicaoNotasFeature {
         assertNotNull(reg.getNota(), "Deveria ter nota técnica");
         assertEquals(0, esperadoNota.compareTo(reg.getNota()));
         assertEquals(esperadoObs, reg.getObservacao());
+
+        Nota persistida = notaMock.getUltimaNota();
+        assertNotNull(persistida, "A nota deveria ter sido salva no repositório");
+        assertEquals("João", persistida.getJogadorId());
+        assertEquals(jogoId, persistida.getJogoId());
+        assertEquals(0, esperadoNota.compareTo(persistida.getNota()));
+        assertEquals(esperadoObs, persistida.getObservacao());
     }
 
     @Então("o sistema de avaliação não permite o registro")
     public void o_sistema_de_avaliacao_nao_permite_o_registro() {
         assertNotNull(erroCapturado, "Era esperado um erro mas não ocorreu");
+        assertNull(notaMock.getUltimaNota(), "Nenhuma nota deveria ter sido salva no repositório");
     }
 
     @Então("o sistema de avaliação exibe o erro {string}")
     public void o_sistema_de_avaliacao_exibe_o_erro(String mensagem) {
         assertNotNull(erroCapturado, "Nenhum erro foi capturado");
         assertEquals(mensagem, erroCapturado.getMessage());
+        assertNull(notaMock.getUltimaNota(), "Nenhuma nota deveria ter sido salva no repositório");
     }
 
     @Então("a observação {string} é vinculada ao desempenho de Caio no jogo {string}")
@@ -130,12 +149,24 @@ public class AtribuicaoNotasFeature {
         Nota reg = service.obterRegistro(jogoId, "Caio").orElseThrow();
         assertNull(reg.getNota(), "Não deveria haver nota técnica");
         assertEquals(observacao, reg.getObservacao());
+
+        Nota persistida = notaMock.getUltimaNota();
+        assertNotNull(persistida, "O registro deveria ter sido salvo no repositório");
+        assertEquals("Caio", persistida.getJogadorId());
+        assertEquals(jogoId, persistida.getJogoId());
+        assertNull(persistida.getNota(), "A nota persistida deveria ser nula");
+        assertEquals(observacao, persistida.getObservacao());
     }
 
     @Então("o registro de desempenho de Caio no jogo {string} não possui {string}")
     public void o_registro_de_desempenho_de_caio_no_jogo_nao_possui(String jogoId, String campo) {
         Nota reg = service.obterRegistro(jogoId, "Caio").orElseThrow();
         assertNull(reg.getNota(), "Nota deveria estar ausente");
+
+        Nota persistida = notaMock.getUltimaNota();
+        if (persistida != null && "nota".equalsIgnoreCase(campo)) {
+            assertNull(persistida.getNota(), "A persistência não deve conter nota para este caso");
+        }
     }
 
     @Então("a observação não impacta o cálculo de média de desempenho do jogador")
