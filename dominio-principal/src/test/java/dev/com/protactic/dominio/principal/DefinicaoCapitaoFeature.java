@@ -14,7 +14,6 @@ import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
 import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
 import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -58,7 +57,6 @@ public class DefinicaoCapitaoFeature {
 
     @E("ele possui contrato {string} com o {string}")
     public void setContrato(String status, String clubeNome) {
-        
         clubeDoTeste = new Clube(clubeNome);
         clubeRepo.salvar(clubeDoTeste);
 
@@ -93,26 +91,29 @@ public class DefinicaoCapitaoFeature {
 
     @Então("{string} deve ser definido como capitão do {string}")
     public void verificaCapitao(String nome, String clube) {
-        Jogador c = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
-        assertNotNull(c, "Capitão não foi salvo");
+        Capitao capitao = repo.buscarCapitaoPorClube(clubeDoTeste.getId());
+        assertNotNull(capitao, "Capitão não foi salvo");
+
+        Jogador c = capitao.getJogador();
         assertTrue(c.isCapitao(), "Flag de capitão falsa");
         assertEquals(nome, c.getNome(), "Nome do capitão não bate");
 
-        Jogador persistido = ((CapitaoMock) repo).getUltimoCapitaoSalvo();
+        Capitao persistido = ((CapitaoMock) repo).getUltimoCapitaoSalvo();
         assertNotNull(persistido, "O capitão não foi persistido no mock");
-        assertEquals(nome, persistido.getNome(), "O capitão persistido não corresponde ao esperado");
+        assertEquals(nome, persistido.getJogador().getNome(), "O capitão persistido não corresponde ao esperado");
         
         assertEquals(clubeDoTeste.getId(), persistido.getClubeId(), "O capitão persistido está associado ao clube errado");
     }
 
     @Então("{string} não deve ser definido como capitão do {string}")
     public void verificaNaoCapitao(String nome, String clube) {
-        Jogador c = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
-        if (c != null) {
+        Capitao capitao = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
+        if (capitao != null) {
+            Jogador c = capitao.getJogador();
             assertFalse(c.getNome().equals(nome) && c.isCapitao(),
                     "Jogador '" + nome + "' não deveria ser capitão");
         } else {
-            assertNull(c);
+            assertNull(capitao);
         }
 
         assertNull(((CapitaoMock) repo).getUltimoCapitaoSalvo(),
@@ -186,22 +187,24 @@ public class DefinicaoCapitaoFeature {
 
     @Então("o treinador deve escolher manualmente quem será o capitão do {string}")
     public void escolhaManual(String clube) {
-        Jogador c = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
-        assertNull(c, "Nenhum capitão deve ser definido em empate total");
+        Capitao capitao = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
+        assertNull(capitao, "Nenhum capitão deve ser definido em empate total");
         assertNull(((CapitaoMock) repo).getUltimoCapitaoSalvo(),
                 "Nenhum capitão deveria ter sido persistido no mock");
     }
 
     @Então("{string} deve ser definido como capitão do {string} por ter mais tempo de clube")
     public void verificaCapitaoTempo(String nome, String clube) {
-        Jogador c = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
-        assertNotNull(c, "Capitão deveria ser definido");
+        Capitao capitao = repo.buscarCapitaoPorClube(clubeDoTeste.getId()); 
+        assertNotNull(capitao, "Capitão deveria ser definido");
+
+        Jogador c = capitao.getJogador();
         assertTrue(c.isCapitao(), "Flag de capitão falsa");
         assertEquals(nome, c.getNome(), "Capitão com mais tempo não definido corretamente");
         
-        Jogador persistido = ((CapitaoMock) repo).getUltimoCapitaoSalvo();
+        Capitao persistido = ((CapitaoMock) repo).getUltimoCapitaoSalvo();
         assertNotNull(persistido, "O capitão não foi persistido no mock");
-        assertEquals(nome, persistido.getNome(), "O capitão persistido não corresponde ao esperado");
+        assertEquals(nome, persistido.getJogador().getNome(), "O capitão persistido não corresponde ao esperado");
         
         assertEquals(clubeDoTeste.getId(), persistido.getClubeId(), "O capitão persistido está associado ao clube errado");
     }

@@ -1,36 +1,38 @@
 package dev.com.protactic.mocks;
 
-import dev.com.protactic.dominio.principal.Jogador;
+
 import dev.com.protactic.dominio.principal.capitao.CapitaoRepository;
 
 import java.util.HashMap;
 import java.util.Map;
+import dev.com.protactic.dominio.principal.Capitao;
+
+
 
 public class CapitaoMock implements CapitaoRepository {
 
-    private final Map<Integer, Jogador> capitoes = new HashMap<>();
-    private Jogador ultimoCapitaoSalvo;
+    private final Map<Integer, Capitao> capitoes = new HashMap<>();
+    private Capitao ultimoCapitaoSalvo;
 
     @Override
-    public void salvarCapitao(Jogador jogador) {
-        if (jogador.getClubeId() != null) {
-            capitoes.put(jogador.getClubeId(), jogador);
-            this.ultimoCapitaoSalvo = jogador;
+    public void salvarCapitao(Capitao capitao) {
+        if (capitao.getClubeId() != null) {
+            capitoes.put(capitao.getClubeId(), capitao);
+            this.ultimoCapitaoSalvo = capitao;
         }
     }
 
-    
     @Override
-    public Jogador buscarCapitaoPorClube(Integer clubeId) {
+    public Capitao buscarCapitaoPorClube(Integer clubeId) {
         return capitoes.get(clubeId);
     }
 
-    public Jogador getUltimoCapitaoSalvo() { 
+    public Capitao getUltimoCapitaoSalvo() {
         return ultimoCapitaoSalvo;
     }
 
     public void limpar() {
         capitoes.clear();
-        ultimoCapitaoSalvo = null; 
+        ultimoCapitaoSalvo = null;
     }
 }

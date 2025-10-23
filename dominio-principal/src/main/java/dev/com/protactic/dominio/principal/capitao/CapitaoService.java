@@ -1,7 +1,6 @@
 package dev.com.protactic.dominio.principal.capitao;
-
+import dev.com.protactic.dominio.principal.Capitao;
 import dev.com.protactic.dominio.principal.Jogador;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -27,7 +26,8 @@ public class CapitaoService {
 
     public void definirCapitao(Jogador jogador) {
         jogador.setCapitao(true);
-        repository.salvarCapitao(jogador);
+        Capitao capitao = new Capitao(jogador);
+        repository.salvarCapitao(capitao);
     }
 
     public void definirCapitaoEntreJogadores(List<Jogador> jogadores) {

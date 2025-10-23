@@ -1,8 +1,7 @@
 package dev.com.protactic.dominio.principal.capitao;
-
-import dev.com.protactic.dominio.principal.Jogador;
+import dev.com.protactic.dominio.principal.Capitao;
 
 public interface CapitaoRepository {
-    void salvarCapitao(Jogador jogador);
-    Jogador buscarCapitaoPorClube(Integer clubeId);
+    void salvarCapitao(Capitao capitao);
+    Capitao buscarCapitaoPorClube(Integer clubeId);
 }
