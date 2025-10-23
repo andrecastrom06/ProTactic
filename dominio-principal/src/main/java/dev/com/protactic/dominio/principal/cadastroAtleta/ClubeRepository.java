@@ -8,6 +8,5 @@ public interface ClubeRepository {
     Clube buscarPorNome(String nome);
     List<Clube> listarTodos();
     
-    
     Clube buscarPorId(Integer id); 
 }

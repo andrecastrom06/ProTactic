@@ -96,10 +96,8 @@ BoundedContext Protactic implements Protactic {
 			Boolean ativo;
 
 			Repository CapitaoRepository {
-				salvar(@Capitao capitao);
-				@Capitao buscarCapitaoAtualPorClube(Integer clubeId);
-				List<@Capitao> historicoPorClube(Integer clubeId);
-				void encerrarMandatoAtual(Integer clubeId, LocalDate fimMandato);
+			salvarCapitao(@Capitao capitao);
+    		 buscarCapitaoPorClube(Integer clubeId);
 			}
 		}
 
@@ -107,8 +105,7 @@ BoundedContext Protactic implements Protactic {
 			boolean podeSerCapitao(@Jogador jogador);
 			int mesesNoClube(@Jogador jogador);
 			@Capitao definirCapitao(@Jogador jogador);     
-			@Capitao definirCapitaoEntreJogadores(List<@Jogador> jogadores);
-			void removerCapitao(@Capitao capitao);   
+			@Capitao definirCapitaoEntreJogadores(List<@Jogador> jogadores); 
 		}
 	}
 
@@ -122,14 +119,13 @@ BoundedContext Protactic implements Protactic {
 			Integer clubeId;
 
 			Repository ContratoRepository {
-				void saveContrato(@Contrato contrato);
-				@Contrato findContratoById(Integer id);
-				List<@Contrato> findAllContratos();
+				salvar(@Contrato contrato);
+				buscarPorId(Integer id);
+				List<@Contrato> listarTodos();
 			}
 		}
 
 		Service DispensaService {
-			boolean jogadorSaudavel(@Jogador jogador);
 			void dispensarJogador(@Jogador jogador);
 		}
 		Service ContratacaoServico {
@@ -222,9 +218,10 @@ BoundedContext Protactic implements Protactic {
 				atuouNoJogo(String jogoId, String jogadorId);
 				registrarJogadorNoElenco(String jogadorId);
 				jogadorExisteNoElenco(String jogadorId);
+				void limpar();
 			}
 		}
-		
+	
 		Service NotaService {
 			atribuirNotaEObservacao(String jogoId, String jogadorId, BigDecimal nota, String observacao);
 			registrarObservacao(String jogoId, String jogadorId, String observacao);
@@ -245,6 +242,27 @@ BoundedContext Protactic implements Protactic {
 			String descricao;
 			Date dataInicio;
 			Date dataFim;
+
+			Repository LesaoRepository{
+				void cadastrarAtleta(String atletaId);
+				void definirContratoAtivo(String atletaId, boolean ativo);
+				boolean contratoAtivo(String atletaId);
+				void atualizarStatusAtleta(String atletaId, String status);          
+				String statusAtleta(String atletaId);
+				void atualizarDisponibilidade(String atletaId, String disponibilidade);  
+				String disponibilidadeAtleta(String atletaId);
+				void atualizarPermissaoTreino(String atletaId, String permissao);  
+				String permissaoTreino(String atletaId);
+				String lesaoStatus(String atletaId);
+				void salvarLesaoAtiva(String atletaId, int grau);
+				void encerrarLesaoAtiva(String atletaId);
+				void salvarPlanoDias(String atletaId, int dias);
+				void limpar();
+			}
+		}
+		Service RegistroLesoesServico {
+		void registrarLesao(String atletaId, int grau) throws IllegalArgumentException, IllegalStateException;
+		void cadastrarPlanoRecuperacao(String atletaId, int dias) throws IllegalStateException;
 		}
 
 		Entity Lesao {
@@ -254,6 +272,8 @@ BoundedContext Protactic implements Protactic {
 			String tempo;
 			String plano;
 			int grau;
+
+			
 		}
 	}
 
@@ -306,7 +326,16 @@ BoundedContext Protactic implements Protactic {
         Entity Preparador { aggregateRoot int id; }
     }
     Aggregate Tatico {
-        Entity Tatico { aggregateRoot int id; }
+        Entity Tatico { aggregateRoot 
+		int id;
+		 Jogador jogador;
+		 Partida partida;
+		 String categoria;
+		 String nome;
+		 String descricao;
+
+		
+		 }
     }
 
 	Aggregate Escalacao {
@@ -316,7 +345,17 @@ BoundedContext Protactic implements Protactic {
 			Integer partidaId;
 			String esquema;
 			List<Integer> jogadorIds;
+
+			Repository EscalacaoRepository{
+				salvarJogadorNaEscalacao(String jogoData, String nomeJogador);
+    			List<String> obterEscalacaoPorData(String jogoData);
+			}
 		}
+	Service DefinirEsquemaTaticoService{
+		registrarEscalacao(String jogoData, String nomeJogador,boolean contratoAtivo, boolean suspenso, int grauLesao);
+		List<String> obterEscalacao(String jogoData);
+	}
+
 	}
 
 	Aggregate SessaoTreino {
