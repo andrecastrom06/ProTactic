@@ -11,7 +11,6 @@ public class PremiacaoMock implements PremiacaoRepository {
     private final List<Jogador> jogadores = new ArrayList<>();
     private final List<Premiacao> premiacoes = new ArrayList<>();
 
-    // O método da interface agora apenas cria uma instância básica, sem regras de negócio
     @Override
     public Premiacao criarPremiacao(String nomePremiacao, Date dataPremiacao) {
         Premiacao nova = new Premiacao(0, null, nomePremiacao, dataPremiacao);
@@ -19,7 +18,6 @@ public class PremiacaoMock implements PremiacaoRepository {
         return nova;
     }
 
-    // Novo método para simular o "save" do resultado gerado pelo serviço
     public void salvarPremiacao(Premiacao premiacao) {
         premiacoes.add(premiacao);
     }

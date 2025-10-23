@@ -21,10 +21,8 @@ public class PremiacaoInternaFeature {
 
     @Quando("eu criar a premiação do mês de {string}")
     public void eu_criar_a_premiacao(String mes) {
-        // Agora a lógica é executada pelo serviço, e o mock é apenas repositório
         premiacao = service.definirVencedor("Premiação " + mes, new Date(), mock.getJogadores());
 
-        // Simulação de persistência: salvar no repositório fake
         if (premiacao != null) {
             mock.salvarPremiacao(premiacao);
         }
@@ -40,8 +38,6 @@ public class PremiacaoInternaFeature {
     public void vencedor_definido(String esperado) {
         assertNotNull(premiacao, "Deveria existir um vencedor");
         assertEquals(esperado, premiacao.getJogador().getNome(), "O vencedor não foi o esperado");
-
-        // Agora verificando persistência no repositório simulado
         assertEquals(esperado, mock.getUltimaPremiacao().getJogador().getNome(),
                      "O vencedor persistido no repositório não foi o esperado");
     }
