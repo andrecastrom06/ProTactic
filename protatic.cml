@@ -171,11 +171,16 @@ BoundedContext Protactic implements Protactic {
 
 			Repository PremiacaoRepository {
 				criarPremiacao(String nomePremiacao, Date dataPremiacao);
+				salvarPremiacao(@Premiacao premiacao);
+
 			}
 		}
 		
 		Service PremiacaoService {
+			criarPremiacaoMensal(String nomePremiacao, Date dataPremiacao, List<@Jogador> jogadores);
 			definirVencedor(String nomePremiacao, Date dataPremiacao, List<@Jogador> jogadores);
+			verificarSeVencedorTemMenorDesvio(@Jogador vencedor, List<@Jogador> jogadores);
+
 		}
 	}
 	

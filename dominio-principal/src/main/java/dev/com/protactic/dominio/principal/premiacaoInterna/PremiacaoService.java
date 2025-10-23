@@ -11,9 +11,7 @@ public class PremiacaoService {
         this.repository = repository;
     }
 
-    /**
-     * Cria uma premiação completa: seleciona o vencedor e persiste a premiação.
-     */
+   
     public Premiacao criarPremiacaoMensal(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores) {
         Premiacao premiacao = repository.criarPremiacao(nomePremiacao, dataPremiacao);
         Jogador vencedor = definirVencedor(jogadores);
@@ -30,9 +28,6 @@ public class PremiacaoService {
         return premiacao;
     }
 
-    /**
-     * Lógica de definição de vencedor.
-     */
     private Jogador definirVencedor(List<Jogador> jogadores) {
         List<Jogador> candidatos = new ArrayList<>();
         for (Jogador j : jogadores) {
@@ -66,9 +61,7 @@ public class PremiacaoService {
         }
     }
 
-    /**
-     * Verifica se o vencedor realmente tem o menor desvio padrão.
-     */
+    
     public boolean verificarSeVencedorTemMenorDesvio(Jogador vencedor, List<Jogador> jogadores) {
         double menorDesvio = jogadores.stream()
                 .mapToDouble(Jogador::getDesvioPadrao)
