@@ -16,35 +16,38 @@ BoundedContext Protactic implements Protactic {
 			Integer capitaoId;
 			List<Integer> jogadorIds;
 
+			Repository ClubeRepository {
+				salvar(@Clube clube);
+				buscarPorNome(String nome);
+				List<@Clube> listarTodos();
+				@Clube buscarPorId(Integer id);
+			}
 		}
-		Entity InscricaoAtleta{
-			String atleta;
-			String competicao;
+
+		Service CadastroDeAtletaService {
+			contratar(@Clube clubeDestino, @Jogador jogador, Date data);
+		}
+	}
+
+	Aggregate InscricaoAtleta {
+		Entity InscricaoAtleta {
+			aggregateRoot
+			Integer id;
+			Integer jogadorId;
+			Integer competicaoId;
 			Boolean elegivelParaJogos;
 			Boolean inscrito;
 			String mensagemErro;
-			
+
+			Repository InscricaoAtletaRepository {
+				salvar(@InscricaoAtleta inscricao);
+				@InscricaoAtleta buscarPorAtletaECompeticao(Integer jogadorId, Integer competicaoId);
+				List<@InscricaoAtleta> listarTodas();
+			}
 		}
 
-		Repository ClubeRepository {
-			salvar(@Clube clube);
-			buscarPorNome(String nome);
-			List<@Clube> listarTodos();
-			@Clube buscarPorId(Integer id);
-			}
-		
-		Repository RegistroInscricaoRepository {
-			salvar(@InscricaoAtleta inscricao);
-			@InscricaoAtleta buscarPorAtletaECompeticao(Integer jogadorId, Integer competicaoId);
-			List<@InscricaoAtleta> listarTodas();
-			}
-		
 		Service RegistroInscricaoService {
-    		@InscricaoAtleta registrarInscricao(Integer jogadorId, Integer competicaoId);
-		}
-		
-		Service CadastroDeAtletaService {
-			contratar(@Clube clubeDestino, @Jogador jogador, Date data);
+			@InscricaoAtleta registrarInscricao(Integer jogadorId, Integer competicaoId);
 		}
 	}
 	
@@ -71,26 +74,41 @@ BoundedContext Protactic implements Protactic {
 			boolean contratoAtivo;
 			boolean saudavel;
 			double desvioPadrao;
+
+			Repository JogadorRepository {
+				salvar(@Jogador jogador);
+				buscarPorNome(String nome);
+				existe(String nome);
+				List<@Jogador> listarTodos();
+				@Jogador buscarPorId(Integer id);
+			}
+		}
+	}
+
+	Aggregate Capitao {
+		Entity Capitao {
+			aggregateRoot
+			Integer id;
+			Integer clubeId;
+			Integer jogadorId;
+			LocalDate inicioMandato;
+			LocalDate fimMandato;
+			Boolean ativo;
+
+			Repository CapitaoRepository {
+				salvar(@Capitao capitao);
+				@Capitao buscarCapitaoAtualPorClube(Integer clubeId);
+				List<@Capitao> historicoPorClube(Integer clubeId);
+				void encerrarMandatoAtual(Integer clubeId, LocalDate fimMandato);
+			}
 		}
 
 		Service CapitaoService {
-			podeSerCapitao(@Jogador jogador);
-			mesesNoClube(@Jogador jogador);
-			definirCapitao(@Jogador jogador);
-			definirCapitaoEntreJogadores(@List<Jogador> jogadores);
-		 }
-
-		Repository CapitaoRepository {
-			salvarCapitao(@Jogador jogador);
-			buscarCapitaoPorClube(Integer clubeId);
-		}
-
-		Repository JogadorRepository {
-			salvar(@Jogador jogador);
-			buscarPorNome(String nome);
-			existe(String nome);
-			List<@Jogador> listarTodos();
-			@Jogador buscarPorId(Integer id);
+			boolean podeSerCapitao(@Jogador jogador);
+			int mesesNoClube(@Jogador jogador);
+			@Capitao definirCapitao(@Jogador jogador);     
+			@Capitao definirCapitaoEntreJogadores(List<@Jogador> jogadores);
+			void removerCapitao(@Capitao capitao);   
 		}
 	}
 
@@ -102,19 +120,18 @@ BoundedContext Protactic implements Protactic {
 			double salario;
 			String status;
 			Integer clubeId;
+
+			Repository ContratoRepository {
+				void saveContrato(@Contrato contrato);
+				@Contrato findContratoById(Integer id);
+				List<@Contrato> findAllContratos();
+			}
 		}
 
-		Repository ContratoRepository {
-            saveContrato(@Contrato contrato);
-            findContratoById(Integer id);
-            List<@Contrato> findAllContratos();
-        }   
-		
 		Service DispensaService {
-			jogadorSaudavel(@Jogador jogador);
-            dispensarJogador(@Jogador jogador);
+			boolean jogadorSaudavel(@Jogador jogador);
+			void dispensarJogador(@Jogador jogador);
 		}
-		
 		Service ContratacaoServico {
 			registrarAtleta(@Clube clubeDestino, @Jogador jogador, boolean janelaAberta);
 		}
@@ -130,16 +147,16 @@ BoundedContext Protactic implements Protactic {
 			String status;
 			double valor;
 			Date data;
-		}
 
-		Repository PropostaRepository {
-            saveProposta(@Proposta proposta);
-            findPropostaById(Integer id);
-            List<@Proposta> findAllPropostas();
-        }
+			Repository PropostaRepository {
+				saveProposta(@Proposta proposta);
+				findPropostaById(Integer id);
+				List<@Proposta> findAllPropostas();
+			}
+		}
 		
 		Service PropostaService {
-            criarProposta(@Jogador jogador, @Clube clube, Date data);
+			criarProposta(@Jogador jogador, @Clube clube, Date data);
 			estaDentroDaJanelaDeTransferencia(Date data);
 		}
 	}
@@ -151,10 +168,10 @@ BoundedContext Protactic implements Protactic {
 			Integer jogadorId;
 			String nome;
 			Date dataPremiacao;
-		}
 
-		Repository PremiacaoRepository {
-			criarPremiacao(String nomePremiacao, Date dataPremiacao);
+			Repository PremiacaoRepository {
+				criarPremiacao(String nomePremiacao, Date dataPremiacao);
+			}
 		}
 		
 		Service PremiacaoService {
@@ -192,24 +209,24 @@ BoundedContext Protactic implements Protactic {
 			String jogadorId;
 			BigDecimal nota;
 			String observacao;
+
+			Repository NotaRepository {
+				buscar(String jogoId, String jogadorId);
+				salvar(@Nota nota);
+				registrarParticipacao(String jogoId, String jogadorId, boolean atuou);
+				atuouNoJogo(String jogoId, String jogadorId);
+				registrarJogadorNoElenco(String jogadorId);
+				jogadorExisteNoElenco(String jogadorId);
+			}
 		}
 		
-		Repository NotaRepository {
-			buscar(String jogoId, String jogadorId);
-			salvar(Nota nota);
-			registrarParticipacao(String jogoId, String jogadorId, boolean atuou);
-			atuouNoJogo(String jogoId, String jogadorId);
-			registrarJogadorNoElenco(String jogadorId);
-			jogadorExisteNoElenco(String jogadorId);
-        }
-		
 		Service NotaService {
-            atribuirNotaEObservacao(String jogoId, String jogadorId, BigDecimal nota, String observacao);
+			atribuirNotaEObservacao(String jogoId, String jogadorId, BigDecimal nota, String observacao);
 			registrarObservacao(String jogoId, String jogadorId, String observacao);
-			Optional<Nota> obterRegistro(String jogoId, String jogadorId);
+			Optional<@Nota> obterRegistro(String jogoId, String jogadorId);
 			registrarJogadorNoElenco(String jogadorId);
 			registrarParticipacao(String jogoId, String jogadorId, boolean atuou);
-        }
+		}
 	}
 	
 	Aggregate Fisico {
@@ -233,7 +250,7 @@ BoundedContext Protactic implements Protactic {
 			String plano;
 			int grau;
 		}
-    }
+	}
 
 	Aggregate Suspensao {
 		Entity Suspensao {
@@ -243,18 +260,18 @@ BoundedContext Protactic implements Protactic {
 			boolean suspenso;
 			int amarelo;
 			int vermelho;
+
+			Repository RegistroCartoesRepository {
+				salvarCartao(@RegistroCartao cartao);
+				List<@RegistroCartao> buscarCartoesPorAtleta(String atleta);
+				limparCartoes(String atleta);
+			}
 		}
 
 		Entity RegistroCartao {
-        	int id;
-        	Integer jogadorId;
-        	String tipo;
-    	}
-
-		Repository RegistroCartoesRepository {
-			salvarCartao(@RegistroCartao cartao);
-			List<@RegistroCartao> buscarCartoesPorAtleta(String atleta);
-			limparCartoes(@String atleta);
+			int id;
+			Integer jogadorId;
+			String tipo;
 		}
 
 		Service RegistroCartoesService {
@@ -303,34 +320,34 @@ BoundedContext Protactic implements Protactic {
 			String nome;
 			Integer partidaId;
 			List<Integer> convocadosIds;
+
+			Repository SessaoTreinoRepository {
+				salvar(@SessaoTreino sessao);
+				List<@SessaoTreino> listarPorPartida(String partidaNome);
+			}
 		}
 
 		Service SessaoTreinoService {
 			criarSessao(String nome, Integer partidaId, List<Integer> jogadorIds);
 			List<@SessaoTreino> listarSessoesPorPartida(String partidaNome);
 		}
-
-		Repository SessaoTreinoRepository {
-			salvar(@SessaoTreino sessao);
-    		List<@SessaoTreino> listarPorPartida(String partidaNome);
-		}
 	}
 
-    Aggregate PlanejamentoCargaSemanal {
-        Entity TreinoSemanal {
-            aggregateRoot
-            int id;
-            Integer jogadorId;
-            boolean registrado;
-        }
+	Aggregate PlanejamentoCargaSemanal {
+		Entity TreinoSemanal {
+			aggregateRoot
+			int id;
+			Integer jogadorId;
+			boolean registrado;
 
-        Repository PlanejamentoCargaSemanalRepository {
-            salvarTreino(@TreinoSemanal treino);
-            buscarPorJogador(String nomeJogador);
-        }
+			Repository PlanejamentoCargaSemanalRepository {
+				salvarTreino(@TreinoSemanal treino);
+				buscarPorJogador(String nomeJogador);
+			}
+		}
 
-        Service PlanejamentoCargaSemanalService {
-            registrarTreino(@Jogador jogador);
-        }
-    }
+		Service PlanejamentoCargaSemanalService {
+			registrarTreino(@Jogador jogador);
+		}
+	}
 }
