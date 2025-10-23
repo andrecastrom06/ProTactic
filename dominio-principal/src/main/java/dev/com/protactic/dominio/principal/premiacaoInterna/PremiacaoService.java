@@ -5,9 +5,35 @@ import java.util.*;
 
 public class PremiacaoService {
 
-    public Premiacao definirVencedor(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores) {
-        Jogador vencedor = null;
+    private final PremiacaoRepository repository;
 
+    public PremiacaoService(PremiacaoRepository repository) {
+        this.repository = repository;
+    }
+
+    /**
+     * Cria uma premiação completa: seleciona o vencedor e persiste a premiação.
+     */
+    public Premiacao criarPremiacaoMensal(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores) {
+        Premiacao premiacao = repository.criarPremiacao(nomePremiacao, dataPremiacao);
+        Jogador vencedor = definirVencedor(jogadores);
+
+        if (vencedor == null) {
+            System.out.println("DEBUG >> Nenhum vencedor definido para " + nomePremiacao);
+            return null;
+        }
+
+        premiacao.setJogador(vencedor);
+        repository.salvarPremiacao(premiacao);
+
+        System.out.println("DEBUG >> Vencedor definitivo: " + vencedor.getNome());
+        return premiacao;
+    }
+
+    /**
+     * Lógica de definição de vencedor.
+     */
+    private Jogador definirVencedor(List<Jogador> jogadores) {
         List<Jogador> candidatos = new ArrayList<>();
         for (Jogador j : jogadores) {
             if (j.getNota() >= 6) {
@@ -15,12 +41,12 @@ public class PremiacaoService {
             }
         }
 
-        if (candidatos.isEmpty()) {
-            System.out.println("DEBUG >> Nenhum vencedor definido para " + nomePremiacao);
-            return null;
-        }
+        if (candidatos.isEmpty()) return null;
 
-        double maiorNota = candidatos.stream().mapToDouble(Jogador::getNota).max().orElse(0);
+        double maiorNota = candidatos.stream()
+                .mapToDouble(Jogador::getNota)
+                .max()
+                .orElse(0);
 
         List<Jogador> empatados = new ArrayList<>();
         for (Jogador j : candidatos) {
@@ -30,32 +56,24 @@ public class PremiacaoService {
         }
 
         if (maiorNota == 6.0) {
-            vencedor = empatados.get(0);
-        }
-        else if (empatados.size() > 1) {
-            vencedor = empatados.stream()
+            return empatados.get(0);
+        } else if (empatados.size() > 1) {
+            return empatados.stream()
                     .min(Comparator.comparingDouble(Jogador::getDesvioPadrao))
                     .orElse(null);
-        } 
-        else {
-            vencedor = empatados.get(0);
+        } else {
+            return empatados.get(0);
         }
-
-        if (vencedor == null) {
-            System.out.println("DEBUG >> Nenhum vencedor definido para " + nomePremiacao);
-            return null;
-        }
-
-        System.out.println("DEBUG >> Vencedor definitivo: " + vencedor.getNome() + " (nota " + vencedor.getNota() + ")");
-        return new Premiacao(1, vencedor, nomePremiacao, dataPremiacao);
     }
 
+    /**
+     * Verifica se o vencedor realmente tem o menor desvio padrão.
+     */
     public boolean verificarSeVencedorTemMenorDesvio(Jogador vencedor, List<Jogador> jogadores) {
-    double menorDesvio = jogadores.stream()
-            .mapToDouble(Jogador::getDesvioPadrao)
-            .min()
-            .orElse(Double.MAX_VALUE);
-    return vencedor.getDesvioPadrao() == menorDesvio;
-}
-
+        double menorDesvio = jogadores.stream()
+                .mapToDouble(Jogador::getDesvioPadrao)
+                .min()
+                .orElse(Double.MAX_VALUE);
+        return vencedor.getDesvioPadrao() == menorDesvio;
+    }
 }

@@ -14,10 +14,10 @@ public class PremiacaoMock implements PremiacaoRepository {
     @Override
     public Premiacao criarPremiacao(String nomePremiacao, Date dataPremiacao) {
         Premiacao nova = new Premiacao(0, null, nomePremiacao, dataPremiacao);
-        premiacoes.add(nova);
         return nova;
     }
 
+    @Override
     public void salvarPremiacao(Premiacao premiacao) {
         premiacoes.add(premiacao);
     }

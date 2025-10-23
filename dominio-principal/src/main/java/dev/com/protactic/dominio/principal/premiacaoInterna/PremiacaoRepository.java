@@ -5,4 +5,5 @@ import java.util.Date;
 
 public interface PremiacaoRepository {
     Premiacao criarPremiacao(String nomePremiacao, Date dataPremiacao);
+    void salvarPremiacao(Premiacao premiacao);
 }

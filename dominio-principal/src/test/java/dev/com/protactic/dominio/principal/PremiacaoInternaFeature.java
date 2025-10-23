@@ -4,6 +4,7 @@ import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
+
 import dev.com.protactic.mocks.PremiacaoMock;
 import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoService;
 
@@ -11,7 +12,7 @@ public class PremiacaoInternaFeature {
 
     private PremiacaoMock mock = new PremiacaoMock();
     private Premiacao premiacao;
-    private PremiacaoService service = new PremiacaoService();
+    private PremiacaoService service = new PremiacaoService(mock);
 
     @Dado("que {string} com média {string} no período de {string} existe")
     @Dado("{string} com média {string} no período de {string} existe")
@@ -21,11 +22,7 @@ public class PremiacaoInternaFeature {
 
     @Quando("eu criar a premiação do mês de {string}")
     public void eu_criar_a_premiacao(String mes) {
-        premiacao = service.definirVencedor("Premiação " + mes, new Date(), mock.getJogadores());
-
-        if (premiacao != null) {
-            mock.salvarPremiacao(premiacao);
-        }
+        premiacao = service.criarPremiacaoMensal("Premiação " + mes, new Date(), mock.getJogadores());
     }
 
     @Então("a premiação ficará sem vencedor")
@@ -39,7 +36,7 @@ public class PremiacaoInternaFeature {
         assertNotNull(premiacao, "Deveria existir um vencedor");
         assertEquals(esperado, premiacao.getJogador().getNome(), "O vencedor não foi o esperado");
         assertEquals(esperado, mock.getUltimaPremiacao().getJogador().getNome(),
-                     "O vencedor persistido no repositório não foi o esperado");
+                "O vencedor persistido no repositório não foi o esperado");
     }
 
     @Então("o jogador com menor desvio padrão será definido como vencedor da premiação")
