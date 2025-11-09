@@ -9,6 +9,8 @@ public class Contrato {
     private String status;
     
     private Integer clubeId; 
+    
+    public Contrato() {}
 
     public Contrato(int id, int duracaoMeses, double salario, String status, Integer clubeId) {
         this.id = id;
@@ -26,7 +28,6 @@ public class Contrato {
     public boolean isExpirado() {
         return !"ATIVO".equalsIgnoreCase(this.status);
     }
-
     public int getId() {
         return id;
     }

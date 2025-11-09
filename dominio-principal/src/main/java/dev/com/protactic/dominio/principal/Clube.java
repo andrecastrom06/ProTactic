@@ -44,6 +44,11 @@ public class Clube {
         this.jogadorIds = new ArrayList<>();
     }
     
+    public Clube() {
+        this.jogadorIds = new ArrayList<>();
+    }
+
+    
     public void adicionarJogadorId(Integer jogadorId) {
         if (jogadorId != null && !this.jogadorIds.contains(jogadorId)) {
             this.jogadorIds.add(jogadorId);

@@ -1,63 +1,94 @@
-/* TEM QUE TROCAR
-package dev.sauloaraujo.sgb.apresentacao;
+package dev.com.protactic.apresentacao; // <-- PACOTE CORRETO
 
-import java.util.List;
-
-import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
 
-import dev.sauloaraujo.sgb.apresentacao.acervo.livro.LivroFormulario.LivroDto;
-import dev.sauloaraujo.sgb.dominio.acervo.autor.AutorId;
-import dev.sauloaraujo.sgb.dominio.acervo.exemplar.ExemplarId;
-import dev.sauloaraujo.sgb.dominio.acervo.livro.Isbn;
-import dev.sauloaraujo.sgb.dominio.acervo.livro.IsbnFabrica;
-import dev.sauloaraujo.sgb.dominio.acervo.livro.Livro;
-import dev.sauloaraujo.sgb.dominio.administracao.socio.SocioId;
+// --- Imports que você vai precisar ---
+import org.modelmapper.Converter;
+import org.modelmapper.spi.MappingContext;
+import dev.com.protactic.dominio.principal.Jogador;
+import dev.com.protactic.dominio.principal.Premiacao;
+import dev.com.protactic.dominio.principal.Partida;
+import dev.com.protactic.dominio.principal.Clube;
+import dev.com.protactic.dominio.principal.SessaoTreino;
+import dev.com.protactic.dominio.principal.Lesao;
+import dev.com.protactic.infraestrutura.persistencia.jpa.lesao.LesaoJPA;
+import dev.com.protactic.infraestrutura.persistencia.jpa.partida.PartidaJPA;
+import dev.com.protactic.infraestrutura.persistencia.jpa.premiacao.PremiacaoJPA;
+import dev.com.protactic.infraestrutura.persistencia.jpa.sessaotreino.SessaoTreinoJPA;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Component
-public class BackendMapeador extends ModelMapper {
-	private IsbnFabrica isbnFabrica;
+public class BackendMapeador extends ModelMapper { // Ele é o ModelMapper
 
-	BackendMapeador() {
-		isbnFabrica = new IsbnFabrica();
+    BackendMapeador() {
+        // --- COPIE TODA A LÓGICA DE CONFIGURAÇÃO PARA CÁ ---
 
-		addConverter(new AbstractConverter<LivroDto, Livro>() {
-			@Override
-			protected Livro convert(LivroDto source) {
-				var id = map(source.id, Isbn.class);
-				List<AutorId> autores = map(source.autores, new TypeToken<List<AutorId>>() {
-				}.getType());
+        // --- CONVERSOR UNIVERSAL DE OBJETO -> ID ---
+        Converter<Object, Integer> objetoParaIdConverter = new Converter<Object, Integer>() {
+            public Integer convert(MappingContext<Object, Integer> context) {
+                if (context.getSource() == null) {
+                    return null;
+                }
+                if (context.getSource() instanceof Jogador) {
+                    return ((Jogador) context.getSource()).getId();
+                }
+                if (context.getSource() instanceof Clube) {
+                    return ((Clube) context.getSource()).getId();
+                }
+                if (context.getSource() instanceof Partida) {
+                    return ((Partida) context.getSource()).getId();
+                }
+                return null; 
+            }
+        };
 
-				return new Livro(id, source.titulo, source.subTitulo, autores);
-			}
-		});
+        // --- CONVERSOR: LISTA DE OBJETOS -> LISTA DE IDs ---
+        Converter<List<Jogador>, List<Integer>> listaJogadorParaListaIdConverter = new Converter<List<Jogador>, List<Integer>>() {
+            public List<Integer> convert(MappingContext<List<Jogador>, List<Integer>> context) {
+                if (context.getSource() == null) {
+                    return null;
+                }
+                return context.getSource().stream()
+                        .map(Jogador::getId)
+                        .collect(Collectors.toList());
+            }
+        };
 
-		addConverter(new AbstractConverter<String, Isbn>() {
-			@Override
-			protected Isbn convert(String source) {
-				return isbnFabrica.construir(source);
-			}
-		});
+        // --- MAPEAMENTO DO 'PREMIACAO' ---
+        this.createTypeMap(Premiacao.class, PremiacaoJPA.class)
+            .addMappings(mapper -> 
+                mapper.using(objetoParaIdConverter).map(Premiacao::getJogador, PremiacaoJPA::setJogadorId)
+            );
 
-		addConverter(new AbstractConverter<Integer, SocioId>() {
-			@Override
-			protected SocioId convert(Integer source) {
-				return new SocioId(source);
-			}
-		});
+        // --- MAPEAMENTO DO 'SESSAOTREINO' ---
+        this.createTypeMap(SessaoTreino.class, SessaoTreinoJPA.class)
+            .addMappings(mapper -> {
+                mapper.using(objetoParaIdConverter).map(SessaoTreino::getPartida, SessaoTreinoJPA::setPartidaId);
+                mapper.using(listaJogadorParaListaIdConverter).map(SessaoTreino::getConvocados, SessaoTreinoJPA::setConvocadosIds);
+            });
+            
+        // --- MAPEAMENTO DO 'PARTIDA' ---
+        this.createTypeMap(Partida.class, PartidaJPA.class)
+            .addMappings(mapper -> {
+                mapper.using(objetoParaIdConverter).map(Partida::getClubeCasa, PartidaJPA::setClubeCasaId);
+                mapper.using(objetoParaIdConverter).map(Partida::getClubeVisitante, PartidaJPA::setClubeVisitanteId);
+            });
 
-		addConverter(new AbstractConverter<Integer, ExemplarId>() {
-			@Override
-			protected ExemplarId convert(Integer source) {
-				return new ExemplarId(source);
-			}
-		});
-	}
+        // --- MAPEAMENTO: 'Lesao' -> 'LesaoJPA' ---
+        this.createTypeMap(Lesao.class, LesaoJPA.class)
+            .addMappings(mapper -> {
+                mapper.using(objetoParaIdConverter).map(Lesao::getJogador, LesaoJPA::setJogadorId);
+            });
 
-	@Override
-	public <D> D map(Object source, Class<D> destinationType) {
-		return source != null ? super.map(source, destinationType) : null;
-	}
-}*/
+        // --- FIM DA LÓGICA DE CONFIGURAÇÃO ---
+    }
+
+    @Override
+    public <D> D map(Object source, Class<D> destinationType) {
+        // Seu método de verificação de nulo está ótimo
+        return source != null ? super.map(source, destinationType) : null;
+    }
+}

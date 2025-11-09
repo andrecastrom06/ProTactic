@@ -7,6 +7,8 @@ public class Suspensao {
     private int amarelo;
     private int vermelho;
 
+    public Suspensao() {}
+    
     public Suspensao(int id, String atleta, boolean suspenso, int amarelo, int vermelho) {
         this.id = id;
         this.atleta = atleta;

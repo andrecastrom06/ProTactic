@@ -10,6 +10,8 @@ public class Partida {
     private String hora;
     private int placarClubeCasa;
     private int placarClubeVisitante;
+    
+    public Partida() {}
 
     public Partida(int id, Clube clubeCasa, Clube clubeVisitante, Date dataJogo,
                    String hora, int placarClubeCasa, int placarClubeVisitante) {

@@ -53,6 +53,10 @@ public class Jogador {
              null, null, false);
     }
 
+    public Jogador() {
+    
+    }
+
     public Jogador(String nome, Integer clubeId) {
         this.nome = nome;
         this.clubeId = clubeId;
