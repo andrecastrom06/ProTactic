@@ -15,6 +15,9 @@ import dev.com.protactic.infraestrutura.persistencia.jpa.lesao.LesaoJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.partida.PartidaJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.premiacao.PremiacaoJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.sessaotreino.SessaoTreinoJPA;
+import dev.com.protactic.dominio.principal.Proposta;
+import dev.com.protactic.infraestrutura.persistencia.jpa.proposta.PropostaJPA;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,6 +78,7 @@ public class BackendMapeador extends ModelMapper {
                 mapper.using(objetoParaIdConverter).map(Lesao::getJogador, LesaoJPA::setJogadorId);
             });
 
+        this.createTypeMap(Proposta.class, PropostaJPA.class);
     }
 
     @Override

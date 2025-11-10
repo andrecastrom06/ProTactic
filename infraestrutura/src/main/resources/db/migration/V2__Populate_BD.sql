@@ -2203,6 +2203,44 @@ VALUES (
     'Melhor Jogador do Mês',
     '2025-08-26'
 );
+-- ===================================
+-- DADOS DE TESTE INICIAIS (SEED DATA)
+-- ===================================
+-- Adiciona dados mínimos para a aplicação iniciar sem erros.
+
+-- 1. Competição
+-- (Necessário para criar Clubes e Jogadores)
+INSERT INTO Competicao (id, nome) 
+VALUES (1, 'Brasileirão Série A');
+
+-- 2. Clubes
+-- (ID 1 será o "Propositor" e ID 2 será o "Receptor/Dono")
+INSERT INTO Clube (id, nome, id_competicao) 
+VALUES (1, 'Clube Propositor (Ex: Flamengo)', 1);
+INSERT INTO Clube (id, nome, id_competicao) 
+VALUES (2, 'Clube Dono (Ex: Palmeiras)', 1);
+
+-- 3. Contrato
+-- (Cria um contrato ATIVO e o vincula ao Clube 2)
+INSERT INTO Contrato (id, status, id_clube, duracao_meses, salario) 
+VALUES (1, 'Ativo', 2, 36, 100000.00);
+
+-- 4. Jogador
+-- (Cria o Jogador 1, o vincula ao Contrato 1 e ao Clube 2)
+-- (Define status='disponível' e saudavel=TRUE para funcionar nos testes de SessaoTreino)
+INSERT INTO Jogador (id, nome, id_contrato, id_clube, id_competicao, status, saudavel, posicao) 
+VALUES (1, 'Everson', 1, 2, 1, 'disponível', TRUE, 'Goleiro');
+
+-- 5. Outro Jogador (para testes de SessaoTreino)
+-- (Também disponível)
+INSERT INTO Jogador (id, nome, id_competicao, status, saudavel, posicao)
+VALUES (2, 'Neymar', 1, 'disponível', TRUE, 'Atacante');
+
+
+-- 6. Partida
+-- (Cria uma partida entre os dois clubes para o SessaoTreino)
+INSERT INTO Partida (id, id_clube_casa, id_clube_visitante, data_jogo, hora)
+VALUES (1, 1, 2, '2025-11-20', '20:00:00');
 
 
 UPDATE Jogador

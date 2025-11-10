@@ -56,14 +56,13 @@ public class ClubeRepositoryImpl implements ClubeRepository, ClubeRepositorioApl
 
     @Override
     public List<ClubeResumo> pesquisarResumos() {
-        // 5. Simplesmente chamamos o método do Spring Data
         return repositoryJPA.findAllBy();
     }
 
 
     @Override
     public List<ClubeResumo> pesquisarResumosPorCompeticao(Integer competicaoId) {
-        // 6. Simplesmente chamamos o método do Spring Data
+        
         return repositoryJPA.findByCompeticaoId(competicaoId);
     }
     

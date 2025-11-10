@@ -4,7 +4,7 @@ import dev.com.protactic.aplicacao.principal.contrato.ContratoResumo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List; // 2. IMPORTAR LIST
+import java.util.List;
 
 @Repository
 public interface ContratoRepositorySpringData extends JpaRepository<ContratoJPA, Integer> {
