@@ -30,6 +30,7 @@ public class PropostaContratacaoFeature {
     private Date dataAtual;
     private Proposta proposta;
     private Exception excecao;
+    private double valorProposta; // <-- CORREÇÃO 1: Campo adicionado
 
     private PropostaMock propostaMock; 
     private ContratoRepository contratoRepo;
@@ -56,6 +57,7 @@ public class PropostaContratacaoFeature {
         this.dataAtual = null;
         this.proposta = null;
         this.excecao = null;
+        this.valorProposta = 0.0; // Reseta o valor
 
         ContratoMock.limparMock();
     }
@@ -99,13 +101,25 @@ public class PropostaContratacaoFeature {
         this.dataAtual = new SimpleDateFormat("dd/MM/yyyy").parse(data);
     }
 
+    @Dado("que o valor da proposta é {double}")
+    public void que_o_valor_da_proposta_e(Double valor) {
+        this.valorProposta = valor;
+    }
+
     @Quando("um analista do {string} cria uma proposta de contrato para {string}")
     public void um_analista_do_cria_uma_proposta_de_contrato_para(String nomeClube, String nomeJogador) {
         
         this.clubeProponente = findOrCreateClube(nomeClube);
 
         try {
-            this.proposta = propostaService.criarProposta(jogador, clubeProponente, dataAtual);
+            // --- CORREÇÃO 3: Passa o 'this.valorProposta' para o método ---
+            this.proposta = propostaService.criarProposta(
+                jogador, 
+                clubeProponente, 
+                this.valorProposta, // <-- Argumento 'valor' adicionado
+                dataAtual
+            );
+            // --- FIM DA CORREÇÃO 3 ---
         } catch (Exception e) {
             this.excecao = e;
         }
@@ -118,6 +132,7 @@ public class PropostaContratacaoFeature {
         assertEquals(jogador.getId(), proposta.getJogadorId(), "Jogador ID incorreto na proposta");
         assertEquals(clubeProponente.getId(), proposta.getPropositorId(), "Clube propositor ID incorreto");
         assertEquals(dataAtual, proposta.getData(), "Data incorreta na proposta");
+        assertEquals(valorProposta, proposta.getValor(), "Valor incorreto na proposta"); // <-- Teste extra
 
         Proposta persistida = propostaMock.getUltimaProposta();
         assertNotNull(persistida, "A proposta deveria ter sido salva no repositório");

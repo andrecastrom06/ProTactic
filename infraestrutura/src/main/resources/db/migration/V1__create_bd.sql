@@ -214,7 +214,7 @@ create table if not exists Tatico (
 create table if not exists Proposta (
     id int not null auto_increment,
     id_propositor int not null,
-    id_receptor int not null,
+    id_receptor int,
     id_jogador int not null,
     status varchar(50),
     valor decimal(10,2),

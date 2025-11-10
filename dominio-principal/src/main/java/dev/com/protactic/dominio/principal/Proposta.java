@@ -24,6 +24,8 @@ public class Proposta {
         this.valor = valor;
         this.data = data;
     }
+    public Proposta() {
+    }
 
     
     public Proposta(Integer propositorId) {

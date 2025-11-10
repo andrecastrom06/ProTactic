@@ -39,15 +39,17 @@ public class PropostaControlador {
     public List<PropostaResumo> pesquisarResumos() {
         return propostaServicoAplicacao.pesquisarResumos();
     }
-    // ... (restante dos métodos GET) ...
+    
     @GetMapping(path = "pesquisa-por-jogador/{jogadorId}")
     public List<PropostaResumo> pesquisarResumosPorJogador(@PathVariable("jogadorId") Integer jogadorId) {
         return propostaServicoAplicacao.pesquisarResumosPorJogador(jogadorId);
     }
+    
     @GetMapping(path = "pesquisa-por-propositor/{clubeId}")
     public List<PropostaResumo> pesquisarResumosPorPropositor(@PathVariable("clubeId") Integer clubeId) {
         return propostaServicoAplicacao.pesquisarResumosPorPropositor(clubeId);
     }
+    
     @GetMapping(path = "pesquisa-por-receptor/{clubeId}")
     public List<PropostaResumo> pesquisarResumosPorReceptor(@PathVariable("clubeId") Integer clubeId) {
         return propostaServicoAplicacao.pesquisarResumosPorReceptor(clubeId);
@@ -56,9 +58,14 @@ public class PropostaControlador {
 
     // --- Endpoints de COMANDO (POST) ---
 
+    /**
+     * Formulário (DTO) que a API recebe para criar uma proposta.
+     * Agora inclui o 'valor'.
+     */
     public record PropostaFormulario(
         Integer jogadorId,
-        Integer clubeId
+        Integer clubeId,
+        double valor // <-- CORREÇÃO: Campo de valor adicionado
     ) {}
 
     @PostMapping(path = "/criar")
@@ -74,21 +81,23 @@ public class PropostaControlador {
             throw new RuntimeException("Jogador não encontrado: " + formulario.jogadorId());
         }
 
-        Clube clube = clubeRepository.buscarPorId(formulario.clubeId());
-        if (clube == null) {
-            throw new RuntimeException("Clube não encontrado: " + formulario.clubeId());
+        // O 'clubeId' do formulário é o clube que FAZ a proposta (Propositor)
+        Clube clubePropositor = clubeRepository.buscarPorId(formulario.clubeId());
+        if (clubePropositor == null) {
+            throw new RuntimeException("Clube propositor não encontrado: " + formulario.clubeId());
         }
 
-        // --- (INÍCIO DA CORREÇÃO) ---
-        // 2. O método 'criarProposta' pode lançar uma Exceção Verificada.
-        //    Precisamos de a "apanhar" (catch) e "re-lançar" (throw)
-        //    como uma RuntimeException.
+        // 2. Chama o serviço de domínio, passando o valor do formulário
         try {
-            propostaService.criarProposta(jogador, clube, new Date());
+            propostaService.criarProposta(
+                jogador, 
+                clubePropositor, 
+                formulario.valor(), // <-- CORREÇÃO: Passa o valor
+                new Date()
+            );
         } catch (Exception e) {
+            // Re-lança a exceção do domínio como uma exceção de runtime
             throw new RuntimeException("Erro ao tentar criar a proposta: " + e.getMessage(), e);
         }
-        // --- (FIM DA CORREÇÃO) ---
     }
 }
-    
