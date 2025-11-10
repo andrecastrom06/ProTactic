@@ -1,15 +1,12 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.contrato;
 
-// 1. Importa os "contratos" e "entidades" do DOMÍNIO
 import dev.com.protactic.dominio.principal.Contrato;
 import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
 
-// 2. IMPORTA OS "CONTRATOS" E "RESUMOS" DA APLICAÇÃO
 import dev.com.protactic.aplicacao.principal.contrato.ContratoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.contrato.ContratoResumo;
 
-// 3. Importa as classes de infraestrutura
-import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador; // Importar o Mapeador
+import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
@@ -25,8 +22,6 @@ public class ContratoRepositoryImpl implements ContratoRepository, ContratoRepos
         this.repositoryJPA = repositoryJPA;
         this.mapeador = mapeador;
     }
-
-    // --- Implementação dos métodos da interface do DOMÍNIO (ContratoRepository) ---
     
     @Override
     public void salvar(Contrato contrato) {
@@ -35,17 +30,10 @@ public class ContratoRepositoryImpl implements ContratoRepository, ContratoRepos
         ContratoJPA contratoJPA = mapeador.map(contrato, ContratoJPA.class);
         
         Objects.requireNonNull(contratoJPA, "O resultado do mapeamento de Contrato para JPA não pode ser nulo.");
-        
-        // --- (INÍCIO DA CORREÇÃO) ---
-        // 1. Salvamos a entidade JPA E guardamos o resultado
-        //    (O 'entidadeSalva' terá o novo ID gerado pelo banco)
+
         ContratoJPA entidadeSalva = repositoryJPA.save(contratoJPA);
-        
-        // 2. Atualizamos o ID do objeto de domínio original
-        //    (Como o Java passa objetos por referência,
-        //    o 'CadastroDeAtletaService' verá esta mudança!)
+
         contrato.setId(entidadeSalva.getId());
-        // --- (FIM DA CORREÇÃO) ---
     }
 
     @Override
@@ -62,11 +50,6 @@ public class ContratoRepositoryImpl implements ContratoRepository, ContratoRepos
                 .map(jpa -> mapeador.map(jpa, Contrato.class))
                 .collect(Collectors.toList());
     }
-
-    // --- (FIM) Implementação dos métodos do DOMÍNIO ---
-
-
-    // --- IMPLEMENTAÇÃO DOS MÉTODOS DA APLICAÇÃO (ContratoRepositorioAplicacao) ---
 
     @Override
     public List<ContratoResumo> pesquisarResumos() {

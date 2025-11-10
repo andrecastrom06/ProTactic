@@ -11,14 +11,13 @@ import jakarta.persistence.TemporalType;
 import java.util.Date;
 
 @Entity(name = "Proposta")
-@Table(name = "Proposta") // 1. O nome da tabela DEVE ser igual ao do seu SQL
+@Table(name = "Proposta") 
 public class PropostaJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
-    // 2. Mapeia os nomes do Java (camelCase) para os nomes do SQL (snake_case)
     @Column(name = "id_propositor")
     private Integer propositorId; 
     
@@ -31,15 +30,10 @@ public class PropostaJPA {
     private String status;
     private double valor;
     
-    // 3. A coluna que acabámos de adicionar ao SQL
-    @Temporal(TemporalType.TIMESTAMP) // Garante que a data e hora sejam salvas
+    @Temporal(TemporalType.TIMESTAMP) 
     private Date data; 
 
-    // Construtor vazio obrigatório para o JPA
     public PropostaJPA() {}
-
-    // --- Getters e Setters ---
-    // (O ModelMapper e o JPA precisam de todos eles)
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

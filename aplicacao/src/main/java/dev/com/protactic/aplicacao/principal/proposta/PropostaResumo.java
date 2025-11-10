@@ -2,10 +2,7 @@ package dev.com.protactic.aplicacao.principal.proposta;
 
 import java.util.Date;
 
-/**
- * Interface de Projeção (Resumo/DTO) para a entidade Proposta.
- * Contém apenas os dados necessários para listagens.
- */
+
 public interface PropostaResumo {
     
     int getId();

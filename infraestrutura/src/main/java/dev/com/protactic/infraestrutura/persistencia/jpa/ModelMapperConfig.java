@@ -14,19 +14,17 @@ import dev.com.protactic.dominio.principal.Lesao; // 1. Importa o domínio Lesao
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-//@Configuration
+
 public class ModelMapperConfig {
 
-    //@Bean
+
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
-        // --- CONVERSOR UNIVERSAL DE OBJETO -> ID (O que já tínhamos) ---
         Converter<Object, Integer> objetoParaIdConverter = new Converter<Object, Integer>() {
             public Integer convert(MappingContext<Object, Integer> context) {
                 if (context.getSource() == null) {
@@ -45,7 +43,6 @@ public class ModelMapperConfig {
             }
         };
 
-        // --- CONVERSOR: LISTA DE OBJETOS -> LISTA DE IDs (O que já tínhamos) ---
         Converter<List<Jogador>, List<Integer>> listaJogadorParaListaIdConverter = new Converter<List<Jogador>, List<Integer>>() {
             public List<Integer> convert(MappingContext<List<Jogador>, List<Integer>> context) {
                 if (context.getSource() == null) {
@@ -57,30 +54,25 @@ public class ModelMapperConfig {
             }
         };
 
-        // --- MAPEAMENTO DO 'PREMIACAO' (O que já tínhamos) ---
         modelMapper.createTypeMap(Premiacao.class, PremiacaoJPA.class)
             .addMappings(mapper -> 
                 mapper.using(objetoParaIdConverter).map(Premiacao::getJogador, PremiacaoJPA::setJogadorId)
             );
 
-        // --- MAPEAMENTO DO 'SESSAOTREINO' (O que já tínhamos) ---
         modelMapper.createTypeMap(SessaoTreino.class, SessaoTreinoJPA.class)
             .addMappings(mapper -> {
                 mapper.using(objetoParaIdConverter).map(SessaoTreino::getPartida, SessaoTreinoJPA::setPartidaId);
                 mapper.using(listaJogadorParaListaIdConverter).map(SessaoTreino::getConvocados, SessaoTreinoJPA::setConvocadosIds);
             });
             
-        // --- MAPEAMENTO DO 'PARTIDA' (O que já tínhamos) ---
         modelMapper.createTypeMap(Partida.class, PartidaJPA.class)
             .addMappings(mapper -> {
                 mapper.using(objetoParaIdConverter).map(Partida::getClubeCasa, PartidaJPA::setClubeCasaId);
                 mapper.using(objetoParaIdConverter).map(Partida::getClubeVisitante, PartidaJPA::setClubeVisitanteId);
             });
 
-        // --- NOVO MAPEAMENTO: Ensina o ModelMapper a mapear 'Lesao' -> 'LesaoJPA' ---
         modelMapper.createTypeMap(Lesao.class, LesaoJPA.class)
             .addMappings(mapper -> {
-                // Mapeia Lesao.jogador (Objeto) -> LesaoJPA.jogadorId (Integer)
                 mapper.using(objetoParaIdConverter).map(Lesao::getJogador, LesaoJPA::setJogadorId);
             });
 

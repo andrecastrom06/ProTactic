@@ -11,14 +11,13 @@ import jakarta.persistence.TemporalType;
 import java.util.Date;
 
 @Entity(name = "Partida")
-@Table(name = "Partida") // 1. O nome da tabela DEVE ser igual ao do seu SQL
+@Table(name = "Partida") 
 public class PartidaJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // 2. Mapeia os IDs (o ModelMapper vai preencher)
     @Column(name = "id_clube_casa")
     private Integer clubeCasaId;
 
@@ -31,7 +30,7 @@ public class PartidaJPA {
 
     @Column(name = "hora")
     @Temporal(TemporalType.TIME)
-    private Date hora; // Nota: O seu SQL usa 'TIME', o Java 'Date' pode guardar 'TIME'
+    private Date hora;
 
     @Column(name = "placar_clube_casa")
     private int placarClubeCasa;
@@ -39,10 +38,8 @@ public class PartidaJPA {
     @Column(name = "placar_clube_visitante")
     private int placarClubeVisitante;
 
-    // Construtor vazio obrigatório para o JPA
     public PartidaJPA() {}
 
-    // --- Getters e Setters ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public Integer getClubeCasaId() { return clubeCasaId; }

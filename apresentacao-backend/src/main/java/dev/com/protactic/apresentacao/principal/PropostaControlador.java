@@ -1,4 +1,4 @@
-/** package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal;
 
 import java.util.List;
 import java.util.Date; // Importar o Date
@@ -91,4 +91,4 @@ public class PropostaControlador {
         // --- (FIM DA CORREÇÃO) ---
     }
 }
-    */
+    

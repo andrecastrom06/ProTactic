@@ -5,18 +5,17 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column; // Importante para mapear nomes diferentes
+import jakarta.persistence.Column; 
 import java.time.LocalDate;
 
 @Entity(name = "Jogador")
-@Table(name = "Jogador") // 1. O nome da tabela DEVE ser igual ao do seu SQL
+@Table(name = "Jogador") 
 public class JogadorJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
-    // 2. Mapeia os nomes do Java (camelCase) para os nomes do SQL (snake_case)
     @Column(name = "id_contrato")
     private Integer contratoId;
     
@@ -35,7 +34,6 @@ public class JogadorJPA {
     private int gols;
     private int assistencias;
     
-    // --- Colunas que adicionámos ---
     private String status;
     private String minutagem;
     
@@ -55,12 +53,9 @@ public class JogadorJPA {
     @Column(name = "desvio_padrao")
     private double desvioPadrao;
 
-    // Construtor vazio obrigatório para o JPA
     public JogadorJPA() {}
 
-    // --- Getters e Setters ---
-    // (O ModelMapper e o JPA precisam de todos eles)
-
+  
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public Integer getContratoId() { return contratoId; }

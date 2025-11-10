@@ -11,27 +11,24 @@ import jakarta.persistence.TemporalType;
 import java.util.Date;
 
 @Entity(name = "Premiacao")
-@Table(name = "Premiacao") // 1. O nome da tabela DEVE ser igual ao do seu SQL
+@Table(name = "Premiacao") 
 public class PremiacaoJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // 2. Mapeia para a coluna 'id_jogador' (o ModelMapper vai preencher isto)
     @Column(name = "id_jogador")
     private Integer jogadorId;
 
     private String nome;
 
     @Column(name = "data_premiacao")
-    @Temporal(TemporalType.DATE) // Define que é apenas a Data
+    @Temporal(TemporalType.DATE) 
     private Date dataPremiacao;
-
-    // Construtor vazio obrigatório para o JPA
+ 
     public PremiacaoJPA() {}
 
-    // --- Getters e Setters ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public Integer getJogadorId() { return jogadorId; }

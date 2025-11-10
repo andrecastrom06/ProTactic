@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-// 4. FAZEMOS A CLASSE IMPLEMENTAR AMBAS AS INTERFACES
 public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoRepository, InscricaoAtletaRepositorioAplicacao {
 
     private final RegistroInscricaoRepositorySpringData repositoryJPA;
@@ -24,7 +23,6 @@ public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoReposit
         this.mapeador = mapeador;
     }
 
-    // --- Implementação dos métodos da interface do DOMÍNIO (RegistroInscricaoRepository) ---
     
     @Override
     public void salvar(InscricaoAtleta inscricao) {
@@ -49,30 +47,22 @@ public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoReposit
                 .collect(Collectors.toList());
     }
 
-    // --- (FIM) Implementação dos métodos do DOMÍNIO ---
-
-
-    // --- IMPLEMENTAÇÃO DOS MÉTODOS DA APLICAÇÃO (InscricaoAtletaRepositorioAplicacao) ---
 
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumos() {
-        // 5. Chama o novo método que retorna a Projeção
         return repositoryJPA.findAllBy();
     }
 
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumosPorAtleta(String atleta) {
         Objects.requireNonNull(atleta, "O nome do Atleta não pode ser nulo.");
-        // 6. Chama o novo método que retorna a Projeção
         return repositoryJPA.findByAtleta(atleta);
     }
 
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumosPorCompeticao(String competicao) {
         Objects.requireNonNull(competicao, "O nome da Competição não pode ser nulo.");
-        // 7. Chama o novo método que retorna a Projeção
         return repositoryJPA.findByCompeticao(competicao);
     }
     
-    // --- (FIM) Implementação dos métodos da APLICAÇÃO ---
 }

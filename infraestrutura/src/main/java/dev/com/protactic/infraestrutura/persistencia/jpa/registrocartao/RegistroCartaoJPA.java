@@ -6,10 +6,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
-// --- (INÍCIO DA CORREÇÃO) ---
 @Entity(name = "RegistroCartao")
-@Table(name = "registro_cartao") // 1. Corrigido para bater com o SQL
-// --- (FIM DA CORREÇÃO) ---
+@Table(name = "registro_cartao") 
+
 public class RegistroCartaoJPA {
 
     @Id
@@ -19,10 +18,8 @@ public class RegistroCartaoJPA {
     private String atleta;
     private String tipo;
 
-    // 2. Construtor vazio (JPA/ModelMapper)
     public RegistroCartaoJPA() {}
 
-    // --- Getters e Setters ---
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

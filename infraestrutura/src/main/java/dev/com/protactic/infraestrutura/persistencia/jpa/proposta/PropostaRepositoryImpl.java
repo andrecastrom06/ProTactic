@@ -1,21 +1,17 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.proposta;
 
-// 1. Importa os "contratos" e "entidades" do DOMÍNIO
 import dev.com.protactic.dominio.principal.Proposta;
 import dev.com.protactic.dominio.principal.proposta.PropostaRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
-// 2. IMPORTA OS "CONTRATOS" E "RESUMOS" DA APLICAÇÃO
 import dev.com.protactic.aplicacao.principal.proposta.PropostaRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.proposta.PropostaResumo;
 
-// 3. Importa as classes de infraestrutura
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-// 4. FAZEMOS A CLASSE IMPLEMENTAR AMBAS AS INTERFACES
 public class PropostaRepositoryImpl implements PropostaRepository, PropostaRepositorioAplicacao {
 
     private final PropostaRepositorySpringData repositoryJPA;
@@ -26,7 +22,6 @@ public class PropostaRepositoryImpl implements PropostaRepository, PropostaRepos
         this.mapeador = mapeador;
     }
 
-    // --- Implementação dos métodos da interface do DOMÍNIO (PropostaRepository) ---
     
     @Override
     public Proposta saveProposta(Proposta proposta) {
@@ -52,14 +47,9 @@ public class PropostaRepositoryImpl implements PropostaRepository, PropostaRepos
                 .collect(Collectors.toList());
     }
 
-    // --- (FIM) Implementação dos métodos do DOMÍNIO ---
-
-
-    // --- IMPLEMENTAÇÃO DOS MÉTODOS DA APLICAÇÃO (PropostaRepositorioAplicacao) ---
 
     @Override
     public List<PropostaResumo> pesquisarResumos() {
-        // 5. Simplesmente chamamos o método do Spring Data
         return repositoryJPA.findAllBy();
     }
 
@@ -78,5 +68,4 @@ public class PropostaRepositoryImpl implements PropostaRepository, PropostaRepos
         return repositoryJPA.findByJogadorId(jogadorId);
     }
     
-    // --- (FIM) Implementação dos métodos da APLICAÇÃO ---
 }

@@ -3,7 +3,6 @@ package dev.com.protactic.apresentacao; // <-- PACOTE CORRETO
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-// --- Imports que você vai precisar ---
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 import dev.com.protactic.dominio.principal.Jogador;
@@ -21,12 +20,10 @@ import java.util.stream.Collectors;
 
 
 @Component
-public class BackendMapeador extends ModelMapper { // Ele é o ModelMapper
+public class BackendMapeador extends ModelMapper { 
 
     BackendMapeador() {
-        // --- COPIE TODA A LÓGICA DE CONFIGURAÇÃO PARA CÁ ---
 
-        // --- CONVERSOR UNIVERSAL DE OBJETO -> ID ---
         Converter<Object, Integer> objetoParaIdConverter = new Converter<Object, Integer>() {
             public Integer convert(MappingContext<Object, Integer> context) {
                 if (context.getSource() == null) {
@@ -45,7 +42,6 @@ public class BackendMapeador extends ModelMapper { // Ele é o ModelMapper
             }
         };
 
-        // --- CONVERSOR: LISTA DE OBJETOS -> LISTA DE IDs ---
         Converter<List<Jogador>, List<Integer>> listaJogadorParaListaIdConverter = new Converter<List<Jogador>, List<Integer>>() {
             public List<Integer> convert(MappingContext<List<Jogador>, List<Integer>> context) {
                 if (context.getSource() == null) {
@@ -57,38 +53,32 @@ public class BackendMapeador extends ModelMapper { // Ele é o ModelMapper
             }
         };
 
-        // --- MAPEAMENTO DO 'PREMIACAO' ---
         this.createTypeMap(Premiacao.class, PremiacaoJPA.class)
             .addMappings(mapper -> 
                 mapper.using(objetoParaIdConverter).map(Premiacao::getJogador, PremiacaoJPA::setJogadorId)
             );
 
-        // --- MAPEAMENTO DO 'SESSAOTREINO' ---
         this.createTypeMap(SessaoTreino.class, SessaoTreinoJPA.class)
             .addMappings(mapper -> {
                 mapper.using(objetoParaIdConverter).map(SessaoTreino::getPartida, SessaoTreinoJPA::setPartidaId);
                 mapper.using(listaJogadorParaListaIdConverter).map(SessaoTreino::getConvocados, SessaoTreinoJPA::setConvocadosIds);
             });
             
-        // --- MAPEAMENTO DO 'PARTIDA' ---
         this.createTypeMap(Partida.class, PartidaJPA.class)
             .addMappings(mapper -> {
                 mapper.using(objetoParaIdConverter).map(Partida::getClubeCasa, PartidaJPA::setClubeCasaId);
                 mapper.using(objetoParaIdConverter).map(Partida::getClubeVisitante, PartidaJPA::setClubeVisitanteId);
             });
 
-        // --- MAPEAMENTO: 'Lesao' -> 'LesaoJPA' ---
         this.createTypeMap(Lesao.class, LesaoJPA.class)
             .addMappings(mapper -> {
                 mapper.using(objetoParaIdConverter).map(Lesao::getJogador, LesaoJPA::setJogadorId);
             });
 
-        // --- FIM DA LÓGICA DE CONFIGURAÇÃO ---
     }
 
     @Override
     public <D> D map(Object source, Class<D> destinationType) {
-        // Seu método de verificação de nulo está ótimo
         return source != null ? super.map(source, destinationType) : null;
     }
 }

@@ -8,14 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 
 @Entity(name = "Lesao")
-@Table(name = "Lesao") // 1. O nome da tabela DEVE ser igual ao do seu SQL
+@Table(name = "Lesao") 
 public class LesaoJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // 2. Mapeia para a coluna 'id_jogador' (o ModelMapper vai preencher)
     @Column(name = "id_jogador")
     private Integer jogadorId;
 
@@ -24,10 +23,8 @@ public class LesaoJPA {
     private String plano;
     private int grau;
 
-    // Construtor vazio obrigatório para o JPA
     public LesaoJPA() {}
 
-    // --- Getters e Setters ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public Integer getJogadorId() { return jogadorId; }

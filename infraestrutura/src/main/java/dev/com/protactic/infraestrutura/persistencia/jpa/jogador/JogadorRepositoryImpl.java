@@ -1,21 +1,17 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.jogador;
 
-// 1. Importa os "contratos" e "entidades" do DOMÍNIO
 import dev.com.protactic.dominio.principal.Jogador;
 import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
-// 2. IMPORTA OS "CONTRATOS" E "RESUMOS" DA APLICAÇÃO
 import dev.com.protactic.aplicacao.principal.jogador.JogadorRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.jogador.JogadorResumo;
 
-// 3. Importa as classes de infraestrutura
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-// 4. FAZEMOS A CLASSE IMPLEMENTAR AMBAS AS INTERFACES
 public class JogadorRepositoryImpl implements JogadorRepository, JogadorRepositorioAplicacao {
 
     private final JogadorRepositorySpringData repositoryJPA;
@@ -25,8 +21,6 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
         this.repositoryJPA = repositoryJPA;
         this.mapeador = mapeador;
     }
-
-    // --- Implementação dos métodos da interface do DOMÍNIO (JogadorRepository) ---
     
     @Override
     public void salvar(Jogador jogador) {
@@ -65,32 +59,15 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
                 .orElse(null);
     }
     
-    // --- (FIM) Implementação dos métodos do DOMÍNIO ---
-
-
-    // --- IMPLEMENTAÇÃO DOS MÉTODOS DA APLICAÇÃO (JogadorRepositorioAplicacao) ---
-
-    /**
-     * Este método implementa o contrato 'pesquisarResumos()'
-     * da camada de Aplicação.
-     * * Nota: Não precisamos do JpaMapeador. O Spring Data já
-     * retorna a projeção (Resumo) pronta.
-     */
     @Override
     public List<JogadorResumo> pesquisarResumos() {
         // 5. Simplesmente chamamos o método do Spring Data
         return repositoryJPA.findAllBy();
     }
 
-    /**
-     * Este método implementa o contrato 'pesquisarResumosPorClube(Integer clubeId)'
-     * da camada de Aplicação.
-     */
     @Override
     public List<JogadorResumo> pesquisarResumosPorClube(Integer clubeId) {
-        // 6. Simplesmente chamamos o método do Spring Data
         return repositoryJPA.findByClubeId(clubeId);
     }
 
-    // --- (FIM) Implementação dos métodos da APLICAÇÃO ---
 }

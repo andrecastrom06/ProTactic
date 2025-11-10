@@ -8,19 +8,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Column; // <-- IMPORTANTE
+import jakarta.persistence.Column; 
 import java.util.List;
 
 @Entity(name = "Clube")
-@Table(name = "Clube") // 1. Mudei para "Clube" (maiúsculo) para bater com o seu SQL
+@Table(name = "Clube") 
 public class ClubeJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
-    // --- INÍCIO DA CORREÇÃO ---
-    // 2. Mapeia os campos Java (camelCase) para as colunas SQL (snake_case)
+ 
     @Column(name = "id_treinador")
     private Integer treinadorId;
     
@@ -33,9 +32,8 @@ public class ClubeJPA {
     @Column(name = "id_competicao")
     private Integer competicaoId;
     
-    @Column(name = "capitao") // No seu SQL, a coluna chama-se 'capitao'
+    @Column(name = "capitao") 
     private Integer capitaoId; 
-    // --- FIM DA CORREÇÃO ---
 
     private String nome;
     
@@ -46,14 +44,12 @@ public class ClubeJPA {
     
     @ElementCollection
     @CollectionTable(name = "clube_jogador_ids", joinColumns = @JoinColumn(name = "clube_id"))
-    @Column(name = "jogador_ids") // Nome da coluna na tabela de junção
+    @Column(name = "jogador_ids") 
     private List<Integer> jogadorIds;
 
-    // Construtor vazio
     public ClubeJPA() {}
 
-    // --- Getters e Setters ---
-    // (Não vou repetir todos, mas certifique-se que os tem)
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public Integer getTreinadorId() { return treinadorId; }
