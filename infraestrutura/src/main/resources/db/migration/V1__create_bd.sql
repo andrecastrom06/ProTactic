@@ -287,10 +287,14 @@ CREATE TABLE IF NOT EXISTS Nota (
 -- ===========================
 -- Tabela RegistroCartao
 -- ===========================
-CREATE TABLE IF NOT EXISTS registro_cartao ( -- <-- CORRIGIDO
+CREATE TABLE IF NOT EXISTS registro_cartao (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    atleta VARCHAR(255) NOT NULL,
-    tipo VARCHAR(50) NOT NULL
+    id_jogador INT NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    
+    -- Adicionando a associação correta
+    FOREIGN KEY (id_jogador) REFERENCES Jogador(id) 
+        ON DELETE CASCADE -- Opcional: se deletar o jogador, limpa os cartões.
 );
 
 -- ===========================

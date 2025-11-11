@@ -36,7 +36,7 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
         Objects.requireNonNull(nome, "O Nome do Jogador a ser buscado não pode ser nulo.");
         
         // 1. Agora o 'repositoryJPA.findByNome' (do SpringData) retorna uma LISTA
-        return repositoryJPA.findByNome(nome)
+        return repositoryJPA.findByNomeIgnoreCase(nome)
                 .stream()
                 .findFirst() // 2. Nós pegamos apenas o *primeiro* resultado da lista
                 .map(jpa -> mapeador.map(jpa, Jogador.class)) // 3. Mapeamos

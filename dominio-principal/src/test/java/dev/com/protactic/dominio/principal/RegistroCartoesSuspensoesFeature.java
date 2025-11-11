@@ -1,11 +1,13 @@
 package dev.com.protactic.dominio.principal;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesRepository;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
+import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.SuspensaoRepository; // <-- 1. NOVO IMPORT
 import dev.com.protactic.mocks.RegistroCartoesMock;
+import dev.com.protactic.mocks.SuspensaoMock; // <-- 2. NOVO IMPORT
+
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
@@ -17,17 +19,29 @@ public class RegistroCartoesSuspensoesFeature {
     private boolean suspenso;
     private boolean disponivel;
     private RegistroCartoesRepository repository;
+    private SuspensaoRepository suspensaoRepository; // <-- 3. NOVO CAMPO
     private RegistroCartoesService service;
 
     @Dado("um atleta chamado {string}")
     public void um_atleta_chamado(String nomeAtleta) {
         this.atleta = nomeAtleta;
+        
+        // 4. Inicializa os DOIS mocks
         this.repository = new RegistroCartoesMock();
-        this.service = new RegistroCartoesService(repository);
+        this.suspensaoRepository = new SuspensaoMock(); // <-- 5. NOVO MOCK
+        
+        // 6. Chama o NOVO construtor com os dois mocks
+        this.service = new RegistroCartoesService(repository, suspensaoRepository);
+        
         this.suspenso = false;
         this.disponivel = true;
     }
 
+    //
+    // TODOS OS OUTROS MÉTODOS DE TESTE (@Dado, @Quando, @Então)
+    // CONTINUAM EXATAMENTE IGUAIS, SEM NENHUMA MUDANÇA
+    //
+    
     @Dado("o atleta possui contrato {string} com o clube")
     public void o_atleta_possui_contrato_com_o_clube(String statusContrato) {
         this.contratoAtivo = "ativo".equals(statusContrato);
@@ -70,7 +84,7 @@ public class RegistroCartoesSuspensoesFeature {
     }
 
     @Quando("o analista executa o processo de limpeza de suspensões")
-    public void o_analista_executa_o_processo_de_limpeza_de_suspensoes() {
+    public void o_analista_executa_o_processo_de_limpeza_de_suspensões() {
         service.limparCartoes(atleta);
         this.suspenso = false;
         this.disponivel = this.contratoAtivo;

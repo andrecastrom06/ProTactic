@@ -155,8 +155,12 @@ public class AplicacaoBackend {
     }
 
     @Bean
-    public RegistroCartoesService registroCartoesService(RegistroCartoesRepository cartoesRepo) {
-        return new RegistroCartoesService(cartoesRepo);
+    public RegistroCartoesService registroCartoesService(
+            RegistroCartoesRepository cartaoRepository, 
+            SuspensaoRepository suspensaoRepository) {
+        
+        // Chama o único construtor que existe agora
+        return new RegistroCartoesService(cartaoRepository, suspensaoRepository);
     }
 
     @Bean

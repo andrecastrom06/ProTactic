@@ -1,4 +1,4 @@
-/** package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,4 +82,4 @@ public class RegistroCartoesControlador {
             throw new RuntimeException("Erro ao limpar cartões: " + e.getMessage(), e);
         }
     }
-} */
+} 
