@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 
 @Entity(name = "EscalacaoSimples")
-@Table(name = "EscalacaoSimples")
+@Table(name = "escalacao_simples")
 public class EscalacaoSimplesJPA {
 
     @Id

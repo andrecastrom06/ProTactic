@@ -296,10 +296,10 @@ CREATE TABLE IF NOT EXISTS registro_cartao ( -- <-- CORRIGIDO
 -- ===========================
 -- Tabela Escalacao Simples
 -- ===========================
-CREATE TABLE IF NOT EXISTS EscalacaoSimples (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    jogo_data VARCHAR(255) NOT NULL,
-    nome_jogador VARCHAR(255) NOT NULL
+CREATE TABLE IF NOT EXISTS escalacao_simples ( -- <-- CORRIGIDO
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    jogo_data VARCHAR(255) NOT NULL,
+    nome_jogador VARCHAR(255) NOT NULL
 );
 -- ===========================
 -- Tabela InscricaoAtleta

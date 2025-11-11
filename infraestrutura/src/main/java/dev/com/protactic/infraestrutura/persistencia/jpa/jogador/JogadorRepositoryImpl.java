@@ -30,13 +30,19 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
         repositoryJPA.save(jogadorJPA);
     }
 
+    // --- (INÍCIO DA CORREÇÃO) ---
     @Override
     public Jogador buscarPorNome(String nome) {
         Objects.requireNonNull(nome, "O Nome do Jogador a ser buscado não pode ser nulo.");
+        
+        // 1. Agora o 'repositoryJPA.findByNome' (do SpringData) retorna uma LISTA
         return repositoryJPA.findByNome(nome)
-                .map(jpa -> mapeador.map(jpa, Jogador.class))
-                .orElse(null);
+                .stream()
+                .findFirst() // 2. Nós pegamos apenas o *primeiro* resultado da lista
+                .map(jpa -> mapeador.map(jpa, Jogador.class)) // 3. Mapeamos
+                .orElse(null); // 4. Se a lista estiver vazia, retornamos nulo
     }
+    // --- (FIM DA CORREÇÃO) ---
 
     @Override
     public boolean existe(String nome) {
