@@ -29,4 +29,12 @@ public class RegistroLesoesServico {
         repo.salvarPlanoDias(atletaId, dias);
         repo.atualizarPermissaoTreino(atletaId, "limitada");
     }
+
+    public void encerrarRecuperacao(String atletaId) {
+        repo.encerrarLesaoAtiva(atletaId); 
+        repo.atualizarStatusAtleta(atletaId, "Saudável");
+        repo.atualizarDisponibilidade(atletaId, "disponível");
+        repo.atualizarPermissaoTreino(atletaId, "liberada");
+    }
+
 }
