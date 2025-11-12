@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional; 
 
 /**
  * Controlador de API REST para a História "Planejar treino físico" (Mapa 1.1).
@@ -107,5 +108,38 @@ public class TreinoFisicoControlador {
 
         // 4. Retornar o objeto salvo
         return ResponseEntity.ok(treinoSalvo);
+    }
+    
+    @PutMapping("/editar/{treinoId}")
+    public ResponseEntity<Fisico> editarTreinoFisico(
+            @PathVariable("treinoId") Integer treinoId,
+            @RequestBody TreinoFisicoFormulario formulario) {
+
+        // 1. Buscar o treino físico existente pelo seu ID
+        Optional<Fisico> treinoOpt = fisicoRepository.buscarPorId(treinoId);
+
+        if (treinoOpt.isEmpty()) {
+            // Se o treino não existe, retorna 404 Not Found
+            return ResponseEntity.notFound().build();
+        }
+
+        Fisico treinoExistente = treinoOpt.get();
+
+        // 2. Atualizar todos os campos do treino existente com os dados do formulário
+        // (Nota: O 'jogador' deste treino não pode ser alterado por esta rota)
+        treinoExistente.setNome(formulario.nome());
+        treinoExistente.setMusculo(formulario.musculo());
+        treinoExistente.setIntensidade(formulario.intensidade());
+        treinoExistente.setDescricao(formulario.descricao());
+        treinoExistente.setDataInicio(formulario.dataInicio());
+        treinoExistente.setDataFim(formulario.dataFim());
+
+        // 3. Salvar as alterações no repositório
+        // O JPA entende que, como 'treinoExistente' já tem um ID,
+        // isto é uma atualização (UPDATE), e não uma criação (INSERT).
+        Fisico treinoAtualizado = fisicoRepository.salvar(treinoExistente);
+
+        // 4. Retornar o objeto atualizado
+        return ResponseEntity.ok(treinoAtualizado);
     }
 }
