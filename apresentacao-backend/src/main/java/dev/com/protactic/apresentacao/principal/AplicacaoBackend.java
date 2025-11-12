@@ -23,6 +23,9 @@ import dev.com.protactic.aplicacao.principal.premiacao.*;
 import dev.com.protactic.aplicacao.principal.proposta.*;
 import dev.com.protactic.aplicacao.principal.registrocartao.*;
 import dev.com.protactic.aplicacao.principal.sessaotreino.*;
+import dev.com.protactic.aplicacao.principal.fisico.FisicoRepositorioAplicacao;
+import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;
+import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
 
 // Importa Repositórios e Serviços de DOMÍNIO
 import dev.com.protactic.dominio.principal.capitao.*;
@@ -31,6 +34,8 @@ import dev.com.protactic.dominio.principal.definirEsquemaTatico.*;
 import dev.com.protactic.dominio.principal.dispensa.*;
 import dev.com.protactic.dominio.principal.lesao.*;
 import dev.com.protactic.dominio.principal.nota.*;
+import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalRepositoryMock;
+import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalService;
 import dev.com.protactic.dominio.principal.premiacaoInterna.*;
 import dev.com.protactic.dominio.principal.proposta.*;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.*;
@@ -173,6 +178,22 @@ public class AplicacaoBackend {
     @Bean
     public SessaoTreinoService sessaoTreinoService(SessaoTreinoRepository sessaoRepo) {
         return new SessaoTreinoService(sessaoRepo);
+    }
+
+    @Bean
+    public PlanejamentoCargaSemanalRepositoryMock planejamentoCargaSemanalRepositoryMock() {
+        return new PlanejamentoCargaSemanalRepositoryMock();
+    }
+
+    @Bean
+    public PlanejamentoCargaSemanalService planejamentoCargaSemanalService(
+            PlanejamentoCargaSemanalRepositoryMock repository) {
+        return new PlanejamentoCargaSemanalService(repository);
+    }
+
+    @Bean
+    public FisicoServicoAplicacao fisicoServicoAplicacao(FisicoRepositorioAplicacao repositorio) {
+        return new FisicoServicoAplicacao(repositorio);
     }
 
     // --- MÉTODO PRINCIPAL ---

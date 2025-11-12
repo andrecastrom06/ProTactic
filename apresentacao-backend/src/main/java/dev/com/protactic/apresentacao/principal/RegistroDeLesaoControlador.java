@@ -30,7 +30,7 @@ import dev.com.protactic.dominio.principal.lesao.LesaoRepository;
 
 @RestController
 @RequestMapping("backend/lesao") // Define a URL base
-public class LesaoControlador {
+public class RegistroDeLesaoControlador {
 
     // --- Injeção dos Serviços ---
     private @Autowired LesaoServicoAplicacao lesaoServicoAplicacao;

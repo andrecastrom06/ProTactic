@@ -43,22 +43,25 @@ create table if not exists Competicao (
 
 -- ===========================
 -- Tabela Contrato
+-- (UNIFICADA - 'id_clube' adicionado diretamente)
 -- ===========================
 create table if not exists Contrato (
     id int not null auto_increment,
     duracao_meses int,
     salario decimal(12,2),
     status varchar(50),
+    id_clube INT, -- Coluna movida de ALTER para cá
     primary key (id)
 );
 
 -- ===========================
 -- Tabela Jogador
+-- (UNIFICADA - todas as colunas do BDD movidas para cá)
 -- ===========================
 create table if not exists Jogador (
     id int not null auto_increment,
     id_contrato int unique,
-    id_clube int,  -- ainda sem FK, pq Clube ainda não existe
+    id_clube int,  -- FK adicionada após a criação do Clube
     id_competicao int not null,
     nome varchar(100) not null,
     idade int,
@@ -68,13 +71,26 @@ create table if not exists Jogador (
     jogos int,
     gols int,
     assistencias int,
+    
+    -- Colunas movidas do ALTER TABLE para cá (baseado nos BDDs)
+    status VARCHAR(50),
+    minutagem VARCHAR(50),
+    chegada_no_clube DATE,
+    capitao BOOLEAN DEFAULT FALSE,
+    grau_lesao INT DEFAULT -1,
+    contrato_ativo BOOLEAN DEFAULT FALSE,
+    saudavel BOOLEAN DEFAULT TRUE,
+    desvio_padrao DECIMAL(10, 5) DEFAULT 0.0,
+    
     primary key (id),
     foreign key (id_contrato) references Contrato(id),
     foreign key (id_competicao) references Competicao(id)
+    -- A FK para 'id_clube' é adicionada abaixo
 );
 
 -- ===========================
 -- Tabela Clube
+-- (REVISADA - 'vice_capitao' removido por não ser usado no BDD/Serviços)
 -- ===========================
 create table if not exists Clube (
     id int not null auto_increment,
@@ -86,23 +102,22 @@ create table if not exists Clube (
     cidade_estado varchar(100),
     estadio varchar(100),
     capitao int,
-    vice_capitao int,
+    -- vice_capitao foi removido por ser redundante com a lógica de negócio implementada
     primary key (id),
     foreign key (id_treinador) references Treinador(id),
     foreign key (id_analista) references Analista(id),
     foreign key (id_preparador) references Preparador(id),
     foreign key (id_competicao) references Competicao(id),
-    foreign key (capitao) references Jogador(id),
-    foreign key (vice_capitao) references Jogador(id)
+    foreign key (capitao) references Jogador(id)
 );
 
--- Agora adicionamos a FK de Jogador -> Clube
+-- Adicionando a FK de Jogador -> Clube (após a tabela Clube existir)
 alter table Jogador
     add constraint fk_jogador_clube
     foreign key (id_clube) references Clube(id);
 
 -- ===========================
--- Tabela Lesão
+-- Tabela Lesão (BDD 3 - Registro de Lesões)
 -- ===========================
 create table if not exists Lesao (
     id int not null auto_increment,
@@ -116,7 +131,7 @@ create table if not exists Lesao (
 );
 
 -- ===========================
--- Tabela Suspensão
+-- Tabela Suspensão (BDD 8 - Cartões)
 -- ===========================
 create table if not exists Suspensao (
     id int not null auto_increment,
@@ -129,7 +144,7 @@ create table if not exists Suspensao (
 );
 
 -- ===========================
--- Tabela Físico
+-- Tabela Físico (BDD 2 - Carga Semanal)
 -- ===========================
 create table if not exists Fisico (
     id int not null auto_increment,
@@ -161,7 +176,7 @@ create table if not exists Partida (
 );
 
 -- ===========================
--- Tabela Escalação (Design Original - Não usada pela interface atual)
+-- Tabela Escalação (Usada pelo FormacaoControlador)
 -- ===========================
 create table if not exists Escalacao (
     id int not null auto_increment,
@@ -209,7 +224,8 @@ create table if not exists Tatico (
 );
 
 -- ===========================
--- Tabela Proposta
+-- Tabela Proposta (BDD 5)
+-- (UNIFICADA - 'data' adicionada diretamente)
 -- ===========================
 create table if not exists Proposta (
     id int not null auto_increment,
@@ -218,6 +234,7 @@ create table if not exists Proposta (
     id_jogador int not null,
     status varchar(50),
     valor decimal(10,2),
+    data DATETIME, -- Coluna movida de ALTER para cá
     primary key (id),
     foreign key (id_propositor) references Clube(id),
     foreign key (id_receptor) references Clube(id),
@@ -225,7 +242,7 @@ create table if not exists Proposta (
 );
 
 -- ===========================
--- Tabela Premiação
+-- Tabela Premiação (BDD 11)
 -- ===========================
 create table if not exists Premiacao (
     id int not null auto_increment,
@@ -235,10 +252,6 @@ create table if not exists Premiacao (
     primary key (id),
     foreign key (id_jogador) references Jogador(id)
 );
-
--- ================================================================
--- == ADIÇÕES E CORREÇÕES (Necessárias para a camada de infraestrutura) ==
--- ================================================================
 
 -- ===========================
 -- Tabela de Junção (Clube <-> Jogador IDs)
@@ -250,32 +263,7 @@ CREATE TABLE IF NOT EXISTS clube_jogador_ids (
 );
 
 -- ===========================
--- ATUALIZAÇÃO: Adicionando colunas faltantes em Jogador
--- (Sintaxe corrigida: removido o 'IF NOT EXISTS' do ALTER TABLE)
--- ===========================
-ALTER TABLE Jogador ADD COLUMN status VARCHAR(50);
-ALTER TABLE Jogador ADD COLUMN minutagem VARCHAR(50);
-ALTER TABLE Jogador ADD COLUMN chegada_no_clube DATE;
-ALTER TABLE Jogador ADD COLUMN capitao BOOLEAN DEFAULT FALSE;
-ALTER TABLE Jogador ADD COLUMN grau_lesao INT DEFAULT -1;
-ALTER TABLE Jogador ADD COLUMN contrato_ativo BOOLEAN DEFAULT FALSE;
-ALTER TABLE Jogador ADD COLUMN saudavel BOOLEAN DEFAULT TRUE;
-ALTER TABLE Jogador ADD COLUMN desvio_padrao DECIMAL(10, 5) DEFAULT 0.0;
-
--- ===========================
--- ATUALIZAÇÃO: Adicionando colunas faltantes em Contrato
--- (Sintaxe corrigida: removido o 'IF NOT EXISTS' do ALTER TABLE)
--- ===========================
-ALTER TABLE Contrato ADD COLUMN id_clube INT;
-
--- ===========================
--- ATUALIZAÇÃO: Adicionando colunas faltantes em Proposta
--- (Sintaxe corrigida: removido o 'IF NOT EXISTS' do ALTER TABLE)
--- ===========================
-ALTER TABLE Proposta ADD COLUMN data DATETIME;
-
--- ===========================
--- Tabela Nota
+-- Tabela Nota (BDD 9 - Atribuição de Notas)
 -- ===========================
 CREATE TABLE IF NOT EXISTS Nota (
     jogo_id VARCHAR(255) NOT NULL,
@@ -284,29 +272,29 @@ CREATE TABLE IF NOT EXISTS Nota (
     observacao TEXT,
     PRIMARY KEY (jogo_id, jogador_id)
 );
+
 -- ===========================
--- Tabela RegistroCartao
+-- Tabela RegistroCartao (BDD 8 - Cartões)
 -- ===========================
 CREATE TABLE IF NOT EXISTS registro_cartao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_jogador INT NOT NULL,
     tipo VARCHAR(50) NOT NULL,
-    
-    -- Adicionando a associação correta
     FOREIGN KEY (id_jogador) REFERENCES Jogador(id) 
-        ON DELETE CASCADE -- Opcional: se deletar o jogador, limpa os cartões.
+        ON DELETE CASCADE
 );
 
 -- ===========================
--- Tabela Escalacao Simples
+-- Tabela Escalacao Simples (BDD 4 - Esquema Tático)
 -- ===========================
-CREATE TABLE IF NOT EXISTS escalacao_simples ( -- <-- CORRIGIDO
+CREATE TABLE IF NOT EXISTS escalacao_simples (
     id INT AUTO_INCREMENT PRIMARY KEY,
     jogo_data VARCHAR(255) NOT NULL,
     nome_jogador VARCHAR(255) NOT NULL
 );
+
 -- ===========================
--- Tabela InscricaoAtleta
+-- Tabela InscricaoAtleta (BDD 6 - Inscrição)
 -- ===========================
 CREATE TABLE IF NOT EXISTS inscricao_atleta (
     atleta VARCHAR(255) NOT NULL,
@@ -318,20 +306,22 @@ CREATE TABLE IF NOT EXISTS inscricao_atleta (
 );
 
 -- ===========================
--- Tabela SessaoTreino
+-- Tabela SessaoTreino (BDD 10 - Treino Tático)
 -- ===========================
-
-CREATE TABLE IF NOT EXISTS sessao_treino ( -- <-- minúsculo e snake_case
+CREATE TABLE IF NOT EXISTS sessao_treino (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     id_partida INT NOT NULL,
     FOREIGN KEY (id_partida) REFERENCES Partida(id)
 );
 
-CREATE TABLE IF NOT EXISTS sessao_treino_convocados ( -- <-- minúsculo e snake_case
+-- ===========================
+-- Tabela SessaoTreino Convocados (BDD 10)
+-- ===========================
+CREATE TABLE IF NOT EXISTS sessao_treino_convocados (
     sessao_treino_id INT NOT NULL,
     jogador_id INT NOT NULL,
-    FOREIGN KEY (sessao_treino_id) REFERENCES sessao_treino(id), -- <-- Referência corrigida
+    FOREIGN KEY (sessao_treino_id) REFERENCES sessao_treino(id),
     FOREIGN KEY (jogador_id) REFERENCES Jogador(id),
     PRIMARY KEY (sessao_treino_id, jogador_id)
 );

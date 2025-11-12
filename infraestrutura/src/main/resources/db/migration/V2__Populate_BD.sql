@@ -1726,11 +1726,11 @@ SET @competicao_id = (SELECT id FROM Competicao WHERE nome = 'Campeonato Brasile
 -- =================================================================================
 -- Insere os 20 clubes da Série A e o time "Passes Livres".
 -- O ID da equipe técnica é recuperado através de subconsultas usando o login.
--- Os campos de capitao e vice_capitao são temporariamente NULL.
+-- Os campos de capitao  são temporariamente NULL.
 -- =================================================================================
 
 -- Atlético Mineiro
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'milito_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_atl')),
@@ -1739,12 +1739,11 @@ VALUES (
     'Atlético Mineiro',
     'Belo Horizonte, MG',
     'Arena MRV',
-    NULL,
     NULL
 );
 
 -- Bahia
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'ceni_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_bah')),
@@ -1753,12 +1752,11 @@ VALUES (
     'Bahia',
     'Salvador, BA',
     'Arena Fonte Nova',
-    NULL,
     NULL
 );
 
 -- Botafogo
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'artur_jorge_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_bot')),
@@ -1767,12 +1765,11 @@ VALUES (
     'Botafogo',
     'Rio de Janeiro, RJ',
     'Estádio Nilton Santos',
-    NULL,
     NULL
 );
 
 -- Ceará
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'vagner_mancini_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_cea')),
@@ -1781,12 +1778,11 @@ VALUES (
     'Ceará',
     'Fortaleza, CE',
     'Arena Castelão',
-    NULL,
     NULL
 );
 
 -- Corinthians
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'antonio_oliveira_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_cor')),
@@ -1795,12 +1791,11 @@ VALUES (
     'Corinthians',
     'São Paulo, SP',
     'Neo Química Arena',
-    NULL,
     NULL
 );
 
 -- Cruzeiro
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'fernando_seabra_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_cru')),
@@ -1809,12 +1804,11 @@ VALUES (
     'Cruzeiro',
     'Belo Horizonte, MG',
     'Mineirão',
-    NULL,
     NULL
 );
 
 -- Flamengo
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'tite_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_fla')),
@@ -1823,12 +1817,11 @@ VALUES (
     'Flamengo',
     'Rio de Janeiro, RJ',
     'Maracanã',
-    NULL,
     NULL
 );
 
 -- Fluminense
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'fernando_diniz_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_flu')),
@@ -1837,12 +1830,11 @@ VALUES (
     'Fluminense',
     'Rio de Janeiro, RJ',
     'Maracanã',
-    NULL,
     NULL
 );
 
 -- Fortaleza
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'vojvoda_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_for')),
@@ -1851,12 +1843,11 @@ VALUES (
     'Fortaleza',
     'Fortaleza, CE',
     'Arena Castelão',
-    NULL,
     NULL
 );
 
 -- Grêmio
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'renato_gaucho_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_gre')),
@@ -1865,12 +1856,11 @@ VALUES (
     'Grêmio',
     'Porto Alegre, RS',
     'Arena do Grêmio',
-    NULL,
     NULL
 );
 
 -- Internacional
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'eduardo_coudet_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_int')),
@@ -1879,12 +1869,11 @@ VALUES (
     'Internacional',
     'Porto Alegre, RS',
     'Beira-Rio',
-    NULL,
     NULL
 );
 
 -- Juventude
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'gabriel_milito_juv_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_juv')),
@@ -1893,12 +1882,11 @@ VALUES (
     'Juventude',
     'Caxias do Sul, RS',
     'Alfredo Jaconi',
-    NULL,
     NULL
 );
 
 -- Mirassol
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'mozart_santos_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_mir')),
@@ -1907,12 +1895,11 @@ VALUES (
     'Mirassol',
     'Mirassol, SP',
     'Estádio José Maria de Campos Maia',
-    NULL,
     NULL
 );
 
 -- Palmeiras
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'abel_ferreira_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_pal')),
@@ -1921,12 +1908,11 @@ VALUES (
     'Palmeiras',
     'São Paulo, SP',
     'Allianz Parque',
-    NULL,
     NULL
 );
 
 -- Red Bull Bragantino
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'pedro_caixinha_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_rbb')),
@@ -1935,12 +1921,11 @@ VALUES (
     'Red Bull Bragantino',
     'Bragança Paulista, SP',
     'Estádio Nabi Abi Chedid',
-    NULL,
     NULL
 );
 
 -- Santos
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'fabio_carille_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_san')),
@@ -1949,12 +1934,11 @@ VALUES (
     'Santos',
     'Santos, SP',
     'Vila Belmiro',
-    NULL,
     NULL
 );
 
 -- São Paulo
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'zubeldia_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_sp')),
@@ -1963,12 +1947,11 @@ VALUES (
     'São Paulo',
     'São Paulo, SP',
     'Morumbi',
-    NULL,
     NULL
 );
 
 -- Sport
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'mariano_soso_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_spo')),
@@ -1977,12 +1960,11 @@ VALUES (
     'Sport',
     'Recife, PE',
     'Ilha do Retiro',
-    NULL,
     NULL
 );
 
 -- Vasco da Gama
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'alvaro_pacheco_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_vas')),
@@ -1991,12 +1973,11 @@ VALUES (
     'Vasco',
     'Rio de Janeiro, RJ',
     'São Januário',
-    NULL,
     NULL
 );
 
 -- Vitória
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'thiago_carpini_t')),
     (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_vit')),
@@ -2005,12 +1986,11 @@ VALUES (
     'Vitória',
     'Salvador, BA',
     'Estádio Manoel Barradas',
-    NULL,
     NULL
 );
 
 -- Passes Livres (Time fictício)
-INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao, vice_capitao)
+INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
     NULL, -- Treinador fictício, não relacionado a um usuário
     NULL, -- Analista fictício, não relacionado a um usuário
@@ -2019,7 +1999,6 @@ VALUES (
     'Passes Livres',
     'Sem Local, BR',
     'Sem estádio',
-    NULL,
     NULL
 );
 
