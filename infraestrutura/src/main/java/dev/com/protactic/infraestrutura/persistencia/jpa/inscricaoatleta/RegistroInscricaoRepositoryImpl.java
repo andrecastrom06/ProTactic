@@ -6,7 +6,6 @@ import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.InscricaoAtletaRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.InscricaoAtletaResumo;
 
-
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +22,7 @@ public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoReposit
         this.mapeador = mapeador;
     }
 
+    // ... (Os seus métodos de Domínio 'salvar', 'buscarPorAtletaECompeticao', 'listarTodas' não mudam) ...
     
     @Override
     public void salvar(InscricaoAtleta inscricao) {
@@ -48,6 +48,8 @@ public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoReposit
     }
 
 
+    // --- Métodos de Aplicação (Consultas) ---
+
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumos() {
         return repositoryJPA.findAllBy();
@@ -56,13 +58,20 @@ public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoReposit
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumosPorAtleta(String atleta) {
         Objects.requireNonNull(atleta, "O nome do Atleta não pode ser nulo.");
-        return repositoryJPA.findByAtleta(atleta);
+        
+        // (INÍCIO DA CORREÇÃO)
+        // Chamamos o novo método 'findByAtletaIgnoreCase'
+        return repositoryJPA.findByAtletaIgnoreCase(atleta);
+        // (FIM DA CORREÇÃO)
     }
 
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumosPorCompeticao(String competicao) {
         Objects.requireNonNull(competicao, "O nome da Competição não pode ser nulo.");
-        return repositoryJPA.findByCompeticao(competicao);
+        
+        // (INÍCIO DA CORREÇÃO)
+        // Chamamos o novo método 'findByCompeticaoIgnoreCase'
+        return repositoryJPA.findByCompeticaoIgnoreCase(competicao);
+        // (FIM DA CORREÇÃO)
     }
-    
 }

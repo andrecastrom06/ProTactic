@@ -8,6 +8,6 @@ public interface JogadorRepository {
     Jogador buscarPorNome(String nome);
     boolean existe(String nome);
     List<Jogador> listarTodos();
-
     Jogador buscarPorId(Integer id);
+    List<Jogador> findByNomeIgnoreCase(String nome);
 }

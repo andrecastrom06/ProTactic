@@ -76,4 +76,16 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
         return repositoryJPA.findByClubeId(clubeId);
     }
 
+    @Override
+    public List<Jogador> findByNomeIgnoreCase(String nome) {
+        
+        // 1. Chama o método do Spring Data (que já existe e funciona)
+        List<JogadorJPA> jpaList = repositoryJPA.findByNomeIgnoreCase(nome);
+
+        // 2. Mapeia a lista de JPA para uma lista de Domínio
+        return jpaList.stream()
+                .map(jpa -> mapeador.map(jpa, Jogador.class))
+                .collect(Collectors.toList());
+    }
+
 }

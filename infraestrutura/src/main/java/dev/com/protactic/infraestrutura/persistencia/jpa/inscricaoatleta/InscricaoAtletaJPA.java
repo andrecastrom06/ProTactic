@@ -7,7 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.IdClass; 
 
 @Entity(name = "InscricaoAtleta")
-@Table(name = "InscricaoAtleta") 
+@Table(name = "inscricao_atleta")
 @IdClass(InscricaoAtletaPK.class)
 public class InscricaoAtletaJPA {
 

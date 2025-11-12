@@ -107,8 +107,9 @@ public class AplicacaoBackend {
     }
 
     @Bean
-    public RegistroInscricaoService registroInscricaoService(RegistroInscricaoRepository inscricaoRepo) {
-        return new RegistroInscricaoService(inscricaoRepo);
+    public RegistroInscricaoService registroInscricaoService(
+            RegistroInscricaoRepository repository) {     
+        return new RegistroInscricaoService(repository);
     }
 
     @Bean

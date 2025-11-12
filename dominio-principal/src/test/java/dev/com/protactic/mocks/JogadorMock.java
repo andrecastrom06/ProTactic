@@ -50,4 +50,9 @@ public class JogadorMock implements JogadorRepository {
         }
         return jogadores.get(id);
     }
+
+    @Override
+    public List<Jogador> findByNomeIgnoreCase(String nome) {
+        throw new UnsupportedOperationException("Unimplemented method 'findByNomeIgnoreCase'");
+    }
 }

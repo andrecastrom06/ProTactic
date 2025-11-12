@@ -66,3 +66,6 @@ insert into escalacao_simples (jogo_data,nome_jogador,id) values (?,?,default) [
 2025-11-11 09:41:55.352458-03:00 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ESCALACAO_SIMPLES" not found; SQL statement:
 insert into escalacao_simples (jogo_data,nome_jogador,id) values (?,?,default) [42102-232]
+2025-11-12 10:58:21.168903-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "INSCRICAO_ATLETA" not found; SQL statement:
+select iaj1_0.atleta,iaj1_0.competicao,iaj1_0.elegivel_para_jogos,iaj1_0.inscrito,iaj1_0.mensagem_erro from inscricao_atleta iaj1_0 where (iaj1_0.atleta,iaj1_0.competicao) in ((?,?)) [42102-232]

@@ -12,7 +12,8 @@ public interface RegistroInscricaoRepositorySpringData extends JpaRepository<Ins
  
     List<InscricaoAtletaResumo> findAllBy();
 
-    List<InscricaoAtletaResumo> findByAtleta(String atleta);
+    List<InscricaoAtletaResumo> findByAtletaIgnoreCase(String atleta);
 
-    List<InscricaoAtletaResumo> findByCompeticao(String competicao);
+    List<InscricaoAtletaResumo> findByCompeticaoIgnoreCase(String competicao);
+    
 }

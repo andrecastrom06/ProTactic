@@ -308,7 +308,7 @@ CREATE TABLE IF NOT EXISTS escalacao_simples ( -- <-- CORRIGIDO
 -- ===========================
 -- Tabela InscricaoAtleta
 -- ===========================
-CREATE TABLE IF NOT EXISTS InscricaoAtleta (
+CREATE TABLE IF NOT EXISTS inscricao_atleta (
     atleta VARCHAR(255) NOT NULL,
     competicao VARCHAR(255) NOT NULL,
     elegivel_para_jogos BOOLEAN DEFAULT FALSE,
