@@ -17,7 +17,6 @@
 	<modules>
 		<module>aplicacao</module>
 		<module>apresentacao-backend</module>
-		<module>apresentacao-frontend</module>	
 		<module>dominio-principal</module>
 		<module>infraestrutura</module>
 		<module>pai</module>

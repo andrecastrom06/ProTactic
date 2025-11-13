@@ -50,22 +50,22 @@ public class PropostaRepositoryImpl implements PropostaRepository, PropostaRepos
 
     @Override
     public List<PropostaResumo> pesquisarResumos() {
-        return repositoryJPA.findAllBy();
+        return repositoryJPA.findPropostaResumos(); // Chama o novo método @Query
     }
 
     @Override
     public List<PropostaResumo> pesquisarResumosPorPropositor(Integer propositorId) {
-        return repositoryJPA.findByPropositorId(propositorId);
+        return repositoryJPA.findPropostaResumosByPropositorId(propositorId); // Chama o novo método @Query
     }
 
     @Override
     public List<PropostaResumo> pesquisarResumosPorReceptor(Integer receptorId) {
-        return repositoryJPA.findByReceptorId(receptorId);
+        return repositoryJPA.findPropostaResumosByReceptorId(receptorId); // Chama o novo método @Query
     }
 
     @Override
     public List<PropostaResumo> pesquisarResumosPorJogador(Integer jogadorId) {
-        return repositoryJPA.findByJogadorId(jogadorId);
+        return repositoryJPA.findPropostaResumosByJogadorId(jogadorId); // Chama o novo método @Query
     }
     
     @Override

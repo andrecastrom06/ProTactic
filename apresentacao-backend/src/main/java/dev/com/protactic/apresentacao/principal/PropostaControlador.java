@@ -24,7 +24,9 @@ import dev.com.protactic.dominio.principal.proposta.PropostaService;
 import org.springframework.http.ResponseEntity; // <-- 1. Adiciona import
 import org.springframework.web.bind.annotation.DeleteMapping; // <-- 2. Adiciona import
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.CrossOrigin; // <-- 1. ADICIONA ESTA IMPORTAÇÃO
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("backend/proposta")
 public class PropostaControlador {

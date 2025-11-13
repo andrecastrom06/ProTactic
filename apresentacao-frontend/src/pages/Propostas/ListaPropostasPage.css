@@ -1,0 +1,109 @@
+/* Estilo geral da página (container) */
+.propostas-page {
+    padding: 24px;
+    font-family: Arial, sans-serif; /* Uma fonte simples por agora */
+    background-color: #f4f7fa; /* Fundo cinzento claro como no protótipo */
+    min-height: 100vh; /* Ocupa a altura toda */
+}
+
+.propostas-page h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Estilo da tabela (para parecer com image_fdfec6.png) */
+.propostas-table {
+    width: 100%;
+    border-collapse: collapse; /* Tira as bordas duplas */
+    background-color: #ffffff; /* Fundo branco */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden; /* Para o border-radius funcionar na tabela */
+}
+
+/* Estilo do cabeçalho da tabela */
+.propostas-table th {
+    background-color: #fafafa; /* Fundo do cabeçalho ligeiramente cinza */
+    padding: 16px;
+    text-align: left;
+    font-size: 14px;
+    color: #555;
+    border-bottom: 2px solid #eee;
+}
+
+/* Estilo das células da tabela */
+.propostas-table td {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0; /* Linha separadora suave */
+    color: #333;
+    font-size: 14px;
+}
+
+/* Remove a borda da última linha */
+.propostas-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- Estilos dos Botões e Status (Como no protótipo) --- */
+
+/* Base comum para os botões */
+.propostas-btn {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.propostas-btn-aprovar {
+    background-color: #e0f8e0;
+    color: #006400;
+    border: 1px solid #b3e6b3;
+    margin-right: 8px;
+}
+.propostas-btn-aprovar:hover {
+    background-color: #c1f0c1;
+}
+
+.propostas-btn-rejeitar {
+    background-color: #fde0e0;
+    color: #A00000;
+    border: 1px solid #f5b3b3;
+}
+.propostas-btn-rejeitar:hover {
+    background-color: #f8c1c1;
+}
+
+
+/* Base comum para os "badges" de status */
+.propostas-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 12px;
+    text-transform: uppercase;
+    display: inline-block; /* Para o padding funcionar */
+}
+
+/* Cores específicas para cada status (como em image_fdfec6.png) */
+.propostas-status-pendente {
+    background-color: #e6f7ff; /* Azul claro */
+    color: #0056b3; /* Azul escuro */
+}
+
+.propostas-status-aceite {
+    background-color: #e0f8e0; /* Verde claro */
+    color: #006400; /* Verde escuro */
+}
+
+.propostas-status-rejeitado {
+    background-color: #fde0e0; /* Vermelho claro */
+    color: #A00000; /* Vermelho escuro */
+}
+
+.propostas-status-default {
+    background-color: #eee; /* Cinza */
+    color: #555;
+}
