@@ -7,6 +7,7 @@ public interface JogadorResumo {
     String getNome();
     String getPosicao();
     double getNota();
-    
+    int getIdade();
+    Integer getClubeId();
 
 }

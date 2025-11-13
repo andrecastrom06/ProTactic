@@ -1,0 +1,119 @@
+/* Fundo escuro (overlay) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* O conteúdo do modal (caixa branca) */
+.modal-content {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px; /* Largura máxima do modal */
+    z-index: 1001;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #888;
+}
+
+/* Estilos do formulário (baseado no protótipo) */
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Espaço entre os campos */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+/* Para campos desabilitados */
+.form-group input:disabled {
+    background-color: #eee;
+    color: #777;
+}
+
+/* Para agrupar Idade e Posição */
+.form-group-row {
+    display: flex;
+    gap: 16px;
+}
+.form-group-row .form-group {
+    flex: 1; /* Faz com que ocupem o mesmo espaço */
+}
+
+/* Botões no final */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    border-top: 1px solid #eee;
+    padding-top: 16px;
+}
+
+.modal-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #eee;
+    color: #333;
+}
+
+.btn-submit {
+    background-color: #007bff; /* Azul (pode mudar para o verde do protótipo) */
+    color: white;
+}

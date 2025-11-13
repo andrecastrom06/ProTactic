@@ -5,11 +5,13 @@ import {
     recusarProposta       
 } from '../../services/propostaService';
 
+// 1. Importa o nosso novo componente Modal
+import { NovaPropostaModal } from '../../components/NovaPropostaModal';
+
 import './ListaPropostasPage.css';
 
 // ... (Função getStatusClass e const styles ficam iguais) ...
 const getStatusClass = (status) => {
-    // ... (igual)
     switch (status) {
         case 'PENDENTE': return 'propostas-status-pendente';
         case 'ACEITE': return 'propostas-status-aceite';
@@ -17,15 +19,20 @@ const getStatusClass = (status) => {
         default: return 'propostas-status-default';
     }
 };
-const styles = { /* ... (igual) ... */ 
+const styles = {
     buttonAprovar: { backgroundColor: '#E0F8E0', color: '#006400', border: '1px solid #006400', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', marginRight: '5px' },
-    buttonRejeitar: { backgroundColor: '#FDE0E0', color: '#A00000', border: '1px solid #A00000', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }
+    buttonRejeitar: { backgroundColor: '#FDE0E0', color: '#A00000', border: '1px solid #A00000', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' },
+    buttonNovaProposta: { backgroundColor: '#0056b3', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }
 };
 
 
 export const ListaPropostasPage = () => {
     
-    // ... (Os teus 'useState', 'useCallback', 'useEffect' e 'handlers' ficam iguais) ...
+    // --- (INÍCIO DAS MUDANÇAS) ---
+    // 2. Adiciona o estado para controlar o modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    // --- (FIM DAS MUDANÇAS) ---
+
     const [propostas, setPropostas] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState(null);
@@ -45,47 +52,46 @@ export const ListaPropostasPage = () => {
     
     useEffect(() => { carregarDados(); }, [carregarDados]); 
     const handleAceitar = async (propostaId) => { /* ... (igual) ... */ 
-        if (!window.confirm("Tem a certeza que deseja ACEITAR esta proposta? Esta ação irá transferir o jogador.")) return;
+        if (!window.confirm("Aceitar?")) return;
         try { await aceitarProposta(propostaId); alert("Proposta aceite!"); carregarDados(); } 
         catch (err) { alert(`Erro: ${err.message}`); }
     };
     const handleRejeitar = async (propostaId) => { /* ... (igual) ... */ 
-        if (!window.confirm("Tem a certeza que deseja REJEITAR esta proposta?")) return;
+        if (!window.confirm("Rejeitar?")) return;
         try { await recusarProposta(propostaId); alert("Proposta rejeitada!"); carregarDados(); }
         catch (err) { alert(`Erro: ${err.message}`); }
     };
 
+    // 3. Handler de Sucesso (para fechar o modal E refrescar a lista)
+    const handleProposalSuccess = () => {
+        setIsModalOpen(false);
+        carregarDados();
+    };
+
     
-    // --- Renderização (HTML/JSX) Atualizada ---
-    
-    if (carregando) {
-        return <div className="propostas-page">Carregando propostas...</div>;
-    }
-    if (erro) {
-        return <div className="propostas-page" style={{ color: 'red' }}>Erro ao carregar dados: {erro}</div>;
-    }
+    // --- Renderização (HTML/JSX) ---
+    if (carregando) { /* ... (igual) ... */ }
+    if (erro) { /* ... (igual) ... */ }
 
     return (
         <div className="propostas-page">
             
-            {/* --- (INÍCIO DA MUDANÇA) --- */}
-            {/* Adiciona um container para alinhar o título e o botão */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                 <h1>Painel de Propostas</h1>
                 
-                {/* O botão "+ Nova Proposta" do protótipo */}
+                {/* 4. Liga o botão para abrir o modal */}
                 <button 
-                    className="propostas-btn propostas-btn-aprovar" 
-                    style={{ backgroundColor: '#0056b3', color: 'white', border: 'none' }}
+                    style={styles.buttonNovaProposta}
+                    onClick={() => setIsModalOpen(true)} // <-- Ação de clique
                 >
                     + Nova Proposta
                 </button>
             </div>
             
             <table className="propostas-table">
+                {/* ... (O <thead> e <tbody> da tabela ficam iguais) ... */}
                 <thead>
                     <tr>
-                        {/* Cabeçalhos atualizados para o protótipo */}
                         <th>Atleta</th>
                         <th>Posição</th>
                         <th>Idade</th>
@@ -97,17 +103,14 @@ export const ListaPropostasPage = () => {
                 </thead>
                 <tbody>
                     {propostas.length === 0 ? (
-                        <tr>
-                            <td colSpan="7" style={{ textAlign: 'center' }}>Nenhuma proposta encontrada.</td>
-                        </tr>
+                        <tr><td colSpan="7" style={{ textAlign: 'center' }}>Nenhuma proposta encontrada.</td></tr>
                     ) : (
                         propostas.map((proposta) => (
                             <tr key={proposta.id}>
-                                {/* Células atualizadas para usar os novos campos */}
                                 <td>{proposta.atletaNome}</td>
                                 <td>{proposta.atletaPosicao}</td>
                                 <td>{proposta.atletaIdade}</td>
-                                <td>{proposta.clubeAtualNome || 'Livre'}</td> {/* Mostra 'Livre' se o clube for nulo */}
+                                <td>{proposta.clubeAtualNome || 'Livre'}</td>
                                 <td>R$ {proposta.valor.toFixed(2)}</td>
                                 <td>
                                     <span className={`propostas-status ${getStatusClass(proposta.status)}`}>
@@ -117,16 +120,10 @@ export const ListaPropostasPage = () => {
                                 <td>
                                     {proposta.status === 'PENDENTE' && (
                                         <>
-                                            <button 
-                                                className="propostas-btn propostas-btn-aprovar"
-                                                onClick={() => handleAceitar(proposta.id)}
-                                            >
+                                            <button className="propostas-btn propostas-btn-aprovar" onClick={() => handleAceitar(proposta.id)}>
                                                 Aprovar
                                             </button>
-                                            <button 
-                                                className="propostas-btn propostas-btn-rejeitar"
-                                                onClick={() => handleRejeitar(proposta.id)}
-                                            >
+                                            <button className="propostas-btn propostas-btn-rejeitar" onClick={() => handleRejeitar(proposta.id)}>
                                                 Rejeitar
                                             </button>
                                         </>
@@ -137,7 +134,19 @@ export const ListaPropostasPage = () => {
                     )}
                 </tbody>
             </table>
+
+            {/* --- (INÍCIO DA MUDANÇA) --- */}
+            {/* 5. Renderiza o Modal (se isModalOpen for true) */}
+            {isModalOpen && (
+                <NovaPropostaModal 
+                    onClose={() => setIsModalOpen(false)}
+                    onSuccess={handleProposalSuccess}
+                    // TODO: O ID do clube propositor precisa vir do login
+                    clubePropositorId={1} // Assumindo "Atlético Mineiro"
+                />
+            )}
             {/* --- (FIM DA MUDANÇA) --- */}
+
         </div>
     );
 };

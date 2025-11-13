@@ -71,4 +71,26 @@ export const recusarProposta = async (propostaId) => {
         throw error;
     }
 };
+export const criarProposta = async (formulario) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/proposta/criar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formulario), // Envia o formulário como JSON
+        });
+
+        if (!response.ok) {
+            const erroTexto = await response.text();
+            throw new Error(`Erro ao criar proposta: ${erroTexto}`);
+        }
+        
+        return true; // Sucesso
+
+    } catch (error) {
+        console.error("Falha na API (criar proposta):", error);
+        throw error;
+    }
+};
 // --- (FIM DA NOVA FUNCIONALIDADE) ---
