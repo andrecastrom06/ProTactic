@@ -26,6 +26,7 @@ import dev.com.protactic.aplicacao.principal.sessaotreino.*;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;
 import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
+import dev.com.protactic.dominio.principal.contrato.ContratoService; // <-- ADICIONA ESTE
 
 // Importa Repositórios e Serviços de DOMÍNIO
 import dev.com.protactic.dominio.principal.capitao.*;
@@ -136,6 +137,11 @@ public class AplicacaoBackend {
             JogadorRepository jogadorRepo, 
             ClubeRepository clubeRepo) {
         return new DispensaService(contratoRepo, jogadorRepo, clubeRepo);
+    }
+
+    @Bean
+    public ContratoService contratoService(ContratoRepository contratoRepo) {
+        return new ContratoService(contratoRepo);
     }
 
     @Bean
