@@ -26,6 +26,8 @@ import dev.com.protactic.aplicacao.principal.sessaotreino.*;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;
 import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
+import dev.com.protactic.dominio.principal.login.LoginService; // <-- ADICIONA ESTE
+import dev.com.protactic.dominio.principal.login.UsuarioRepository;
 import dev.com.protactic.dominio.principal.contrato.ContratoService; // <-- ADICIONA ESTE
 
 // Importa Repositórios e Serviços de DOMÍNIO
@@ -42,6 +44,7 @@ import dev.com.protactic.dominio.principal.proposta.*;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.*;
 import dev.com.protactic.dominio.principal.registroInscricaoAtleta.*;
 import dev.com.protactic.dominio.principal.treinoTatico.*;
+import dev.com.protactic.infraestrutura.persistencia.jpa.usuario.UsuarioRepositorySpringData;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "dev.com.protactic")
@@ -161,6 +164,15 @@ public class AplicacaoBackend {
             dispensaService,
             cadastroDeAtletaService
         );
+    }
+    
+    @Bean
+    public LoginService loginService(
+            UsuarioRepository usuarioRepository, // <-- Agora injeta a Interface
+            JogadorRepository jogadorRepository,
+            ClubeRepository clubeRepository) {
+        
+        return new LoginService(usuarioRepository, jogadorRepository, clubeRepository);
     }
 
     @Bean

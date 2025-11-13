@@ -6,29 +6,11 @@ create table if not exists Usuario (
     login varchar(25) not null unique,
     senha varchar(25) not null,
     nome varchar(100) not null,
+    funcao varchar(50),  
     primary key (id)
 );
 
--- ===========================
--- Tabelas de especialização
--- ===========================
-create table if not exists Treinador (
-    id int not null,
-    primary key (id),
-    foreign key (id) references Usuario(id)
-);
 
-create table if not exists Analista (
-    id int not null,
-    primary key (id),
-    foreign key (id) references Usuario(id)
-);
-
-create table if not exists Preparador (
-    id int not null,
-    primary key (id),
-    foreign key (id) references Usuario(id)
-);
 
 -- ===========================
 -- Tabela Competição
@@ -88,10 +70,7 @@ create table if not exists Jogador (
     -- A FK para 'id_clube' é adicionada abaixo
 );
 
--- ===========================
--- Tabela Clube
--- (REVISADA - 'vice_capitao' removido por não ser usado no BDD/Serviços)
--- ===========================
+
 create table if not exists Clube (
     id int not null auto_increment,
     id_treinador int,
@@ -102,12 +81,10 @@ create table if not exists Clube (
     cidade_estado varchar(100),
     estadio varchar(100),
     capitao int,
-    -- vice_capitao foi removido por ser redundante com a lógica de negócio implementada
     primary key (id),
-    foreign key (id_treinador) references Treinador(id),
-    foreign key (id_analista) references Analista(id),
-    foreign key (id_preparador) references Preparador(id),
-    foreign key (id_competicao) references Competicao(id),
+    foreign key (id_treinador) references Usuario(id),
+    foreign key (id_analista) references Usuario(id),  
+    foreign key (id_preparador) references Usuario(id),
     foreign key (capitao) references Jogador(id)
 );
 

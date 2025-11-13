@@ -1,0 +1,15 @@
+.main-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    /* flex-grow: 1 faz o conteúdo ocupar todo o espaço restante */
+    flex-grow: 1;
+    
+    /* Como a sidebar tem 260px, o conteúdo começa APÓS ela */
+    margin-left: 260px; 
+    
+    /* O resto do estilo (padding, etc.)
+       virá do CSS de cada página (ex: "propostas-page") */
+}

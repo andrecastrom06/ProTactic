@@ -5,6 +5,9 @@ public class Usuario {
     private String login;
     private String senha;
     private String nome;
+    private String funcao; 
+
+    public Usuario() {}
 
     public Usuario(int id, String login, String senha, String nome) {
         this.id = id;
@@ -44,5 +47,11 @@ public class Usuario {
     public void setNome(String nome) {
         this.nome = nome;
     }
-       
+    
+    public String getFuncao() {
+        return funcao;
+    }
+    public void setFuncao(String funcao) {
+        this.funcao = funcao;
+    }
 }

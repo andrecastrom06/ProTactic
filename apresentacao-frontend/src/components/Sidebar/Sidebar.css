@@ -1,0 +1,105 @@
+/* O container principal da barra lateral */
+.sidebar {
+    width: 260px; /* Largura fixa */
+    height: 100vh; /* Altura total da tela */
+    background-color: #004d40; /* Verde escuro do protótipo */
+    color: #ffffff;
+    display: flex;
+    flex-direction: column; /* Organiza os itens verticalmente */
+    position: fixed; /* Fica fixo na tela */
+    top: 0;
+    left: 0;
+}
+
+/* Cabeçalho com o logo */
+.sidebar-header {
+    padding: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.sidebar-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+.sidebar-header p {
+    margin: 0;
+    font-size: 14px;
+    color: #b2dfdb; /* Verde claro (Gestão Integrada) */
+}
+
+/* Navegação (lista de links) */
+.sidebar-nav {
+    flex-grow: 1; /* Faz esta área crescer para empurrar o footer para baixo */
+    padding-top: 16px;
+}
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-nav li a {
+    display: block;
+    padding: 14px 24px;
+    margin: 4px 12px;
+    text-decoration: none;
+    color: #e0f2f1; /* Cor do link normal */
+    font-size: 16px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* Estilo do link ATIVO (ex: "Contratos" em image_0bb984.png) */
+.sidebar-nav li a.active {
+    background-color: #00695c; /* Verde um pouco mais claro */
+    color: #ffffff;
+    font-weight: 700;
+}
+/* Efeito ao passar o rato (não-ativo) */
+.sidebar-nav li a:not(.active):hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Rodapé com o perfil do usuário */
+.sidebar-footer {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+}
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #00796b; /* Fundo do avatar "CT" */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    margin-right: 12px;
+}
+.user-info .user-name {
+    margin: 0;
+    font-weight: 700;
+    font-size: 14px;
+}
+.user-info .user-role {
+    margin: 0;
+    font-size: 12px;
+    color: #b2dfdb; /* Verde claro */
+}
+
+.logout-btn {
+    background: none;
+    border: 1px solid #f44336;
+    color: #f44336;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: auto; /* Empurra para a direita */
+    font-size: 12px;
+    padding: 4px 8px;
+}
+.logout-btn:hover {
+    background: #f44336;
+    color: white;
+}

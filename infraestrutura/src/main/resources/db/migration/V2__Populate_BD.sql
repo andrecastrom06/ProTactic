@@ -4,203 +4,145 @@
 -- =================================================================================
 -- Equipe do Atlético Mineiro
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('milito_t', 'senha123', 'Gabriel Milito');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_atl', 'senha456', 'Analista do Atlético-MG');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_atl', 'senha789', 'Preparador do Atlético-MG');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+-- =================================================================================
+-- Equipe do Atlético Mineiro
+-- =================================================================================
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('milito_t', 'senha123', 'Gabriel Milito', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_atl', 'senha456', 'Analista do Atlético-MG', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_atl', 'senha789', 'Preparador do Atlético-MG', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Bahia
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('ceni_t', 'senha123', 'Rogério Ceni');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_bah', 'senha456', 'Analista do Bahia');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_bah', 'senha789', 'Preparador do Bahia');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ceni_t', 'senha123', 'Rogério Ceni', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_bah', 'senha456', 'Analista do Bahia', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_bah', 'senha789', 'Preparador do Bahia', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Botafogo
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('artur_jorge_t', 'senha123', 'Artur Jorge');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_bot', 'senha456', 'Analista do Botafogo');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_bot', 'senha789', 'Preparador do Botafogo');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('artur_jorge_t', 'senha123', 'Artur Jorge', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_bot', 'senha456', 'Analista do Botafogo', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_bot', 'senha789', 'Preparador do Botafogo', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Ceará
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('vagner_mancini_t', 'senha123', 'Vagner Mancini');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_cea', 'senha456', 'Analista do Ceará');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_cea', 'senha789', 'Preparador do Ceará');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('vagner_mancini_t', 'senha123', 'Vagner Mancini', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_cea', 'senha456', 'Analista do Ceará', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_cea', 'senha789', 'Preparador do Ceará', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Corinthians
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('antonio_oliveira_t', 'senha123', 'António Oliveira');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_cor', 'senha456', 'Analista do Corinthians');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_cor', 'senha789', 'Preparador do Corinthians');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('antonio_oliveira_t', 'senha123', 'António Oliveira', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_cor', 'senha456', 'Analista do Corinthians', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_cor', 'senha789', 'Preparador do Corinthians', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Cruzeiro
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('fernando_seabra_t', 'senha123', 'Fernando Seabra');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_cru', 'senha456', 'Analista do Cruzeiro');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_cru', 'senha789', 'Preparador do Cruzeiro');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('fernando_seabra_t', 'senha123', 'Fernando Seabra', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_cru', 'senha456', 'Analista do Cruzeiro', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_cru', 'senha789', 'Preparador do Cruzeiro', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Flamengo
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('tite_t', 'senha123', 'Tite');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_fla', 'senha456', 'Analista do Flamengo');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_fla', 'senha789', 'Preparador do Flamengo');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('tite_t', 'senha123', 'Tite', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_fla', 'senha456', 'Analista do Flamengo', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_fla', 'senha789', 'Preparador do Flamengo', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Fluminense
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('fernando_diniz_t', 'senha123', 'Fernando Diniz');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_flu', 'senha456', 'Analista do Fluminense');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_flu', 'senha789', 'Preparador do Fluminense');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('fernando_diniz_t', 'senha123', 'Fernando Diniz', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_flu', 'senha456', 'Analista do Fluminense', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_flu', 'senha789', 'Preparador do Fluminense', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Fortaleza
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('vojvoda_t', 'senha123', 'Juan Pablo Vojvoda');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_for', 'senha456', 'Analista do Fortaleza');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_for', 'senha789', 'Preparador do Fortaleza');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('vojvoda_t', 'senha123', 'Juan Pablo Vojvoda', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_for', 'senha456', 'Analista do Fortaleza', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_for', 'senha789', 'Preparador do Fortaleza', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Grêmio
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('renato_gaucho_t', 'senha123', 'Renato Gaúcho');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_gre', 'senha456', 'Analista do Grêmio');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_gre', 'senha789', 'Preparador do Grêmio');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('renato_gaucho_t', 'senha123', 'Renato Gaúcho', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_gre', 'senha456', 'Analista do Grêmio', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_gre', 'senha789', 'Preparador do Grêmio', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Internacional
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('eduardo_coudet_t', 'senha123', 'Eduardo Coudet');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_int', 'senha456', 'Analista do Internacional');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_int', 'senha789', 'Preparador do Internacional');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('eduardo_coudet_t', 'senha123', 'Eduardo Coudet', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_int', 'senha456', 'Analista do Internacional', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_int', 'senha789', 'Preparador do Internacional', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Juventude
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('gabriel_milito_juv_t', 'senha123', 'Gabriel Milito');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_juv', 'senha456', 'Analista do Juventude');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_juv', 'senha789', 'Preparador do Juventude');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('gabriel_milito_juv_t', 'senha123', 'Gabriel Milito', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_juv', 'senha456', 'Analista do Juventude', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_juv', 'senha789', 'Preparador do Juventude', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Mirassol
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('mozart_santos_t', 'senha123', 'Mozart Santos');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_mir', 'senha456', 'Analista do Mirassol');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_mir', 'senha789', 'Preparador do Mirassol');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('mozart_santos_t', 'senha123', 'Mozart Santos', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_mir', 'senha456', 'Analista do Mirassol', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_mir', 'senha789', 'Preparador do Mirassol', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Palmeiras
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('abel_ferreira_t', 'senha123', 'Abel Ferreira');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_pal', 'senha456', 'Analista do Palmeiras');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_pal', 'senha789', 'Preparador do Palmeiras');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('abel_ferreira_t', 'senha123', 'Abel Ferreira', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_pal', 'senha456', 'Analista do Palmeiras', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_pal', 'senha789', 'Preparador do Palmeiras', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Red Bull Bragantino
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('pedro_caixinha_t', 'senha123', 'Pedro Caixinha');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_rbb', 'senha456', 'Analista do Red Bull Bragantino');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_rbb', 'senha789', 'Preparador do Red Bull Bragantino');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('pedro_caixinha_t', 'senha123', 'Pedro Caixinha', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_rbb', 'senha456', 'Analista do Red Bull Bragantino', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_rbb', 'senha789', 'Preparador do Red Bull Bragantino', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Santos
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('fabio_carille_t', 'senha123', 'Fábio Carille');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_san', 'senha456', 'Analista do Santos');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_san', 'senha789', 'Preparador do Santos');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('fabio_carille_t', 'senha123', 'Fábio Carille', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_san', 'senha456', 'Analista do Santos', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_san', 'senha789', 'Preparador do Santos', 'Preparador');
 
 -- =================================================================================
 -- Equipe do São Paulo
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('zubeldia_t', 'senha123', 'Luis Zubeldía');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_sp', 'senha456', 'Analista do São Paulo');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_sp', 'senha789', 'Preparador do São Paulo');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('zubeldia_t', 'senha123', 'Luis Zubeldía', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_sp', 'senha456', 'Analista do São Paulo', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_sp', 'senha789', 'Preparador do São Paulo', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Sport
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('mariano_soso_t', 'senha123', 'Mariano Soso');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_spo', 'senha456', 'Analista do Sport');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_spo', 'senha789', 'Preparador do Sport');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('mariano_soso_t', 'senha123', 'Mariano Soso', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_spo', 'senha456', 'Analista do Sport', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_spo', 'senha789', 'Preparador do Sport', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Vasco
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('alvaro_pacheco_t', 'senha123', 'Álvaro Pacheco');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_vas', 'senha456', 'Analista do Vasco');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_vas', 'senha789', 'Preparador do Vasco');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('alvaro_pacheco_t', 'senha123', 'Álvaro Pacheco', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_vas', 'senha456', 'Analista do Vasco', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_vas', 'senha789', 'Preparador do Vasco', 'Preparador');
 
 -- =================================================================================
 -- Equipe do Vitória
 -- =================================================================================
-INSERT INTO Usuario (login, senha, nome) VALUES ('thiago_carpini_t', 'senha123', 'Thiago Carpini');
-INSERT INTO Treinador (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('ana_vit', 'senha456', 'Analista do Vitória');
-INSERT INTO Analista (id) VALUES (LAST_INSERT_ID());
-INSERT INTO Usuario (login, senha, nome) VALUES ('prep_vit', 'senha789', 'Preparador do Vitória');
-INSERT INTO Preparador (id) VALUES (LAST_INSERT_ID());
-
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('thiago_carpini_t', 'senha123', 'Thiago Carpini', 'Treinador');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('ana_vit', 'senha456', 'Analista do Vitória', 'Analista');
+INSERT INTO Usuario (login, senha, nome, funcao) VALUES ('prep_vit', 'senha789', 'Preparador do Vitória', 'Preparador');
 
 
 
@@ -1732,9 +1674,9 @@ SET @competicao_id = (SELECT id FROM Competicao WHERE nome = 'Campeonato Brasile
 -- Atlético Mineiro
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'milito_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_atl')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_atl')),
+    (SELECT id FROM Usuario WHERE login = 'milito_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_atl'),
+    (SELECT id FROM Usuario WHERE login = 'prep_atl'),
     @competicao_id,
     'Atlético Mineiro',
     'Belo Horizonte, MG',
@@ -1745,9 +1687,9 @@ VALUES (
 -- Bahia
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'ceni_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_bah')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_bah')),
+    (SELECT id FROM Usuario WHERE login = 'ceni_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_bah'),
+    (SELECT id FROM Usuario WHERE login = 'prep_bah'),
     @competicao_id,
     'Bahia',
     'Salvador, BA',
@@ -1758,9 +1700,9 @@ VALUES (
 -- Botafogo
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'artur_jorge_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_bot')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_bot')),
+    (SELECT id FROM Usuario WHERE login = 'artur_jorge_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_bot'),
+    (SELECT id FROM Usuario WHERE login = 'prep_bot'),
     @competicao_id,
     'Botafogo',
     'Rio de Janeiro, RJ',
@@ -1771,9 +1713,9 @@ VALUES (
 -- Ceará
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'vagner_mancini_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_cea')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_cea')),
+    (SELECT id FROM Usuario WHERE login = 'vagner_mancini_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_cea'),
+    (SELECT id FROM Usuario WHERE login = 'prep_cea'),
     @competicao_id,
     'Ceará',
     'Fortaleza, CE',
@@ -1784,9 +1726,9 @@ VALUES (
 -- Corinthians
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'antonio_oliveira_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_cor')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_cor')),
+    (SELECT id FROM Usuario WHERE login = 'antonio_oliveira_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_cor'),
+    (SELECT id FROM Usuario WHERE login = 'prep_cor'),
     @competicao_id,
     'Corinthians',
     'São Paulo, SP',
@@ -1797,9 +1739,9 @@ VALUES (
 -- Cruzeiro
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'fernando_seabra_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_cru')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_cru')),
+    (SELECT id FROM Usuario WHERE login = 'fernando_seabra_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_cru'),
+    (SELECT id FROM Usuario WHERE login = 'prep_cru'),
     @competicao_id,
     'Cruzeiro',
     'Belo Horizonte, MG',
@@ -1810,9 +1752,9 @@ VALUES (
 -- Flamengo
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'tite_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_fla')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_fla')),
+    (SELECT id FROM Usuario WHERE login = 'tite_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_fla'),
+    (SELECT id FROM Usuario WHERE login = 'prep_fla'),
     @competicao_id,
     'Flamengo',
     'Rio de Janeiro, RJ',
@@ -1823,9 +1765,9 @@ VALUES (
 -- Fluminense
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'fernando_diniz_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_flu')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_flu')),
+    (SELECT id FROM Usuario WHERE login = 'fernando_diniz_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_flu'),
+    (SELECT id FROM Usuario WHERE login = 'prep_flu'),
     @competicao_id,
     'Fluminense',
     'Rio de Janeiro, RJ',
@@ -1836,9 +1778,9 @@ VALUES (
 -- Fortaleza
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'vojvoda_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_for')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_for')),
+    (SELECT id FROM Usuario WHERE login = 'vojvoda_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_for'),
+    (SELECT id FROM Usuario WHERE login = 'prep_for'),
     @competicao_id,
     'Fortaleza',
     'Fortaleza, CE',
@@ -1849,9 +1791,9 @@ VALUES (
 -- Grêmio
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'renato_gaucho_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_gre')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_gre')),
+    (SELECT id FROM Usuario WHERE login = 'renato_gaucho_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_gre'),
+    (SELECT id FROM Usuario WHERE login = 'prep_gre'),
     @competicao_id,
     'Grêmio',
     'Porto Alegre, RS',
@@ -1862,9 +1804,9 @@ VALUES (
 -- Internacional
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'eduardo_coudet_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_int')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_int')),
+    (SELECT id FROM Usuario WHERE login = 'eduardo_coudet_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_int'),
+    (SELECT id FROM Usuario WHERE login = 'prep_int'),
     @competicao_id,
     'Internacional',
     'Porto Alegre, RS',
@@ -1875,9 +1817,9 @@ VALUES (
 -- Juventude
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'gabriel_milito_juv_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_juv')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_juv')),
+    (SELECT id FROM Usuario WHERE login = 'gabriel_milito_juv_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_juv'),
+    (SELECT id FROM Usuario WHERE login = 'prep_juv'),
     @competicao_id,
     'Juventude',
     'Caxias do Sul, RS',
@@ -1888,9 +1830,9 @@ VALUES (
 -- Mirassol
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'mozart_santos_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_mir')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_mir')),
+    (SELECT id FROM Usuario WHERE login = 'mozart_santos_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_mir'),
+    (SELECT id FROM Usuario WHERE login = 'prep_mir'),
     @competicao_id,
     'Mirassol',
     'Mirassol, SP',
@@ -1901,9 +1843,9 @@ VALUES (
 -- Palmeiras
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'abel_ferreira_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_pal')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_pal')),
+    (SELECT id FROM Usuario WHERE login = 'abel_ferreira_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_pal'),
+    (SELECT id FROM Usuario WHERE login = 'prep_pal'),
     @competicao_id,
     'Palmeiras',
     'São Paulo, SP',
@@ -1914,9 +1856,9 @@ VALUES (
 -- Red Bull Bragantino
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'pedro_caixinha_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_rbb')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_rbb')),
+    (SELECT id FROM Usuario WHERE login = 'pedro_caixinha_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_rbb'),
+    (SELECT id FROM Usuario WHERE login = 'prep_rbb'),
     @competicao_id,
     'Red Bull Bragantino',
     'Bragança Paulista, SP',
@@ -1927,9 +1869,9 @@ VALUES (
 -- Santos
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'fabio_carille_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_san')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_san')),
+    (SELECT id FROM Usuario WHERE login = 'fabio_carille_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_san'),
+    (SELECT id FROM Usuario WHERE login = 'prep_san'),
     @competicao_id,
     'Santos',
     'Santos, SP',
@@ -1940,9 +1882,9 @@ VALUES (
 -- São Paulo
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'zubeldia_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_sp')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_sp')),
+    (SELECT id FROM Usuario WHERE login = 'zubeldia_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_sp'),
+    (SELECT id FROM Usuario WHERE login = 'prep_sp'),
     @competicao_id,
     'São Paulo',
     'São Paulo, SP',
@@ -1953,9 +1895,9 @@ VALUES (
 -- Sport
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'mariano_soso_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_spo')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_spo')),
+    (SELECT id FROM Usuario WHERE login = 'mariano_soso_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_spo'),
+    (SELECT id FROM Usuario WHERE login = 'prep_spo'),
     @competicao_id,
     'Sport',
     'Recife, PE',
@@ -1966,9 +1908,9 @@ VALUES (
 -- Vasco da Gama
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'alvaro_pacheco_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_vas')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_vas')),
+    (SELECT id FROM Usuario WHERE login = 'alvaro_pacheco_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_vas'),
+    (SELECT id FROM Usuario WHERE login = 'prep_vas'),
     @competicao_id,
     'Vasco',
     'Rio de Janeiro, RJ',
@@ -1979,9 +1921,9 @@ VALUES (
 -- Vitória
 INSERT INTO Clube (id_treinador, id_analista, id_preparador, id_competicao, nome, cidade_estado, estadio, capitao)
 VALUES (
-    (SELECT id FROM Treinador WHERE id = (SELECT id FROM Usuario WHERE login = 'thiago_carpini_t')),
-    (SELECT id FROM Analista WHERE id = (SELECT id FROM Usuario WHERE login = 'ana_vit')),
-    (SELECT id FROM Preparador WHERE id = (SELECT id FROM Usuario WHERE login = 'prep_vit')),
+    (SELECT id FROM Usuario WHERE login = 'thiago_carpini_t'),
+    (SELECT id FROM Usuario WHERE login = 'ana_vit'),
+    (SELECT id FROM Usuario WHERE login = 'prep_vit'),
     @competicao_id,
     'Vitória',
     'Salvador, BA',
