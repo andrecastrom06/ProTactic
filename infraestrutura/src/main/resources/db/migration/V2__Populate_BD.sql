@@ -2060,7 +2060,8 @@ SET @jogador_id_2 = 183;
 SET @jogador_id_3 = 139;
 
 -- Exemplo 1: Treino de força para um zagueiro
-INSERT INTO Fisico (id_jogador, nome, musculo, intensidade, descricao, data_inicio, data_fim)
+-- Exemplo 1: Treino de força para um zagueiro
+INSERT INTO Fisico (id_jogador, nome, musculo, intensidade, descricao, data_inicio, data_fim, status)
 VALUES (
     @jogador_id_1,
     'Treino de Força',
@@ -2068,11 +2069,12 @@ VALUES (
     'Alta',
     'Sessão de fortalecimento muscular com foco na recuperação de lesão.',
     '2025-08-20',
-    '2025-09-05'
+    '2025-09-05', 
+    'CONCLUÍDO'
 );
 
 -- Exemplo 2: Treino de resistência para um lateral
-INSERT INTO Fisico (id_jogador, nome, musculo, intensidade, descricao, data_inicio, data_fim)
+INSERT INTO Fisico (id_jogador, nome, musculo, intensidade, descricao, data_inicio, data_fim, status)
 VALUES (
     @jogador_id_2,
     'Treino Aeróbico',
@@ -2080,11 +2082,12 @@ VALUES (
     'Moderada',
     'Sessões de corrida e exercícios de agilidade para melhorar o fôlego.',
     '2025-08-25',
-    '2025-09-10'
+    '2025-09-10', 
+    'CONCLUÍDO'
 );
 
 -- Exemplo 3: Treino de prevenção para um atacante
-INSERT INTO Fisico (id_jogador, nome, musculo, intensidade, descricao, data_inicio, data_fim)
+INSERT INTO Fisico (id_jogador, nome, musculo, intensidade, descricao, data_inicio, data_fim, status)
 VALUES (
     @jogador_id_3,
     'Trabalho Preventivo',
@@ -2092,7 +2095,8 @@ VALUES (
     'Baixa',
     'Sessão de exercícios para estabilidade e prevenção de lesões.',
     '2025-08-28',
-    '2025-09-01'
+    '2025-09-01', 
+    'PLANEJADO'
 );
 
 

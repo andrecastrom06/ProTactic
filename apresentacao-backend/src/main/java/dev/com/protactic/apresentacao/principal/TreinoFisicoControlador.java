@@ -10,11 +10,13 @@ import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+// <-- ADIÇÃO: Importação necessária
+// <-- ADIÇÃO: Importação para a nova funcionalidade
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional; 
+import java.util.Optional; // <-- CORREÇÃO: Importação que faltava
 
 /**
  * Controlador de API REST para a História "Planejar treino físico" (Mapa 1.1).
@@ -53,7 +55,7 @@ public class TreinoFisicoControlador {
     }
 
 
-    // --- Endpoints de COMANDO (POST) ---
+    // --- Endpoints de COMANDO (POST, PUT, PATCH) ---
 
     /**
      * DTO (Formulário) para receber os dados do treino físico.
@@ -93,6 +95,8 @@ public class TreinoFisicoControlador {
         }
 
         // 3. Se estiver apto, criar e salvar a entidade Fisico
+        // --- (INÍCIO DA CORREÇÃO) ---
+        // (Assumindo que o construtor de Fisico.java foi atualizado)
         Fisico novoTreino = new Fisico(
             0, // O ID será gerado pelo banco
             jogador,
@@ -101,8 +105,10 @@ public class TreinoFisicoControlador {
             formulario.intensidade(),
             formulario.descricao(),
             formulario.dataInicio(),
-            formulario.dataFim()
+            formulario.dataFim(),
+            "PLANEJADO" // <-- Status Padrão ao criar
         );
+        // --- (FIM DA CORREÇÃO) ---
 
         Fisico treinoSalvo = fisicoRepository.salvar(novoTreino);
 
@@ -110,6 +116,11 @@ public class TreinoFisicoControlador {
         return ResponseEntity.ok(treinoSalvo);
     }
     
+    /**
+     * PUT /backend/treino-fisico/editar/{treinoId}
+     * Implementa a história "Editar treinamento de cada atleta".
+     * Atualiza um plano de treino físico existente.
+     */
     @PutMapping("/editar/{treinoId}")
     public ResponseEntity<Fisico> editarTreinoFisico(
             @PathVariable("treinoId") Integer treinoId,
@@ -126,20 +137,88 @@ public class TreinoFisicoControlador {
         Fisico treinoExistente = treinoOpt.get();
 
         // 2. Atualizar todos os campos do treino existente com os dados do formulário
-        // (Nota: O 'jogador' deste treino não pode ser alterado por esta rota)
         treinoExistente.setNome(formulario.nome());
         treinoExistente.setMusculo(formulario.musculo());
         treinoExistente.setIntensidade(formulario.intensidade());
         treinoExistente.setDescricao(formulario.descricao());
         treinoExistente.setDataInicio(formulario.dataInicio());
         treinoExistente.setDataFim(formulario.dataFim());
+        // Nota: O status não é alterado aqui (o que é correto para um PUT)
 
         // 3. Salvar as alterações no repositório
-        // O JPA entende que, como 'treinoExistente' já tem um ID,
-        // isto é uma atualização (UPDATE), e não uma criação (INSERT).
         Fisico treinoAtualizado = fisicoRepository.salvar(treinoExistente);
 
         // 4. Retornar o objeto atualizado
         return ResponseEntity.ok(treinoAtualizado);
+    }
+
+    /**
+     * DTO (Formulário) para receber a atualização de status.
+     * Ex: { "status": "CONCLUÍDO" }
+     */
+    public record StatusUpdateFormulario(
+        String status
+    ) {}
+
+    /**
+     * Endpoint para PATCH /backend/treino-fisico/atualizar-status/{treinoId}
+     * Implementa "Acompanhar performance" e "Verificar se foi cumprido".
+     * Atualiza *apenas* o status de um treino (ex: PLANEJADO -> CONCLUÍDO).
+     */
+    @PatchMapping("/atualizar-status/{treinoId}")
+    public ResponseEntity<Fisico> atualizarStatusTreino(
+            @PathVariable("treinoId") Integer treinoId,
+            @RequestBody StatusUpdateFormulario formulario) {
+
+        // 1. Buscar o treino físico existente pelo seu ID
+        Optional<Fisico> treinoOpt = fisicoRepository.buscarPorId(treinoId);
+
+        if (treinoOpt.isEmpty()) {
+            return ResponseEntity.notFound().build(); // Retorna 404
+        }
+
+        Fisico treinoExistente = treinoOpt.get();
+
+        // 2. Atualizar *apenas* o status
+        treinoExistente.setStatus(formulario.status());
+
+        // 3. Salvar a alteração (JPA fará um UPDATE)
+        Fisico treinoAtualizado = fisicoRepository.salvar(treinoExistente);
+
+        // 4. Retornar o objeto atualizado
+        return ResponseEntity.ok(treinoAtualizado);
+    }
+    
+    @PostMapping("/criar-protocolo-retorno/{jogadorId}")
+    public ResponseEntity<Fisico> criarProtocoloDeRetorno(
+            @PathVariable("jogadorId") Integer jogadorId,
+            @RequestBody TreinoFisicoFormulario formulario) {
+
+        // 1. Buscar a entidade de domínio 'Jogador'
+        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
+        if (jogador == null) {
+            return ResponseEntity.notFound().build(); // Retorna 404
+        }
+
+        // 2. (NOTA: NÃO HÁ VALIDAÇÃO DE APTIDÃO AQUI)
+        // Criamos o treino diretamente.
+
+        // 3. Criar e salvar a entidade Fisico, marcando o status
+        Fisico novoProtocolo = new Fisico(
+            0, // O ID será gerado pelo banco
+            jogador,
+            formulario.nome(),
+            formulario.musculo(),
+            formulario.intensidade(),
+            formulario.descricao(),
+            formulario.dataInicio(),
+            formulario.dataFim(),
+            "PROTOCOLO_RETORNO" // <-- Status especial
+        );
+
+        Fisico protocoloSalvo = fisicoRepository.salvar(novoProtocolo);
+
+        // 4. Retornar o objeto salvo
+        return ResponseEntity.ok(protocoloSalvo);
     }
 }

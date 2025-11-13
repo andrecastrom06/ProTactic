@@ -11,9 +11,10 @@ public class Fisico {
     private String descricao;
     private Date dataInicio;
     private Date dataFim;
+    private String status;
 
     public Fisico(int id, Jogador jogador, String nome, String musculo,
-                  String intensidade, String descricao, Date dataInicio, Date dataFim) {
+                  String intensidade, String descricao, Date dataInicio, Date dataFim, String status) {
         this.id = id;
         this.jogador = jogador;
         this.nome = nome;
@@ -22,6 +23,7 @@ public class Fisico {
         this.descricao = descricao;
         this.dataInicio = dataInicio;
         this.dataFim = dataFim;
+        this.status = status;
     }
 
     public int getId() { return id; }
@@ -47,4 +49,7 @@ public class Fisico {
 
     public Date getDataFim() { return dataFim; }
     public void setDataFim(Date dataFim) { this.dataFim = dataFim; }
+
+    public String getStatus() { return status; } 
+    public void setStatus(String status) { this.status = status; }
 }

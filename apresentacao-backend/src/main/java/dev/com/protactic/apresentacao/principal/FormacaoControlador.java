@@ -1,42 +1,39 @@
 package dev.com.protactic.apresentacao.principal;
 
 import java.util.List;
-import java.util.ArrayList; // Importar o ArrayList
+import java.util.ArrayList;
+import java.util.Optional; // <-- 1. Importação necessária
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity; // <-- 2. Importação necessária
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping; // <-- 3. Importação necessária
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController; // Importar ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable; // <-- 4. Importação necessária
+import org.springframework.web.bind.annotation.RestController;
 
-// Importa a nova infraestrutura que acabámos de criar
+// Importa a entidade JPA e o repositório
 import dev.com.protactic.infraestrutura.persistencia.jpa.escalacao.EscalacaoJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.escalacao.EscalacaoRepositorySpringData;
 
-// --- (INÍCIO DAS CORREÇÕES) ---
-// Precisamos de todos os serviços/repositórios para a verificação de aptidão
+// Importa os serviços/repositórios para a verificação de aptidão
 import dev.com.protactic.dominio.principal.Jogador;
 import dev.com.protactic.dominio.principal.Suspensao;
 import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.dominio.principal.definirEsquemaTatico.DefinirEsquemaTaticoService;
 import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
-// --- (FIM DAS CORREÇÕES) ---
 
 
-/**
- * Controlador de API REST para a funcionalidade de Formação Tática
- * (Salva na tabela 'ESCALACAO' com 11 jogadores).
- */
 @RestController
 @RequestMapping("backend/formacao")
 public class FormacaoControlador {
 
     // --- Injeção dos Repositórios e Serviços ---
     
-    // Repositório para a tabela ESCALACAO (os 11 jogadores)
     private @Autowired EscalacaoRepositorySpringData escalacaoRepository;
     
-    // Serviços e Repositórios para a lógica de aptidão (do BDD)
+    // Serviços e Repositórios para a lógica de aptidão (BDD #4)
     private @Autowired DefinirEsquemaTaticoService definirEsquemaTaticoService;
     private @Autowired JogadorRepository jogadorRepository;
     private @Autowired RegistroLesoesRepository registroLesoesRepository;
@@ -44,105 +41,137 @@ public class FormacaoControlador {
     
 
     /**
-     * DTO/Formulário para receber a escalação completa (11 jogadores).
-     * Exemplo de JSON:
-     * {
-     * "partidaId": 1,
-     * "esquema": "4-3-3",
-     * "jogadoresIds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-     * }
+     * DTO/Formulário (reutilizado para Criar e Editar)
      */
     public record FormacaoFormulario(
         Integer partidaId,
         String esquema,
         List<Integer> jogadoresIds
     ) {}
-    
-    /**
-     * Endpoint para POST /backend/formacao/salvar
-     * (Agora verifica a aptidão ANTES de salvar)
-     */
-    @PostMapping(path = "/salvar")
-    public void salvarFormacao(@RequestBody FormacaoFormulario formulario) {
-        
-        if (formulario == null) {
-            throw new IllegalArgumentException("Formulário não pode ser nulo.");
-        }
-        
-        // 1. Validar se a lista tem 11 jogadores
-        if (formulario.jogadoresIds() == null || formulario.jogadoresIds().size() != 11) {
-            throw new IllegalArgumentException("A escalação deve ter exatamente 11 jogadores.");
-        }
-        
-        // --- (INÍCIO DA NOVA LÓGICA DE VERIFICAÇÃO) ---
-        
-        // 2. Verificar a aptidão de CADA jogador
-        List<String> jogadoresInaptos = new ArrayList<>();
-        // O BDD usa 'jogoData' (String), então vamos criar uma (ex: "partida-1")
-        String jogoData = "partida-" + formulario.partidaId(); 
 
-        for (Integer jogadorId : formulario.jogadoresIds()) {
+    private List<String> validarAptidaoJogadores(List<Integer> jogadoresIds, Integer partidaId) {
+        
+        List<String> jogadoresInaptos = new ArrayList<>();
+        if (jogadoresIds == null || jogadoresIds.size() != 11) {
+             jogadoresInaptos.add("A escalação deve ter exatamente 11 jogadores.");
+             return jogadoresInaptos;
+        }
+
+        String jogoData = "partida-" + partidaId; 
+
+        for (Integer jogadorId : jogadoresIds) {
             
             Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
             if (jogador == null) {
-                throw new RuntimeException("Jogador com ID " + jogadorId + " não encontrado.");
+                jogadoresInaptos.add("Jogador com ID " + jogadorId + " não encontrado.");
+                continue; // Pula para o próximo jogador
             }
             
             String atletaNome = jogador.getNome();
             
-            // 3. Buscamos os 3 argumentos da regra de negócio
             boolean contratoAtivo = registroLesoesRepository.contratoAtivo(atletaNome);
             Suspensao suspensaoObj = registroCartoesService.verificarSuspensao(atletaNome);
             boolean suspenso = (suspensaoObj != null) ? suspensaoObj.isSuspenso() : false;
             int grauLesao = registroLesoesRepository.grauLesaoAtiva(atletaNome).orElse(0);
 
             try {
-                // 4. Chamamos o seu Serviço de Domínio (que salva na ESCALACAOSIMPLES)
+                // Chamamos o Serviço de Domínio (BDD #4)
                 boolean apto = definirEsquemaTaticoService.registrarEscalacao(
-                    jogoData,
-                    atletaNome,
-                    contratoAtivo,
-                    suspenso,
-                    grauLesao
+                    jogoData, atletaNome, contratoAtivo, suspenso, grauLesao
                 );
                 
-                // 5. Se não estiver apto, adicionamos à lista de erro
                 if (!apto) {
                     jogadoresInaptos.add(atletaNome + " (Contrato: " + contratoAtivo + ", Suspenso: " + suspenso + ", Lesão: " + grauLesao + ")");
                 }
 
             } catch (Exception e) {
-                // Se o próprio serviço falhar
-                throw new RuntimeException("Erro ao verificar jogador " + atletaNome + ": " + e.getMessage(), e);
+                jogadoresInaptos.add("Erro ao verificar jogador " + atletaNome + ": " + e.getMessage());
             }
         }
+        
+        return jogadoresInaptos;
+    }
+    // --- (FIM DO NOVO MÉTODO PRIVADO DE VALIDAÇÃO) ---
 
-        // 6. Verificação final: Se a lista de inaptos não estiver vazia, falhamos!
-        if (!jogadoresInaptos.isEmpty()) {
-            throw new RuntimeException("A escalação não pôde ser salva. Os seguintes jogadores estão inaptos: " + String.join(", ", jogadoresInaptos));
+
+    /**
+     * Endpoint para POST /backend/formacao/salvar
+     * (CRIAR nova formação)
+     */
+    @PostMapping(path = "/salvar")
+    public ResponseEntity<?> salvarFormacao(@RequestBody FormacaoFormulario formulario) {
+        
+        if (formulario == null) {
+            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
         }
         
-        // --- (FIM DA NOVA LÓGICA DE VERIFICAÇÃO) ---
+        // 1. CHAMA O MÉTODO DE VALIDAÇÃO REUTILIZADO
+        List<String> erros = validarAptidaoJogadores(formulario.jogadoresIds(), formulario.partidaId());
 
-        // 7. SUCESSO! Todos os 11 jogadores estão aptos.
-        //    Agora, salvamos a escalação completa na tabela 'ESCALACAO'.
+        // 2. Verificação final: Se a lista de inaptos não estiver vazia, falhamos!
+        if (!erros.isEmpty()) {
+            // Retorna 400 Bad Request com a lista de erros
+            return ResponseEntity.badRequest().body("A escalação não pôde ser salva: " + String.join(", ", erros));
+        }
         
+        // 3. SUCESSO! Salva a nova escalação.
         EscalacaoJPA novaEscalacao = new EscalacaoJPA();
         novaEscalacao.setPartidaId(formulario.partidaId());
         novaEscalacao.setEsquema(formulario.esquema());
         
-        novaEscalacao.setIdJogador1(formulario.jogadoresIds().get(0));
-        novaEscalacao.setIdJogador2(formulario.jogadoresIds().get(1));
-        novaEscalacao.setIdJogador3(formulario.jogadoresIds().get(2));
-        novaEscalacao.setIdJogador4(formulario.jogadoresIds().get(3));
-        novaEscalacao.setIdJogador5(formulario.jogadoresIds().get(4));
-        novaEscalacao.setIdJogador6(formulario.jogadoresIds().get(5));
-        novaEscalacao.setIdJogador7(formulario.jogadoresIds().get(6));
-        novaEscalacao.setIdJogador8(formulario.jogadoresIds().get(7));
-        novaEscalacao.setIdJogador9(formulario.jogadoresIds().get(8));
-        novaEscalacao.setIdJogador10(formulario.jogadoresIds().get(9));
-        novaEscalacao.setIdJogador11(formulario.jogadoresIds().get(10));
+        // (Método auxiliar para preencher os 11 jogadores)
+        preencherJogadores(novaEscalacao, formulario.jogadoresIds());
         
-        escalacaoRepository.save(novaEscalacao);
+        EscalacaoJPA escalacaoSalva = escalacaoRepository.save(novaEscalacao);
+        return ResponseEntity.ok(escalacaoSalva); // Retorna 200 OK com o objeto criado
+    }
+
+    @PutMapping(path = "/editar/{formacaoId}")
+    public ResponseEntity<?> editarFormacao(
+            @PathVariable("formacaoId") Integer formacaoId,
+            @RequestBody FormacaoFormulario formulario) {
+
+        if (formulario == null) {
+            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
+        }
+
+        // 1. Busca a formação existente no banco
+        Optional<EscalacaoJPA> formacaoOpt = escalacaoRepository.findById(formacaoId);
+        if (formacaoOpt.isEmpty()) {
+            return ResponseEntity.notFound().build(); // Retorna 404 Not Found
+        }
+
+        // 2. CHAMA O MESMO MÉTODO DE VALIDAÇÃO
+        List<String> erros = validarAptidaoJogadores(formulario.jogadoresIds(), formulario.partidaId());
+
+        if (!erros.isEmpty()) {
+            // Retorna 400 Bad Request com a lista de erros
+            return ResponseEntity.badRequest().body("A escalação não pôde ser editada: " + String.join(", ", erros));
+        }
+
+        // 3. SUCESSO! Atualiza a formação existente.
+        EscalacaoJPA formacaoExistente = formacaoOpt.get();
+        formacaoExistente.setPartidaId(formulario.partidaId());
+        formacaoExistente.setEsquema(formulario.esquema());
+
+        // (Método auxiliar para preencher os 11 jogadores)
+        preencherJogadores(formacaoExistente, formulario.jogadoresIds());
+
+        EscalacaoJPA escalacaoAtualizada = escalacaoRepository.save(formacaoExistente);
+        return ResponseEntity.ok(escalacaoAtualizada); // Retorna 200 OK com o objeto atualizado
+    }
+    
+    private void preencherJogadores(EscalacaoJPA escalacao, List<Integer> jogadoresIds) {
+        escalacao.setIdJogador1(jogadoresIds.get(0));
+        escalacao.setIdJogador2(jogadoresIds.get(1));
+        escalacao.setIdJogador3(jogadoresIds.get(2));
+        escalacao.setIdJogador4(jogadoresIds.get(3));
+        escalacao.setIdJogador5(jogadoresIds.get(4));
+        escalacao.setIdJogador6(jogadoresIds.get(5));
+        escalacao.setIdJogador7(jogadoresIds.get(6));
+        escalacao.setIdJogador8(jogadoresIds.get(7));
+        escalacao.setIdJogador9(jogadoresIds.get(8));
+        escalacao.setIdJogador10(jogadoresIds.get(9));
+        escalacao.setIdJogador11(jogadoresIds.get(10));
     }
 }

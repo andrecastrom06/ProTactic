@@ -155,6 +155,7 @@ create table if not exists Fisico (
     descricao varchar(255),
     data_inicio date,
     data_fim date,
+    status VARCHAR(50) DEFAULT 'PLANEJADO',
     primary key (id),
     foreign key (id_jogador) references Jogador(id)
 );

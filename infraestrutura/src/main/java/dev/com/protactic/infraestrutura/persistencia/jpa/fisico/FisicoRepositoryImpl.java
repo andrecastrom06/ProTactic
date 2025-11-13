@@ -79,7 +79,8 @@ public class FisicoRepositoryImpl implements FisicoRepository, FisicoRepositorio
             jpa.getIntensidade(),
             jpa.getDescricao(),
             jpa.getDataInicio(),
-            jpa.getDataFim()
+            jpa.getDataFim(),
+            jpa.getStatus()
         );
     }
 }

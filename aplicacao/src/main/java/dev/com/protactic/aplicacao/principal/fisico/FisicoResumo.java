@@ -12,4 +12,5 @@ public interface FisicoResumo {
     String getDescricao();
     Date getDataInicio();
     Date getDataFim();
+    String getStatus();
 }
