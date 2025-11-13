@@ -8,4 +8,5 @@ public interface PropostaRepository {
     Proposta saveProposta(Proposta proposta);
     Proposta findPropostaById(int id);
     List<Proposta> findAllPropostas();
+    void deleteProposta(Proposta proposta); 
 }

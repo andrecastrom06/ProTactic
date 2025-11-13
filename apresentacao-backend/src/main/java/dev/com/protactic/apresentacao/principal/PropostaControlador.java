@@ -21,6 +21,10 @@ import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
 import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.dominio.principal.proposta.PropostaService;
 
+import org.springframework.http.ResponseEntity; // <-- 1. Adiciona import
+import org.springframework.web.bind.annotation.DeleteMapping; // <-- 2. Adiciona import
+import org.springframework.web.bind.annotation.PatchMapping;
+
 @RestController
 @RequestMapping("backend/proposta")
 public class PropostaControlador {
@@ -98,6 +102,68 @@ public class PropostaControlador {
         } catch (Exception e) {
             // Re-lança a exceção do domínio como uma exceção de runtime
             throw new RuntimeException("Erro ao tentar criar a proposta: " + e.getMessage(), e);
+        }
+    }
+    
+    public record PropostaValorFormulario(
+        double novoValor
+    ) {}
+
+    /**
+     * PATCH /backend/proposta/editar-valor/{propostaId}
+     * Implementa a história "Editar proposta já criada".
+     */
+    @PatchMapping(path = "/editar-valor/{propostaId}")
+    public ResponseEntity<Void> editarValorProposta(
+            @PathVariable("propostaId") Integer propostaId,
+            @RequestBody PropostaValorFormulario formulario) {
+        try {
+            propostaService.editarValorProposta(propostaId, formulario.novoValor());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao editar proposta: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * POST /backend/proposta/aceitar/{propostaId}
+     * Implementa a história "Aceitar proposta".
+     */
+    @PostMapping(path = "/aceitar/{propostaId}")
+    public ResponseEntity<Void> aceitarProposta(@PathVariable("propostaId") Integer propostaId) {
+        try {
+            propostaService.aceitarProposta(propostaId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao aceitar proposta: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * POST /backend/proposta/recusar/{propostaId}
+     * Implementa a história "Recusar proposta".
+     */
+    @PostMapping(path = "/recusar/{propostaId}")
+    public ResponseEntity<Void> recusarProposta(@PathVariable("propostaId") Integer propostaId) {
+        try {
+            propostaService.recusarProposta(propostaId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao recusar proposta: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * DELETE /backend/proposta/excluir/{propostaId}
+     * Implementa a história "Excluir proposta enviada".
+     */
+    @DeleteMapping(path = "/excluir/{propostaId}")
+    public ResponseEntity<Void> excluirProposta(@PathVariable("propostaId") Integer propostaId) {
+        try {
+            propostaService.excluirProposta(propostaId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao excluir proposta: " + e.getMessage(), e);
         }
     }
 }

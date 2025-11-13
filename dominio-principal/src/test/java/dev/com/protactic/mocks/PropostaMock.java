@@ -12,7 +12,9 @@ public class PropostaMock implements PropostaRepository {
 
     @Override
     public Proposta saveProposta(Proposta proposta) {
-        proposta.setId((int) sequence++);
+        if (proposta.getId() == 0) { // Garante que novas propostas também recebam ID
+            proposta.setId((int) sequence++);
+        }
         storage.put((long) proposta.getId(), proposta);
         this.ultimaProposta = proposta;
         return proposta;
@@ -27,6 +29,14 @@ public class PropostaMock implements PropostaRepository {
     public List<Proposta> findAllPropostas() {
         return new ArrayList<>(storage.values());
     }
+
+    // --- (INÍCIO DA CORREÇÃO) ---
+    // Adiciona o método em falta da interface
+    @Override
+    public void deleteProposta(Proposta proposta) {
+        storage.remove((long) proposta.getId());
+    }
+    // --- (FIM DA CORREÇÃO) ---
 
     public Proposta getUltimaProposta() {
         return ultimaProposta;

@@ -141,8 +141,20 @@ public class AplicacaoBackend {
     @Bean
     public PropostaService propostaService(
             PropostaRepository propostaRepo, 
-            ContratoRepository contratoRepo) {
-        return new PropostaService(propostaRepo, contratoRepo);
+            ContratoRepository contratoRepo,
+            JogadorRepository jogadorRepo, // <-- Adicionado
+            ClubeRepository clubeRepo,     // <-- Adicionado
+            DispensaService dispensaService, // <-- Adicionado
+            CadastroDeAtletaService cadastroDeAtletaService) { // <-- Adicionado
+        
+        return new PropostaService(
+            propostaRepo, 
+            contratoRepo,
+            jogadorRepo,
+            clubeRepo,
+            dispensaService,
+            cadastroDeAtletaService
+        );
     }
 
     @Bean

@@ -14,6 +14,12 @@ import dev.com.protactic.dominio.principal.proposta.PropostaService;
 import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
 import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
 import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
+
+// --- (INÍCIO DAS CORREÇÕES DE IMPORT) ---
+import dev.com.protactic.dominio.principal.cadastroAtleta.CadastroDeAtletaService;
+import dev.com.protactic.dominio.principal.dispensa.DispensaService;
+// --- (FIM DAS CORREÇÕES DE IMPORT) ---
+
 import dev.com.protactic.mocks.PropostaMock;
 import dev.com.protactic.mocks.ClubeMock;
 import dev.com.protactic.mocks.ContratoMock;
@@ -30,38 +36,59 @@ public class PropostaContratacaoFeature {
     private Date dataAtual;
     private Proposta proposta;
     private Exception excecao;
-    private double valorProposta; // <-- CORREÇÃO 1: Campo adicionado
+    private double valorProposta;
 
     private PropostaMock propostaMock; 
     private ContratoRepository contratoRepo;
     private JogadorRepository jogadorRepo;
     private ClubeRepository clubeRepo;
     
+    // --- (INÍCIO DAS NOVAS DEPENDÊNCIAS) ---
+    private DispensaService dispensaService;
+    private CadastroDeAtletaService cadastroDeAtletaService;
+    // --- (FIM DAS NOVAS DEPENDÊNCIAS) ---
+
     private PropostaService propostaService;
     
     private Map<String, Clube> clubesDoTeste;
 
     @Before
     public void setup() {
+        // 1. Criar todos os Mocks
         this.propostaMock = new PropostaMock();
         this.contratoRepo = new ContratoMock();
         this.jogadorRepo = new JogadorMock();
         this.clubeRepo = new ClubeMock();
+        
+        // 2. Criar os Serviços que o PropostaService precisa
+        this.dispensaService = new DispensaService(contratoRepo, jogadorRepo, clubeRepo);
+        this.cadastroDeAtletaService = new CadastroDeAtletaService(jogadorRepo, clubeRepo, contratoRepo);
 
-        this.propostaService = new PropostaService(propostaMock, contratoRepo);
+        // 3. Criar o PropostaService com TODOS os 6 argumentos
+        this.propostaService = new PropostaService(
+            propostaMock, 
+            contratoRepo,
+            jogadorRepo,       // <-- Novo
+            clubeRepo,         // <-- Novo
+            dispensaService,   // <-- Novo
+            cadastroDeAtletaService // <-- Novo
+        );
+        // --- (FIM DA CORREÇÃO NO SETUP) ---
         
         this.clubesDoTeste = new HashMap<>();
-
         this.jogador = null;
         this.clubeProponente = null;
         this.dataAtual = null;
         this.proposta = null;
         this.excecao = null;
-        this.valorProposta = 0.0; // Reseta o valor
+        this.valorProposta = 0.0; 
 
         ContratoMock.limparMock();
     }
     
+    // ... (O resto do ficheiro .java (métodos @Dado, @Quando, @Então) 
+    //      não precisa de nenhuma alteração) ...
+
     private Clube findOrCreateClube(String nomeClube) {
         if (clubesDoTeste.containsKey(nomeClube)) {
             return clubesDoTeste.get(nomeClube);
@@ -112,14 +139,12 @@ public class PropostaContratacaoFeature {
         this.clubeProponente = findOrCreateClube(nomeClube);
 
         try {
-            // --- CORREÇÃO 3: Passa o 'this.valorProposta' para o método ---
             this.proposta = propostaService.criarProposta(
                 jogador, 
                 clubeProponente, 
-                this.valorProposta, // <-- Argumento 'valor' adicionado
+                this.valorProposta,
                 dataAtual
             );
-            // --- FIM DA CORREÇÃO 3 ---
         } catch (Exception e) {
             this.excecao = e;
         }
@@ -132,7 +157,7 @@ public class PropostaContratacaoFeature {
         assertEquals(jogador.getId(), proposta.getJogadorId(), "Jogador ID incorreto na proposta");
         assertEquals(clubeProponente.getId(), proposta.getPropositorId(), "Clube propositor ID incorreto");
         assertEquals(dataAtual, proposta.getData(), "Data incorreta na proposta");
-        assertEquals(valorProposta, proposta.getValor(), "Valor incorreto na proposta"); // <-- Teste extra
+        assertEquals(valorProposta, proposta.getValor(), "Valor incorreto na proposta"); 
 
         Proposta persistida = propostaMock.getUltimaProposta();
         assertNotNull(persistida, "A proposta deveria ter sido salva no repositório");

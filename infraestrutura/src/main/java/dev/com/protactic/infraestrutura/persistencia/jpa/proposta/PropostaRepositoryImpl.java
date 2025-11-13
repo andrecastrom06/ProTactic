@@ -68,4 +68,11 @@ public class PropostaRepositoryImpl implements PropostaRepository, PropostaRepos
         return repositoryJPA.findByJogadorId(jogadorId);
     }
     
+    @Override
+    public void deleteProposta(Proposta proposta) {
+        Objects.requireNonNull(proposta, "A Proposta a ser deletada não pode ser nula.");
+        PropostaJPA jpa = mapeador.map(proposta, PropostaJPA.class);
+        repositoryJPA.delete(jpa);
+    }
+    
 }
