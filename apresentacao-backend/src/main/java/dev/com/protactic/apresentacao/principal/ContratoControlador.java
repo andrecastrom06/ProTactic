@@ -3,6 +3,7 @@ package dev.com.protactic.apresentacao.principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity; // <-- 1. Adiciona import
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.dominio.principal.dispensa.DispensaService;
 import dev.com.protactic.dominio.principal.contrato.ContratoService; // <-- 5. Adiciona import
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("backend/contrato")
 public class ContratoControlador { // <-- Classe renomeada

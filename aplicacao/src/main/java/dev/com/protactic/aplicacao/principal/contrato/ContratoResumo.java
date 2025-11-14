@@ -1,5 +1,8 @@
 package dev.com.protactic.aplicacao.principal.contrato;
 
+import java.util.Date;
+import java.time.LocalDate;
+
 public interface ContratoResumo {
     
     int getId();
@@ -7,5 +10,9 @@ public interface ContratoResumo {
     double getSalario();
     String getStatus();
     Integer getClubeId(); 
+    String getAtletaNome();
+    String getAtletaPosicao();
+    int getAtletaIdade();
+    LocalDate getDataInicio();
 
 }

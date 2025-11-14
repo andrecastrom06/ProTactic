@@ -1,36 +1,38 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// Layouts e Rotas
 import { MainLayout } from './layouts/MainLayout';
-import { ProtectedRoute } from './layouts/ProtectedRoute'; // 1. Importa o "guarda"
+import { ProtectedRoute } from './layouts/ProtectedRoute';
 
-// Páginas
-import { LoginPage } from './pages/Login/LoginPage'; // 2. Importa a Página de Login
-import { ListaPropostasPage } from './pages/Propostas/ListaPropostasPage';
+// --- (INÍCIO DA MUDANÇA) ---
+// 1. Importa a página com o novo nome
+import { ContratosPage } from './pages/Propostas/ContratosPage';
+// --- (FIM DA MUDANÇA) ---
+
+import { LoginPage } from './pages/Login/LoginPage';
 
 export const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>
-                
-                {/* Rota 1: Página de Login (Pública) */}
                 <Route path="/login" element={<LoginPage />} />
 
-                {/* Rota 2: Rotas Protegidas (Privadas) */}
-                {/* O <ProtectedRoute> verifica se o user está logado */}
                 <Route element={<ProtectedRoute />}>
-                    {/* Se estiver logado, mostra o <MainLayout> */}
                     <Route element={<MainLayout />}>
-                        {/* E aqui vêm todas as tuas páginas internas */}
-                        <Route path="/" element={<ListaPropostasPage />} />
-                        <Route path="/contratos" element={<ListaPropostasPage />} />
+                        
+                        {/* --- (INÍCIO DA MUDANÇA) --- */}
+                        {/* 2. Atualiza as rotas para a página de Contratos */}
+                        <Route path="/" element={<ContratosPage />} />
+                        <Route path="/contratos" element={<ContratosPage />} />
+                        {/* --- (FIM DA MUDANÇA) --- */}
+
                         <Route path="/dashboard" element={<div style={{padding: '20px'}}>Página de Dashboard</div>} />
                         <Route path="/atletas" element={<div style={{padding: '20px'}}>Página de Atletas</div>} />
-                        {/* ... etc ... */}
+                        <Route path="/competicoes" element={<div style={{padding: '20px'}}>Página de Competições</div>} />
+                        <Route path="/treinos" element={<div style={{padding: '20px'}}>Página de Treinos</div>} />
+                        <Route path="/jogos" element={<div style={{padding: '20px'}}>Página de Jogos</div>} />
                     </Route>
                 </Route>
-
             </Routes>
         </BrowserRouter>
     );

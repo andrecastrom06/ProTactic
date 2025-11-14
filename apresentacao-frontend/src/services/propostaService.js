@@ -1,13 +1,14 @@
 import { API_BASE_URL } from '../config/apiConfig';
 
 /**
- * Busca todas as propostas do backend.
- * Chama: GET /backend/proposta/pesquisa
+ * CORRIGIDO: Busca apenas propostas ONDE o clube logado é o RECEPTOR.
+ * Chama: GET /backend/proposta/pesquisa-por-receptor/{clubeId}
  */
-export const buscarTodasPropostas = async () => {
-    // ... (função existente, não mexe)
+export const buscarPropostasRecebidas = async (clubeId) => {
+    if (!clubeId) return []; // Não faz nada se o ID do clube ainda não carregou
+
     try {
-        const response = await fetch(`${API_BASE_URL}/proposta/pesquisa`);
+        const response = await fetch(`${API_BASE_URL}/proposta/pesquisa-por-receptor/${clubeId}`);
         
         if (!response.ok) {
             throw new Error(`Erro ao buscar propostas: ${response.statusText}`);
@@ -17,12 +18,10 @@ export const buscarTodasPropostas = async () => {
         return dados;
 
     } catch (error) {
-        console.error("Falha na chamada da API:", error);
+        console.error("Falha na chamada da API (propostas):", error);
         throw error;
     }
 };
-
-// --- (INÍCIO DA NOVA FUNCIONALIDADE) ---
 
 /**
  * Aceita uma proposta de contratação.
@@ -31,16 +30,14 @@ export const buscarTodasPropostas = async () => {
 export const aceitarProposta = async (propostaId) => {
     try {
         const response = await fetch(`${API_BASE_URL}/proposta/aceitar/${propostaId}`, {
-            method: 'POST', // Define o método como POST
+            method: 'POST',
         });
 
         if (!response.ok) {
-            // Tenta ler a mensagem de erro do backend
             const erroTexto = await response.text();
             throw new Error(`Erro ao aceitar proposta: ${erroTexto}`);
         }
         
-        // Se deu 200 OK, não precisa retornar nada
         return true; 
 
     } catch (error) {
@@ -56,7 +53,7 @@ export const aceitarProposta = async (propostaId) => {
 export const recusarProposta = async (propostaId) => {
     try {
         const response = await fetch(`${API_BASE_URL}/proposta/recusar/${propostaId}`, {
-            method: 'POST', // Define o método como POST
+            method: 'POST',
         });
 
         if (!response.ok) {
@@ -71,6 +68,11 @@ export const recusarProposta = async (propostaId) => {
         throw error;
     }
 };
+
+/**
+ * Cria uma nova proposta.
+ * Chama: POST /backend/proposta/criar
+ */
 export const criarProposta = async (formulario) => {
     try {
         const response = await fetch(`${API_BASE_URL}/proposta/criar`, {
@@ -78,7 +80,7 @@ export const criarProposta = async (formulario) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formulario), // Envia o formulário como JSON
+            body: JSON.stringify(formulario),
         });
 
         if (!response.ok) {
@@ -93,4 +95,3 @@ export const criarProposta = async (formulario) => {
         throw error;
     }
 };
-// --- (FIM DA NOVA FUNCIONALIDADE) ---

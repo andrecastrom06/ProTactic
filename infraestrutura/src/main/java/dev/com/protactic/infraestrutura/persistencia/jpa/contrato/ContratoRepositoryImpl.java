@@ -53,11 +53,11 @@ public class ContratoRepositoryImpl implements ContratoRepository, ContratoRepos
 
     @Override
     public List<ContratoResumo> pesquisarResumos() {
-        return repositoryJPA.findAllBy();
+        return repositoryJPA.findContratoResumos(); 
     }
 
     @Override
     public List<ContratoResumo> pesquisarResumosPorClube(Integer clubeId) {
-        return repositoryJPA.findByClubeId(clubeId);
+        return repositoryJPA.findContratoResumosByClubeId(clubeId); 
     }
 }

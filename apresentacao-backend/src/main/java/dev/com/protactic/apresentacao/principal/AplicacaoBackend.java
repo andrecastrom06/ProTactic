@@ -168,13 +168,14 @@ public class AplicacaoBackend {
     
     @Bean
     public LoginService loginService(
-            UsuarioRepository usuarioRepository, // <-- Agora injeta a Interface
-            JogadorRepository jogadorRepository,
-            ClubeRepository clubeRepository) {
+            UsuarioRepository usuarioRepository, // Fica
+            // JogadorRepository jogadorRepository, // <-- REMOVE ESTA LINHA
+            ClubeRepository clubeRepository) {  // Fica
         
-        return new LoginService(usuarioRepository, jogadorRepository, clubeRepository);
+        // Chama o novo construtor de 2 argumentos
+        return new LoginService(usuarioRepository, clubeRepository); // <-- REMOVE O 'jogadorRepository' DAQUI
     }
-
+    
     @Bean
     public PremiacaoService premiacaoService(PremiacaoRepository premiacaoRepo) {
         return new PremiacaoService(premiacaoRepo);

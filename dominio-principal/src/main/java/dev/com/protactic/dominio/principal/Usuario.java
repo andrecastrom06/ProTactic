@@ -6,6 +6,7 @@ public class Usuario {
     private String senha;
     private String nome;
     private String funcao; 
+    private Integer clubeId; // <-- ADICIONA ISTO
 
     public Usuario() {}
 
@@ -53,5 +54,11 @@ public class Usuario {
     }
     public void setFuncao(String funcao) {
         this.funcao = funcao;
+    }
+    public Integer getClubeId() {
+        return clubeId;
+    }
+    public void setClubeId(Integer clubeId) {
+        this.clubeId = clubeId;
     }
 }
