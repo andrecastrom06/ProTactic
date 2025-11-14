@@ -1,0 +1,169 @@
+/* Container principal da página */
+.atletas-page-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    height: 100%;
+}
+
+/* Cabeçalho da página com Título e Botão */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    color: #333;
+    margin: 0;
+}
+
+/* Botão de "Novo Atleta" */
+.novo-atleta-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaço entre o ícone e o texto */
+    transition: background-color 0.3s ease;
+}
+
+.novo-atleta-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Container da lista de atletas */
+.atletas-list-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* Garante que os cantos arredondados funcionem */
+}
+
+/*
+ * Usamos CSS Grid para alinhar tudo como uma "tabela"
+ * mas com a flexibilidade de componentes.
+ */
+.atleta-item {
+    display: grid;
+    /* Colunas: Nome | Posição | Idade | Status | Saúde | Contrato | Ações */
+    grid-template-columns: 2fr 1.5fr 0.5fr 1.5fr 1.5fr 1.5fr 2fr;
+    gap: 15px; /* Espaço entre as colunas */
+    padding: 18px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+/* Remove a borda do último item */
+.atleta-item:last-child {
+    border-bottom: none;
+}
+
+/* Efeito de hover em cada linha */
+.atleta-item:not(.header):hover {
+    background-color: #fcfcfc;
+}
+
+/* Linha do Cabeçalho */
+.atleta-item.header {
+    background-color: #fafafa;
+    color: #555;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 15px 20px;
+}
+
+/* Colunas individuais */
+.atleta-item > span {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaço para ícones dentro das colunas */
+    color: #444;
+}
+
+/* --- Estilos Específicos por Coluna --- */
+
+/* Nome e Tag de Capitão */
+.nome .capitao-tag {
+    background-color: #fff8e1; /* Fundo amarelo claro */
+    color: #e6b800; /* Cor amarela/dourada */
+    border: 1px solid #ffeec2;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Status (Ponto colorido + Texto) */
+.status .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0; /* Impede que o ponto seja espremido */
+}
+.status-dot.disponivel {
+    background-color: #28a745; /* Verde */
+    box-shadow: 0 0 5px #28a745;
+}
+.status-dot.indisponivel {
+    background-color: #dc3545; /* Vermelho */
+    box-shadow: 0 0 5px #dc3545;
+}
+
+/* Saúde */
+.saude.lesionado {
+    color: #c9302c; /* Cor do texto vermelha para lesionado */
+    font-weight: 600;
+}
+.saude.saudavel {
+    color: #2a9d8f; /* Cor do texto verde para saudável */
+}
+
+/* Ações (Botões) */
+.acoes {
+    gap: 10px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn-details {
+    background-color: #f0f0f0;
+    color: #333;
+}
+.action-btn-details:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.action-btn-lesao {
+    background-color: #fff4f4;
+    color: #dc3545;
+    border-color: #f5c6cb;
+}
+.action-btn-lesao:hover {
+    background-color: #ffeaea;
+    border-color: #f1b0b7;
+}
