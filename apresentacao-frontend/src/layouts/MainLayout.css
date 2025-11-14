@@ -1,15 +1,66 @@
 .main-layout {
     display: flex;
     min-height: 100vh;
+    background-color: #f4f6f8; /* Um fundo para a área de conteúdo */
+}
+
+
+.mobile-header {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    padding: 0 16px;
+    background-color: #ffffff; 
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 900;
+}
+
+.hamburger-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #004d40;
+    padding: 4px;
+}
+
+.mobile-header-title {
+    margin: 0 0 0 16px;
+    font-size: 20px;
+    color: #004d40;
+    font-weight: 700;
 }
 
 .main-content {
-    /* flex-grow: 1 faz o conteúdo ocupar todo o espaço restante */
     flex-grow: 1;
+    width: 100%;
+    padding-top: 60px;
     
-    /* Como a sidebar tem 260px, o conteúdo começa APÓS ela */
-    margin-left: 260px; 
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
     
-    /* O resto do estilo (padding, etc.)
-       virá do CSS de cada página (ex: "propostas-page") */
+    margin-left: 0; 
+}
+
+
+
+@media (min-width: 1024px) {
+    
+    .mobile-header {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 260px; 
+        
+        padding-top: 24px;
+        
+        padding-left: 24px;
+        padding-right: 24px;
+        padding-bottom: 24px;
+    }
 }
