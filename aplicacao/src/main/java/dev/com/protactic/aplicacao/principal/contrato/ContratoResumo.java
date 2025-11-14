@@ -1,6 +1,5 @@
 package dev.com.protactic.aplicacao.principal.contrato;
 
-import java.util.Date;
 import java.time.LocalDate;
 
 public interface ContratoResumo {

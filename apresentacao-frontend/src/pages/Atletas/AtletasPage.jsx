@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { buscarTodosJogadores } from '../../services/jogadorService'; // (O teu serviço)
+import React, { useState, useEffect, useCallback } from 'react';
+import { buscarTodosJogadores } from '../../services/jogadorService';
 import './AtletasPage.css'; // (O teu CSS)
 import { FaPlus, FaStar, FaEye, FaHeartbeat } from 'react-icons/fa';
 
-// (A tua função formatarData está perfeita)
+// Importa o novo Modal e o hook de autenticação
+import { NovoAtletaModal } from '../../components/NovoAtletaModal/NovoAtletaModal';
+import { useAuth } from '../../store/AuthContext'; 
+
+/**
+ * Função para formatar a data (Corrigida para LocalDate)
+ */
 const formatarData = (dataString) => {
     if (!dataString) return '-';
     // O backend envia um array [ano, mes, dia], vamos converter
@@ -24,33 +30,55 @@ const AtletasPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const carregarAtletas = async () => {
-            try {
-                setLoading(true);
-                // Chama a API que agora retorna todos os dados
-                const response = await buscarTodosJogadores();
-                setAtletas(response);
-                setError(null);
-            } catch (err) {
-                console.error("Erro ao buscar atletas:", err);
-                setError("Não foi possível carregar os atletas.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        carregarAtletas();
-    }, []); 
+    // Estado para controlar o modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    // Pega o ID do clube logado (para passar ao modal)
+    const { clubeIdLogado } = useAuth();
 
-    if (loading) { /* ... (igual) ... */ }
-    if (error) { /* ... (igual) ... */ }
+    // Usa o useCallback para a função de carregar
+    const carregarAtletas = useCallback(async () => {
+        try {
+            setLoading(true);
+            const response = await buscarTodosJogadores();
+            setAtletas(response); 
+            setError(null);
+        } catch (err) {
+            console.error("Erro ao buscar atletas:", err);
+            setError("Não foi possível carregar os atletas.");
+        } finally {
+            setLoading(false);
+        }
+    }, []); // Dependência vazia
+
+    useEffect(() => {
+        carregarAtletas();
+    }, [carregarAtletas]); 
+
+    // Função de sucesso (chamada pelo modal)
+    const handleCadastroSuccess = () => {
+        setIsModalOpen(false); // Fecha o modal
+        carregarAtletas(); // Recarrega a lista de atletas
+    };
+
+    if (loading) {
+        return <div style={{ padding: '20px' }}>Carregando atletas...</div>;
+    }
+
+    if (error) {
+        return <div style={{ padding: '20px' }}>{error}</div>;
+    }
 
     return (
         <div className="atletas-page-container">
             
             <div className="page-header">
                 <h1>Gestão de Atletas</h1>
-                <button className="novo-atleta-btn">
+                {/* Liga o botão para abrir o modal */}
+                <button 
+                    className="novo-atleta-btn"
+                    onClick={() => setIsModalOpen(true)}
+                >
                     <FaPlus size={14} />
                     Novo Atleta
                 </button>
@@ -85,7 +113,7 @@ const AtletasPage = () => {
                                 {/* Nome + Tag de Capitão */}
                                 <span className="nome">
                                     {atleta.nome}
-                                    {/* A API agora envia 'isCapitao' */}
+                                    {/* A API agora envia 'capitao' (era 'isCapitao') */}
                                     {atleta.capitao && (
                                         <span className="capitao-tag">
                                             <FaStar size={12} /> Capitão
@@ -138,6 +166,15 @@ const AtletasPage = () => {
                     </div>
                 )}
             </div>
+            
+            {/* Renderiza o Modal (se isModalOpen for true) */}
+            {isModalOpen && (
+                <NovoAtletaModal 
+                    onClose={() => setIsModalOpen(false)}
+                    onSuccess={handleCadastroSuccess}
+                />
+            )}
+
         </div>
     );
 };

@@ -1,0 +1,72 @@
+/* Fundo escuro (overlay) */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+/* Caixa branca */
+.modal-content {
+    background: white; padding: 24px; border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 100%; max-width: 500px; z-index: 1001;
+}
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #eee; padding-bottom: 16px; margin-bottom: 16px;
+}
+.modal-header h2 { margin: 0; font-size: 20px; }
+.modal-close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #888; }
+.modal-subtitle { font-size: 14px; color: #555; margin-top: -8px; margin-bottom: 16px; }
+
+/* Aviso amarelo (do protótipo) */
+.modal-alert {
+    background-color: #fffbeb; border: 1px solid #fde086; color: #7a4a01;
+    padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;
+}
+
+/* Estilos do formulário */
+.modal-form { display: flex; flex-direction: column; gap: 16px; }
+.form-group { display: flex; flex-direction: column; }
+.form-group label { margin-bottom: 6px; font-size: 14px; font-weight: bold; color: #333; }
+.form-group input, .form-group select {
+    padding: 10px; border: 1px solid #ccc; border-radius: 4px;
+    font-size: 14px; background-color: #f9f9f9;
+}
+/* Foco (como no protótipo) */
+.form-group input:focus, .form-group select:focus {
+    border-color: #00796b; /* Verde */
+    box-shadow: 0 0 0 2px #b2dfdb; /* Sombra verde clara */
+    outline: none;
+}
+.form-group-row { display: flex; gap: 16px; }
+.form-group-row .form-group { flex: 1; }
+
+/* Caixa de Requisitos (Dinâmica) */
+.requisitos-box {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 12px 16px;
+    border-radius: 4px;
+}
+.requisitos-box p { margin: 0 0 10px 0; font-weight: bold; font-size: 14px; }
+.requisitos-box ul { list-style: none; margin: 0; padding: 0; }
+.requisito-item { font-size: 13px; margin-bottom: 4px; }
+.requisito-item span { margin-right: 8px; }
+/* Cores vermelho/verde */
+.requisito-item.invalido { color: #A00000; }
+.requisito-item.valido { color: #006400; text-decoration: line-through; }
+
+/* Botões */
+.modal-actions {
+    display: flex; justify-content: flex-end; gap: 12px;
+    margin-top: 24px; border-top: 1px solid #eee; padding-top: 16px;
+}
+.modal-actions button {
+    padding: 10px 20px; border: none; border-radius: 5px;
+    font-size: 14px; font-weight: bold; cursor: pointer;
+}
+.btn-cancel { background-color: #eee; color: #333; }
+.btn-submit { background-color: #00796b; color: white; }
+.btn-submit:disabled { background-color: #aaa; cursor: not-allowed; }
+
+.error-message { color: #A00000; font-size: 14px; text-align: center; }

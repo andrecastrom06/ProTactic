@@ -18,3 +18,23 @@ export const buscarTodosJogadores = async () => {
         throw error;
     }
 };
+export const cadastrarNovoAtleta = async (atletaData) => {
+    // atletaData = { nomeCompleto, posicao, idade, ... }
+    try {
+        const response = await fetch(`${API_BASE_URL}/jogador/cadastrar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(atletaData)
+        });
+
+        if (!response.ok) {
+            const erroTexto = await response.text();
+            throw new Error(`Erro ao cadastrar atleta: ${erroTexto}`);
+        }
+        
+        return await response.json(); // Retorna o novo atleta criado
+    } catch (error) {
+        console.error("Falha na API (Cadastrar Atleta):", error);
+        throw error;
+    }
+};
