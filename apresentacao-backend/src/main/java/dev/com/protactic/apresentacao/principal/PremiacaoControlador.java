@@ -15,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 @RestController
 @RequestMapping("backend/premiacao")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class PremiacaoControlador {
 
     // Serviço para consultas (GET)

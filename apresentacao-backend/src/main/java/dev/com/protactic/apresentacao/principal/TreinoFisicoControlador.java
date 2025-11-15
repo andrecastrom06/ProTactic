@@ -26,6 +26,8 @@ import java.util.Optional; // <-- CORREÇÃO: Importação que faltava
  */
 @RestController
 @RequestMapping("backend/treino-fisico")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class TreinoFisicoControlador {
 
     // --- Injeção dos Serviços e Repositórios ---

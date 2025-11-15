@@ -3,6 +3,7 @@ package dev.com.protactic.apresentacao.principal;
 import java.util.List;
 import java.math.BigDecimal; // Importante para o DTO e o Serviço
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,8 @@ import dev.com.protactic.dominio.principal.nota.NotaService;
 
 
 @RestController
-@RequestMapping("backend/nota") // Define a URL base
+@RequestMapping("backend/nota")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AtribuicaoNotasControlador {
 
     // --- Injeção dos Serviços ---

@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
+// 1. Importar o novo modal e os serviços
 import { buscarTodosJogadores } from '../../services/jogadorService';
-import './AtletasPage.css'; // (O teu CSS)
+import { encerrarLesao } from '../../services/lesaoService'; // Importa a nova função
+import { NovoAtletaModal } from '../../components/NovoAtletaModal/NovoAtletaModal';
+import { RegistrarLesaoModal } from '../../components/RegistrarLesaoModal/RegistrarLesaoModal'; // Importa o modal de lesão
+import { useAuth } from '../../store/AuthContext';
+import './AtletasPage.css'; 
 import { FaPlus, FaStar, FaEye, FaHeartbeat } from 'react-icons/fa';
 
-// Importa o novo Modal e o hook de autenticação
-import { NovoAtletaModal } from '../../components/NovoAtletaModal/NovoAtletaModal';
-import { useAuth } from '../../store/AuthContext'; 
-
-/**
- * Função para formatar a data (Corrigida para LocalDate)
- */
+// ... (A função formatarData continua igual) ...
 const formatarData = (dataString) => {
     if (!dataString) return '-';
     // O backend envia um array [ano, mes, dia], vamos converter
@@ -30,14 +29,15 @@ const AtletasPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Estado para controlar o modal
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // 2. Adicionar estados para o novo modal de lesão
+    const [isCadastroModalOpen, setIsCadastroModalOpen] = useState(false);
+    const [isLesaoModalOpen, setIsLesaoModalOpen] = useState(false);
+    const [atletaSelecionado, setAtletaSelecionado] = useState(null);
     
-    // Pega o ID do clube logado (para passar ao modal)
     const { clubeIdLogado } = useAuth();
 
-    // Usa o useCallback para a função de carregar
     const carregarAtletas = useCallback(async () => {
+        // ... (função carregarAtletas continua igual) ...
         try {
             setLoading(true);
             const response = await buscarTodosJogadores();
@@ -49,35 +49,61 @@ const AtletasPage = () => {
         } finally {
             setLoading(false);
         }
-    }, []); // Dependência vazia
+    }, []); 
 
     useEffect(() => {
         carregarAtletas();
     }, [carregarAtletas]); 
 
-    // Função de sucesso (chamada pelo modal)
+    // Função de sucesso para o modal de NOVO ATLETA
     const handleCadastroSuccess = () => {
-        setIsModalOpen(false); // Fecha o modal
-        carregarAtletas(); // Recarrega a lista de atletas
+        setIsCadastroModalOpen(false); 
+        carregarAtletas(); 
     };
+
+    // 3. Adicionar funções para controlar o modal de LESÃO
+    const handleAbrirModalLesao = (atleta) => {
+        setAtletaSelecionado(atleta);
+        setIsLesaoModalOpen(true);
+    };
+
+    const handleLesaoSuccess = () => {
+        setIsLesaoModalOpen(false);
+        setAtletaSelecionado(null);
+        carregarAtletas(); // Recarrega a lista
+    };
+
+    const handleEncerrarLesao = async (jogadorId) => {
+        if (!window.confirm("Tem certeza que deseja encerrar esta lesão e marcar o atleta como 'Saudável'?")) {
+            return;
+        }
+        try {
+            await encerrarLesao(jogadorId);
+            alert("Lesão encerrada. O atleta está saudável.");
+            carregarAtletas();
+        } catch (err) {
+            alert(`Erro ao encerrar lesão: ${err.message}`);
+        }
+    };
+    // --- Fim das novas funções ---
 
     if (loading) {
         return <div style={{ padding: '20px' }}>Carregando atletas...</div>;
     }
-
+    // ... (o if(error) continua igual) ...
     if (error) {
         return <div style={{ padding: '20px' }}>{error}</div>;
     }
+
 
     return (
         <div className="atletas-page-container">
             
             <div className="page-header">
                 <h1>Gestão de Atletas</h1>
-                {/* Liga o botão para abrir o modal */}
                 <button 
                     className="novo-atleta-btn"
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => setIsCadastroModalOpen(true)} // Corrigido
                 >
                     <FaPlus size={14} />
                     Novo Atleta
@@ -86,7 +112,7 @@ const AtletasPage = () => {
 
             <div className="atletas-list-container">
                 
-                {/* Cabeçalho da Lista */}
+                {/* Cabeçalho da Lista (igual) */}
                 <div className="atleta-item header">
                     <span className="nome">Nome</span>
                     <span className="posicao">Posição</span>
@@ -100,78 +126,89 @@ const AtletasPage = () => {
                 {atletas.length > 0 ? (
                     atletas.map((atleta) => {
                         
-                        // --- (INÍCIO DAS CORREÇÕES) ---
-                        // 1. Os dados agora vêm direto da API
                         const status = atleta.status || 'Indefinido';
-                        const saudavel = atleta.saudavel; // Vem como true/false
+                        const saudavel = atleta.saudavel;
                         const grauLesao = atleta.grauLesao;
-                        // --- (FIM DAS CORREÇÕES) ---
 
                         return (
                             <div key={atleta.id} className="atleta-item">
                                 
-                                {/* Nome + Tag de Capitão */}
+                                {/* ... (colunas Nome, Posição, Idade, Status, Saúde, Contrato continuam iguais) ... */}
                                 <span className="nome">
                                     {atleta.nome}
-                                    {/* A API agora envia 'capitao' (era 'isCapitao') */}
                                     {atleta.capitao && (
                                         <span className="capitao-tag">
                                             <FaStar size={12} /> Capitão
                                         </span>
                                     )}
                                 </span>
-
-                                {/* Posição */}
                                 <span className="posicao">
                                     {atleta.posicao}
                                 </span>
-
-                                {/* Idade (API agora envia 'idade') */}
                                 <span className="idade">
                                     {atleta.idade}
                                 </span>
-
-                                {/* Status (API agora envia 'status') */}
                                 <span className="status">
                                     <span className={`status-dot ${status === 'Disponível' ? 'disponivel' : 'indisponivel'}`}></span>
                                     {status}
                                 </span>
-
-                                {/* Saúde (API agora envia 'saudavel' e 'grauLesao') */}
                                 <span className={`saude ${saudavel ? 'saudavel' : 'lesionado'}`}>
                                     {saudavel ? 'Saudável' : `Lesionado (G${grauLesao})`}
                                 </span>
-
-                                {/* Contrato (API agora envia 'chegadaNoClube') */}
                                 <span className="contrato">
                                     {formatarData(atleta.chegadaNoClube)}
                                 </span>
 
-                                {/* Ações */}
+                                {/* 4. Lógica de botões atualizada */}
                                 <span className="acoes">
                                     <button className="action-btn action-btn-details">
                                         <FaEye size={14} /> Detalhes
                                     </button>
-                                    <button className="action-btn action-btn-lesao">
-                                        <FaHeartbeat size={14} /> Lesão
-                                    </button>
+                                    
+                                    {/* Botão condicional: ou registra ou encerra lesão */}
+                                    {saudavel ? (
+                                        <button 
+                                            className="action-btn action-btn-lesao"
+                                            onClick={() => handleAbrirModalLesao(atleta)}
+                                        >
+                                            <FaHeartbeat size={14} /> Registrar Lesão
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            className="action-btn action-btn-details" // Botão neutro
+                                            onClick={() => handleEncerrarLesao(atleta.id)}
+                                            title="Encerrar Lesão Ativa"
+                                        >
+                                            <FaHeartbeat size={14} /> Encerrar Lesão
+                                        </button>
+                                    )}
                                 </span>
 
                             </div>
                         );
                     })
                 ) : (
+                    // ... (igual) ...
                     <div style={{ padding: '20px', textAlign: 'center' }}>
                         Nenhum atleta cadastrado.
                     </div>
                 )}
             </div>
             
-            {/* Renderiza o Modal (se isModalOpen for true) */}
-            {isModalOpen && (
+            {/* Modal de Cadastro (já existia) */}
+            {isCadastroModalOpen && (
                 <NovoAtletaModal 
-                    onClose={() => setIsModalOpen(false)}
+                    onClose={() => setIsCadastroModalOpen(false)}
                     onSuccess={handleCadastroSuccess}
+                />
+            )}
+
+            {/* 5. Renderização do novo Modal de Lesão */}
+            {isLesaoModalOpen && atletaSelecionado && (
+                <RegistrarLesaoModal
+                    atleta={atletaSelecionado}
+                    onClose={() => setIsLesaoModalOpen(false)}
+                    onSuccess={handleLesaoSuccess}
                 />
             )}
 

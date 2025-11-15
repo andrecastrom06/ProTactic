@@ -2,6 +2,7 @@ package dev.com.protactic.apresentacao.principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,8 @@ import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.Planejamento
  */
 @RestController
 @RequestMapping("backend/carga-semanal")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class PlanejamentoCargaSemanalControlador {
 
     // --- Injeção dos Serviços e Repositórios ---

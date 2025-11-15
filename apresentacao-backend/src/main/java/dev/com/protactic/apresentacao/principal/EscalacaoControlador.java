@@ -2,6 +2,7 @@ package dev.com.protactic.apresentacao.principal;
 
 import java.util.List; // Importar Optional
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +28,8 @@ import dev.com.protactic.dominio.principal.Suspensao; // Importa a entidade Susp
  */
 @RestController
 @RequestMapping("backend/escalacao")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class EscalacaoControlador {
 
     // --- Injeção dos Serviços ---

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("backend/inscricao")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class InscricaoAtletaControlador {
 
     // --- (INJEÇÕES ATUALIZADAS) ---

@@ -33,8 +33,8 @@ public class RegistroLesoesServico {
     public void encerrarRecuperacao(String atletaId) {
         repo.encerrarLesaoAtiva(atletaId); 
         repo.atualizarStatusAtleta(atletaId, "Saudável");
-        repo.atualizarDisponibilidade(atletaId, "disponível");
-        repo.atualizarPermissaoTreino(atletaId, "liberada");
+        repo.atualizarDisponibilidade(atletaId, "Disponível");
+        repo.atualizarPermissaoTreino(atletaId, "Disponível");
     }
 
 }

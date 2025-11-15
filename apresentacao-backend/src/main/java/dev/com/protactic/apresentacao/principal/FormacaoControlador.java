@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping; // <-- 3. Importação necessária
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable; // <-- 4. Importação necessária
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,8 @@ import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCar
 
 @RestController
 @RequestMapping("backend/formacao")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class FormacaoControlador {
 
     // --- Injeção dos Repositórios e Serviços ---
