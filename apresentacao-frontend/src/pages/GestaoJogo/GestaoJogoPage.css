@@ -1,0 +1,138 @@
+.gestao-jogo-page {
+    width: 100%;
+    height: 100%; /* Garante que ocupe o espaço do layout */
+    display: flex;
+    flex-direction: column;
+}
+
+.gestao-jogo-header {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.gestao-jogo-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.gestao-jogo-tabs {
+    display: flex;
+    gap: 24px;
+}
+
+.tab-item {
+    padding: 8px 4px;
+    font-weight: 500;
+    color: #616161;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+}
+
+.tab-item.active {
+    color: #004d40; /* Cor primária */
+    border-bottom-color: #004d40;
+    font-weight: 700;
+}
+
+
+.gestao-jogo-content {
+    display: flex;
+    flex-grow: 1; /* Ocupa o resto da altura */
+    margin-top: 16px;
+    gap: 24px;
+}
+
+.campo-column {
+    flex: 3; 
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.lista-column {
+    flex: 1;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+}/* Layout principal da página */
+.gestao-jogo-page {
+    width: 100%;
+    height: 100%; /* Garante que ocupe o espaço do layout */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header com o título e as abas */
+.gestao-jogo-header {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.gestao-jogo-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.gestao-jogo-tabs {
+    display: flex;
+    gap: 24px;
+}
+
+.tab-item {
+    padding: 8px 4px;
+    font-weight: 500;
+    color: #616161;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+}
+
+.tab-item.active {
+    color: #004d40; /* Cor primária */
+    border-bottom-color: #004d40;
+    font-weight: 700;
+}
+
+
+/* Container do conteúdo principal (campo + lista) */
+.gestao-jogo-content {
+    display: flex;
+    flex-grow: 1; /* Ocupa o resto da altura */
+    margin-top: 16px;
+    gap: 24px;
+    /* Garante que o flexbox não encolha além do conteúdo */
+    min-height: 0; 
+}
+
+/* Coluna da esquerda (campo) */
+.campo-column {
+    flex-grow: 1; /* Faz esta coluna crescer para ocupar o espaço */
+    flex-shrink: 1;
+    flex-basis: 0; /* Permite que ela cresça livremente */
+
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    
+    /* Para o 'campo-tatico-bg' interno crescer */
+    display: flex;
+    flex-direction: column;
+}
+
+.lista-column {
+    flex-grow: 0; /* Não cresce */
+    flex-shrink: 0; /* Não encolhe */
+    flex-basis: 350px; /* Largura fixa (pode ajustar para 400px se quiser) */
+
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    
+    /* Adiciona scroll se a lista ficar muito grande */
+    overflow-y: auto;
+}

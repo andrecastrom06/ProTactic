@@ -1,0 +1,37 @@
+.campo-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.campo-container h3 {
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.campo-tatico-bg {
+    flex-grow: 1; /* Ocupa todo o espaço disponível */
+    border-radius: 8px;
+    overflow: hidden; 
+    position: relative; 
+    
+    /* 1. Imagem de fundo (use o caminho correto para seu projeto) */
+    /* Este caminho é relativo AO ARQUIVO CSS */
+    background-image: url(../../../assets/campo-tatica.png); 
+    
+    /* 2. Garante que o campo todo apareça, sem cortar */
+    background-size: contain; 
+    
+    /* 3. Centraliza a imagem */
+    background-position: center; 
+    
+    /* 4. Evita que ela se repita */
+    background-repeat: no-repeat; 
+    
+    /* 5. Cor de fundo para preencher as laterais */
+    background-color: #03543f; 
+}
+
+/* REMCOVA qualquer estilo .campo-imagem-fundo daqui,
+  pois não estamos mais usando a tag <img>
+*/

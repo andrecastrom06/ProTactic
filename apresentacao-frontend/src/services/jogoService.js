@@ -1,0 +1,3 @@
+export const jogoService = {}
+
+// SUKAR IRÁ CONECTAR COM O BACKEND, AGORA SO ESTOU USANDO MOCKS

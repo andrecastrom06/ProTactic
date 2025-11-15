@@ -20,7 +20,6 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 <div className="sidebar-header">
                     <div className="sidebar-header-top">
                         <h1>ProTactic</h1>
-                        {/* 4. Botão de fechar (X) para mobile */}
                         <button className="sidebar-close-btn" onClick={onClose}>
                             <LuX size={24} />
                         </button>

@@ -1,0 +1,27 @@
+.lista-atletas-container {
+    margin-bottom: 24px;
+}
+
+.lista-atletas-container h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.lista-atletas-box {
+    border: 1px dashed #cccccc;
+    border-radius: 8px;
+    padding: 8px;
+    min-height: 150px;
+    background-color: #f9f9f9;
+}
+
+.lista-vazia-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    color: #9e9e9e;
+    font-size: 14px;
+    text-align: center;
+}
