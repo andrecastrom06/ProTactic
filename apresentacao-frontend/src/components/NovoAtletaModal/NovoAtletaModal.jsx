@@ -15,7 +15,7 @@ export const NovoAtletaModal = ({ onClose, onSuccess }) => {
     const [posicao, setPosicao] = useState('');
     const [idade, setIdade] = useState('');
     const [validadeContrato, setValidadeContrato] = useState('');
-    const [situacao, setSituacao] = useState('Com contrato ativo');
+    const [situacao, setSituacao] = useState('ATIVO');
     const [erroApi, setErroApi] = useState(null);
 
     // --- Lógica dos Requisitos (Pedido 4) ---

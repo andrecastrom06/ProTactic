@@ -132,3 +132,15 @@ VALUES ('JOGO-1', '1', 9.0, 'Excelente performance defensiva, marcou um golo.');
 
 INSERT INTO Nota (jogo_id, jogador_id, nota, observacao)
 VALUES ('JOGO-1', '2', 7.5, 'Esforçado, mas perdeu algumas oportunidades.');
+
+INSERT INTO Competicao (nome, data_inicio, data_fim) VALUES
+('Copa do Brasil 2025', '2025-02-20', '2025-11-12'),
+('Copa Libertadores 2025', '2025-02-05', '2025-11-29'),
+('Copa Sul-Americana 2025', '2025-03-05', '2025-11-22'),
+('Campeonato Paulista 2025', '2025-01-15', '2025-04-06'),
+('Campeonato Carioca 2025', '2025-01-17', '2025-04-09'),
+('Campeonato Mineiro 2025', '2025-01-21', '2025-04-05'),
+('Copa do Nordeste 2025', '2025-01-22', '2025-05-10'),
+('Supercopa do Brasil 2025', '2025-02-01', '2025-02-01'),
+('Recopa Sul-Americana 2025', '2025-02-19', '2025-02-26'),
+('Campeonato Pernambucano 2025', '2025-01-10', '2025-04-12');

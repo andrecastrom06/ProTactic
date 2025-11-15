@@ -9,6 +9,8 @@ import { LoginPage } from './pages/Login/LoginPage';
 import { ContratosPage } from './pages/Propostas/ContratosPage';
 import AtletasPage from './pages/Atletas/AtletasPage';
 import { GestaoJogoPage } from './pages/GestaoJogo/GestaoJogoPage';
+// 1. Importe a nova página
+import { CompeticoesPage } from './pages/Competicoes/CompeticoesPage'; 
 
 export const AppRoutes = () => {
     return (
@@ -26,8 +28,10 @@ export const AppRoutes = () => {
 
                         <Route path="/atletas" element={<AtletasPage />} />
 
+                        {/* 2. Adicione a rota de competições */}
+                        <Route path="/competicoes" element={<CompeticoesPage />} />
+
                         <Route path="/dashboard" element={<div style={{padding: '20px'}}>Página de Dashboard</div>} />
-                        <Route path="/competicoes" element={<div style={{padding: '20px'}}>Página de Competições</div>} />
                         <Route path="/treinos" element={<div style={{padding: '20px'}}>Página de Treinos</div>} />
                         <Route path="/jogos" element={<GestaoJogoPage />} />
                     </Route>

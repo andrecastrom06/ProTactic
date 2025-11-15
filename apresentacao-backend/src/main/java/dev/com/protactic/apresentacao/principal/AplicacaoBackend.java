@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 // Importa todos os Serviços de APLICAÇÃO (Queries)
 import dev.com.protactic.aplicacao.principal.clube.*;
+import dev.com.protactic.aplicacao.principal.competicao.CompeticaoRepositorioAplicacao;
+import dev.com.protactic.aplicacao.principal.competicao.CompeticaoServicoAplicacao;
 import dev.com.protactic.aplicacao.principal.contrato.*;
 import dev.com.protactic.aplicacao.principal.escalacao.*;
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.*;
@@ -225,6 +227,11 @@ public class AplicacaoBackend {
     @Bean
     public FisicoServicoAplicacao fisicoServicoAplicacao(FisicoRepositorioAplicacao repositorio) {
         return new FisicoServicoAplicacao(repositorio);
+    }
+    
+    @Bean
+    public CompeticaoServicoAplicacao competicaoServicoAplicacao(CompeticaoRepositorioAplicacao repositorio) {
+        return new CompeticaoServicoAplicacao(repositorio);
     }
 
     // --- MÉTODO PRINCIPAL ---

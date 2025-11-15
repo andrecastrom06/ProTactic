@@ -1,0 +1,179 @@
+.competicoes-page {
+    padding: 24px;
+    background-color: #f4f7fa;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.competicao-header {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.competicao-header h2 {
+    margin: 0 0 16px 0;
+    font-size: 22px;
+}
+
+/* Para o seletor de competição */
+.competicao-header .form-group {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+}
+.competicao-header label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+}
+.competicao-header select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+}
+
+.atletas-registrados {
+    display: block;
+    margin-top: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* --- Abas --- */
+.tabs-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 24px;
+}
+.tab-buttons {
+    display: flex;
+}
+.tab-item {
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #888;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent; 
+    margin-bottom: -2px; 
+}
+.tab-item:hover {
+    color: #333;
+}
+.tab-item.active {
+    color: #004d40; /* Cor primária */
+    border-bottom-color: #004d40;
+}
+
+.registrar-inscricao-btn {
+    background-color: #28a745; /* Verde */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.registrar-inscricao-btn:hover {
+    background-color: #218838;
+}
+
+.tab-content {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.placeholder-content {
+    padding: 40px;
+    text-align: center;
+    color: #888;
+    font-size: 16px;
+}
+
+/* --- Lista de Atletas (Grid) --- */
+.atleta-list-container {
+    overflow: hidden; /* Garante o border-radius */
+}
+
+.atleta-list-item {
+    display: grid;
+    /* CORREÇÃO: Check | Nome | Posição | Capitão */
+    grid-template-columns: 100px 3fr 2fr 1fr;
+    gap: 15px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+}
+.atleta-list-item:last-child {
+    border-bottom: none;
+}
+.atleta-list-item.header {
+    background-color: #fafafa;
+    color: #555;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 12px 20px;
+}
+.atleta-list-item > span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+    font-size: 14px;
+}
+.col-nome {
+    font-weight: 600;
+}
+.col-check {
+    justify-content: center;
+}
+.col-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+/* Botão "Definir" e Badge "Capitão" */
+.capitao-badge {
+    background-color: #f0ad4e;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.definir-btn {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.definir-btn:hover {
+    background-color: #e0e0e0;
+}
+.definir-btn:disabled {
+    background-color: #f9f9f9;
+    color: #aaa;
+    border-color: #eee;
+    cursor: not-allowed;
+}
+
