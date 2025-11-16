@@ -1,0 +1,85 @@
+.aba-notas-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.aba-notas-tabela-wrapper {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden; 
+}
+
+.aba-notas-tabela {
+    width: 100%;
+    border-collapse: collapse; 
+}
+
+.aba-notas-tabela th,
+.aba-notas-tabela td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle; /* Alinha o conteúdo no meio */
+}
+
+.aba-notas-tabela th {
+    background-color: #f9f9f9;
+    font-weight: 600;
+    color: #333;
+}
+
+.aba-notas-tabela tr:last-child td {
+    border-bottom: none;
+}
+
+.coluna-nota-visual {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espaço entre o texto e as estrelas */
+}
+
+.nota-texto {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    width: 35px; 
+    text-align: right;
+}
+
+.star-display {
+    display: flex; /* Garante que as estrelas fiquem em linha */
+    gap: 2px;
+}
+
+.input-nota {
+    width: 70px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+.aba-notas-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.btn-salvar-notas {
+    background-color: #004d40; /* Verde escuro */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-salvar-notas:hover {
+    background-color: #00695c;
+}

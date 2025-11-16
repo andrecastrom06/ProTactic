@@ -3,10 +3,8 @@ import { useDraggable } from '@dnd-kit/core';
 import './JogadorDisponivel.css';
 
 export const JogadorDisponivel = ({ atleta, type }) => {
-    // 1. Torna este 'div' arrastável
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: atleta.id,
-        // 2. Passa os dados e o tipo de lista (DISPONIVEL ou RESERVA)
         data: {
             atleta: atleta,
             type: type,
