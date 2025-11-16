@@ -3,10 +3,9 @@ import { DndContext, closestCenter } from '@dnd-kit/core';
 
 import { CampoTatico } from './components/CampoTatico';
 import { ListaAtletas } from './components/ListaAtletas';
-import { AbaAtribuirNotas } from './components/AbaAtribuirNotas'; // 1. Importe o novo componente
+import { AbaAtribuirNotas } from './components/AbaAtribuirNotas';
 import './GestaoJogoPage.css';
 
-// --- Dados de Exemplo (MOCK) ---
 const MOCK_DISPONIVEIS = [
     { id: 'a1', nome: 'Rokenedy', posicao: 'Goleiro', numero: 1 },
     { id: 'a2', nome: 'PH', posicao: 'Lateral', numero: 2 },
@@ -25,7 +24,6 @@ const MOCK_RESERVAS = [
     { id: 'r2', nome: 'Rodrigo Alves', posicao: 'Zagueiro', numero: 13 },
     { id: 'r3', nome: 'Paulo Henrique', posicao: 'Meio-campo', numero: 14 },
 ];
-// ----------------------------------
 
 export const GestaoJogoPage = () => {
     const [abaAtiva, setAbaAtiva] = useState('ESCALACAO');
@@ -118,7 +116,6 @@ export const GestaoJogoPage = () => {
                         >
                             Atribuir Notas
                         </span>
-                        <span className="tab-item">Relatório de Desempenho</span>
                     </nav>
                 </header>
                 
