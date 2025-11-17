@@ -133,22 +133,16 @@ public class PropostaService {
         propostaRepo.saveProposta(proposta);
     }
 
-    /**
-     * Implementa a história "Excluir proposta".
-     * (Requer adicionar 'deleteProposta' ao PropostaRepository)
-     */
     public void excluirProposta(Integer propostaId) throws Exception {
         Proposta proposta = buscarPropostaOuLancarExcecao(propostaId);
         if (!"PENDENTE".equalsIgnoreCase(proposta.getStatus())) {
             throw new Exception("Apenas propostas 'PENDENTES' podem ser excluídas.");
         }
-        // Assumindo que PropostaRepository tem este método
-        // (Vamos ter de o adicionar no Passo 1.A)
+        
         propostaRepo.deleteProposta(proposta); 
     }
 
 
-    // --- Métodos auxiliares para buscar ou falhar ---
     private Proposta buscarPropostaOuLancarExcecao(Integer propostaId) throws Exception {
         Objects.requireNonNull(propostaId, "O ID da Proposta não pode ser nulo.");
         Proposta proposta = propostaRepo.findPropostaById(propostaId);
@@ -175,5 +169,4 @@ public class PropostaService {
         }
         return clube;
     }
-    // --- (FIM DAS NOVAS FUNCIONALIDADES) ---
 }

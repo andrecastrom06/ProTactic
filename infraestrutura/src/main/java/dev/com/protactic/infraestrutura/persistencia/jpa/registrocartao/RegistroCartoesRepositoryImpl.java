@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-// (INÍCIO DA CORREÇÃO 1) Adicionamos a interface da Aplicação de volta
 public class RegistroCartoesRepositoryImpl implements RegistroCartoesRepository, RegistroCartaoRepositorioAplicacao { 
 
     private final RegistroCartoesRepositorySpringData cartaoRepositoryJPA;
@@ -26,7 +25,6 @@ public class RegistroCartoesRepositoryImpl implements RegistroCartoesRepository,
         this.jogadorRepositoryJPA = jogadorRepositoryJPA;
     }
 
-    // --- Métodos do Domínio (já corrigidos) ---
     
     @Override
     public void salvarCartao(RegistroCartao cartao) {
@@ -54,11 +52,9 @@ public class RegistroCartoesRepositoryImpl implements RegistroCartoesRepository,
         cartaoRepositoryJPA.deleteByIdJogador(idJogador);
     }
 
-    // --- (INÍCIO DA CORREÇÃO 2) Implementação dos Métodos da Aplicação ---
     
     @Override
     public List<RegistroCartaoResumo> pesquisarResumos() {
-        // Chama a nova query com JOIN
         return cartaoRepositoryJPA.findAllResumos();
     }
 
@@ -66,21 +62,17 @@ public class RegistroCartoesRepositoryImpl implements RegistroCartoesRepository,
     public List<RegistroCartaoResumo> pesquisarResumosPorAtleta(String atleta) {
         Objects.requireNonNull(atleta, "O nome do Atleta não pode ser nulo.");
         
-        // 1. TRADUZIR: Encontra o ID do jogador pelo nome
         Integer idJogador = buscarIdJogadorPeloNome(atleta);
         
-        // 2. BUSCAR: Chama a nova query com JOIN usando o ID
         return cartaoRepositoryJPA.findAllResumosByIdJogador(idJogador);
     }
 
     @Override
     public List<RegistroCartaoResumo> pesquisarResumosPorTipo(String tipo) {
         Objects.requireNonNull(tipo, "O Tipo do cartão não pode ser nulo.");
-        // Chama a nova query com JOIN
         return cartaoRepositoryJPA.findResumosByTipo(tipo);
     }
 
-    // --- Método Auxiliar "Tradutor" (já corrigido) ---
     
     private Integer buscarIdJogadorPeloNome(String nomeAtleta) {
         return jogadorRepositoryJPA.findByNomeIgnoreCase(nomeAtleta)

@@ -1,7 +1,7 @@
 package dev.com.protactic.aplicacao.principal.lesao;
 
 import java.util.List;
-import java.util.Optional; // Importar Optional
+import java.util.Optional; 
 import org.springframework.stereotype.Service;
 
 @Service 

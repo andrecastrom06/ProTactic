@@ -1,6 +1,5 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.fisico;
 
-import dev.com.protactic.dominio.principal.Jogador; // Importa a entidade de domínio
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
@@ -20,8 +19,7 @@ public class FisicoJPA {
     private int id;
 
     @Column(name = "id_jogador")
-    private Integer jogadorId; // Mapeado a partir de Jogador jogador
-
+    private Integer jogadorId;
     private String nome;
     private String musculo;
     private String intensidade;
@@ -36,10 +34,8 @@ public class FisicoJPA {
     private Date dataFim;
     private String status;
 
-    // Construtor vazio para JPA
     public FisicoJPA() {}
 
-    // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public Integer getJogadorId() { return jogadorId; }

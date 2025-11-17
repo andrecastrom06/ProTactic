@@ -22,7 +22,6 @@ public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoReposit
         this.mapeador = mapeador;
     }
 
-    // ... (Os seus métodos de Domínio 'salvar', 'buscarPorAtletaECompeticao', 'listarTodas' não mudam) ...
     
     @Override
     public void salvar(InscricaoAtleta inscricao) {
@@ -48,7 +47,6 @@ public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoReposit
     }
 
 
-    // --- Métodos de Aplicação (Consultas) ---
 
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumos() {
@@ -58,20 +56,14 @@ public class RegistroInscricaoRepositoryImpl implements RegistroInscricaoReposit
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumosPorAtleta(String atleta) {
         Objects.requireNonNull(atleta, "O nome do Atleta não pode ser nulo.");
-        
-        // (INÍCIO DA CORREÇÃO)
-        // Chamamos o novo método 'findByAtletaIgnoreCase'
+
         return repositoryJPA.findByAtletaIgnoreCase(atleta);
-        // (FIM DA CORREÇÃO)
     }
 
     @Override
     public List<InscricaoAtletaResumo> pesquisarResumosPorCompeticao(String competicao) {
         Objects.requireNonNull(competicao, "O nome da Competição não pode ser nulo.");
-        
-        // (INÍCIO DA CORREÇÃO)
-        // Chamamos o novo método 'findByCompeticaoIgnoreCase'
+
         return repositoryJPA.findByCompeticaoIgnoreCase(competicao);
-        // (FIM DA CORREÇÃO)
     }
 }

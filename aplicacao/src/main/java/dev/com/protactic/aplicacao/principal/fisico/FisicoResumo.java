@@ -2,7 +2,6 @@ package dev.com.protactic.aplicacao.principal.fisico;
 
 import java.util.Date;
 
-// Esta é a interface de Aplicação (para consultas)
 public interface FisicoResumo {
     int getId();
     Integer getJogadorId();

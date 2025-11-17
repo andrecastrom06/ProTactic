@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 
 @Entity(name = "Escalacao")
-@Table(name = "Escalacao") // O nome da sua tabela SQL
+@Table(name = "Escalacao")
 public class EscalacaoJPA {
 
     @Id
@@ -43,10 +43,8 @@ public class EscalacaoJPA {
     @Column(name = "id_jogador11")
     private Integer idJogador11;
 
-    // Construtor vazio para JPA
     public EscalacaoJPA() {}
 
-    // --- Getters e Setters ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public Integer getPartidaId() { return partidaId; }

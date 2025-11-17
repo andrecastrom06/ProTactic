@@ -15,7 +15,6 @@ public class RegistroCartaoJPA {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // ATUALIZADO: Trocamos 'atleta' por 'idJogador'
     @Column(name = "id_jogador")
     private Integer idJogador; 
 
@@ -23,7 +22,6 @@ public class RegistroCartaoJPA {
 
     public RegistroCartaoJPA() {}
     
-    // Construtor para salvar
     public RegistroCartaoJPA(Integer idJogador, String tipo) {
         this.idJogador = idJogador;
         this.tipo = tipo;

@@ -4,7 +4,6 @@ import dev.com.protactic.dominio.principal.Fisico;
 import java.util.List;
 import java.util.Optional;
 
-// Esta é a interface de Domínio (para comandos)
 public interface FisicoRepository {
     
     Fisico salvar(Fisico fisico);

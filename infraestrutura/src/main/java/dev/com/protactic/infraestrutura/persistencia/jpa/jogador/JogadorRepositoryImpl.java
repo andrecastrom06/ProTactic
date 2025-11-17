@@ -30,19 +30,16 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
         repositoryJPA.save(jogadorJPA);
     }
 
-    // --- (INÍCIO DA CORREÇÃO) ---
     @Override
     public Jogador buscarPorNome(String nome) {
         Objects.requireNonNull(nome, "O Nome do Jogador a ser buscado não pode ser nulo.");
         
-        // 1. Agora o 'repositoryJPA.findByNome' (do SpringData) retorna uma LISTA
         return repositoryJPA.findByNomeIgnoreCase(nome)
                 .stream()
-                .findFirst() // 2. Nós pegamos apenas o *primeiro* resultado da lista
-                .map(jpa -> mapeador.map(jpa, Jogador.class)) // 3. Mapeamos
-                .orElse(null); // 4. Se a lista estiver vazia, retornamos nulo
+                .findFirst() 
+                .map(jpa -> mapeador.map(jpa, Jogador.class)) 
+                .orElse(null); 
     }
-    // --- (FIM DA CORREÇÃO) ---
 
     @Override
     public boolean existe(String nome) {
@@ -67,7 +64,6 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
     
     @Override
     public List<JogadorResumo> pesquisarResumos() {
-        // 5. Simplesmente chamamos o método do Spring Data
         return repositoryJPA.findAllBy();
     }
 
@@ -79,10 +75,8 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
     @Override
     public List<Jogador> findByNomeIgnoreCase(String nome) {
         
-        // 1. Chama o método do Spring Data (que já existe e funciona)
         List<JogadorJPA> jpaList = repositoryJPA.findByNomeIgnoreCase(nome);
 
-        // 2. Mapeia a lista de JPA para uma lista de Domínio
         return jpaList.stream()
                 .map(jpa -> mapeador.map(jpa, Jogador.class))
                 .collect(Collectors.toList());

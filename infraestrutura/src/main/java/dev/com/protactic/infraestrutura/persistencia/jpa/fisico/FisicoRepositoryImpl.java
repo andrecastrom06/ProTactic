@@ -29,7 +29,6 @@ public class FisicoRepositoryImpl implements FisicoRepository, FisicoRepositorio
         this.jogadorRepository = jogadorRepository;
     }
 
-    // --- Métodos de DOMÍNIO (Comandos) ---
 
     @Override
     public Fisico salvar(Fisico fisico) {
@@ -51,18 +50,14 @@ public class FisicoRepositoryImpl implements FisicoRepository, FisicoRepositorio
                 .collect(Collectors.toList());
     }
 
-    // --- Métodos de APLICAÇÃO (Consultas) ---
 
     @Override
     public List<FisicoResumo> pesquisarResumosPorJogador(Integer jogadorId) {
-        // Agora, simplesmente chamamos o novo método do Spring Data.
-        // Não precisamos do ModelMapper, pois o Spring Data
-        // já retorna a projeção (a interface FisicoResumo) preenchida.
+    
         Objects.requireNonNull(jogadorId, "O ID do Jogador não pode ser nulo.");
         return repositoryJPA.findAllByJogadorId(jogadorId);
     }
 
-    // --- Método Auxiliar de Conversão ---
 
     private Fisico converterParaDominio(FisicoJPA jpa) {
         if (jpa == null) return null;

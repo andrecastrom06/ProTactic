@@ -7,6 +7,5 @@ import java.util.Optional;
 @Repository
 public interface SuspensaoRepositorySpringData extends JpaRepository<SuspensaoJPA, Integer> {
     
-    // Busca um registro de suspensão pelo ID do jogador
     Optional<SuspensaoJPA> findByIdJogador(Integer idJogador);
 }

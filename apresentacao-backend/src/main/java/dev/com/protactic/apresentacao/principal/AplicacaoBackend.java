@@ -5,12 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
-// --- (INÍCIO DA CORREÇÃO) ---
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-// --- (FIM DA CORREÇÃO) ---
 
-// Importa todos os Serviços de APLICAÇÃO (Queries)
 import dev.com.protactic.aplicacao.principal.clube.*;
 import dev.com.protactic.aplicacao.principal.competicao.CompeticaoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.competicao.CompeticaoServicoAplicacao;
@@ -27,12 +24,10 @@ import dev.com.protactic.aplicacao.principal.registrocartao.*;
 import dev.com.protactic.aplicacao.principal.sessaotreino.*;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;
-import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
-import dev.com.protactic.dominio.principal.login.LoginService; // <-- ADICIONA ESTE
+import dev.com.protactic.dominio.principal.login.LoginService; 
 import dev.com.protactic.dominio.principal.login.UsuarioRepository;
-import dev.com.protactic.dominio.principal.contrato.ContratoService; // <-- ADICIONA ESTE
+import dev.com.protactic.dominio.principal.contrato.ContratoService; 
 
-// Importa Repositórios e Serviços de DOMÍNIO
 import dev.com.protactic.dominio.principal.capitao.*;
 import dev.com.protactic.dominio.principal.cadastroAtleta.*;
 import dev.com.protactic.dominio.principal.definirEsquemaTatico.*;
@@ -46,19 +41,14 @@ import dev.com.protactic.dominio.principal.proposta.*;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.*;
 import dev.com.protactic.dominio.principal.registroInscricaoAtleta.*;
 import dev.com.protactic.dominio.principal.treinoTatico.*;
-import dev.com.protactic.infraestrutura.persistencia.jpa.usuario.UsuarioRepositorySpringData;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "dev.com.protactic")
 
-// --- (INÍCIO DA CORREÇÃO) ---
-// Força o Spring a procurar Repositórios e Entidades dentro do módulo de infraestrutura
 @EnableJpaRepositories(basePackages = "dev.com.protactic.infraestrutura.persistencia.jpa")
 @EntityScan(basePackages = "dev.com.protactic.infraestrutura.persistencia.jpa")
-// --- (FIM DA CORREÇÃO) ---
 public class AplicacaoBackend {
 
-    // --- SERVIÇOS DE APLICAÇÃO ---
     @Bean
     public JogadorServicoAplicacao jogadorServicoAplicacao(JogadorRepositorioAplicacao repositorio) {
         return new JogadorServicoAplicacao(repositorio);
@@ -108,7 +98,6 @@ public class AplicacaoBackend {
         return new SessaoTreinoServicoAplicacao(repositorio);
     }
 
-    // --- SERVIÇOS DE DOMÍNIO ---
     @Bean
     public CadastroDeAtletaService cadastroDeAtletaService(
             JogadorRepository jogadorRepo,
@@ -153,10 +142,10 @@ public class AplicacaoBackend {
     public PropostaService propostaService(
             PropostaRepository propostaRepo, 
             ContratoRepository contratoRepo,
-            JogadorRepository jogadorRepo, // <-- Adicionado
-            ClubeRepository clubeRepo,     // <-- Adicionado
-            DispensaService dispensaService, // <-- Adicionado
-            CadastroDeAtletaService cadastroDeAtletaService) { // <-- Adicionado
+            JogadorRepository jogadorRepo,
+            ClubeRepository clubeRepo,    
+            DispensaService dispensaService,
+            CadastroDeAtletaService cadastroDeAtletaService) {
         
         return new PropostaService(
             propostaRepo, 
@@ -170,12 +159,11 @@ public class AplicacaoBackend {
     
     @Bean
     public LoginService loginService(
-            UsuarioRepository usuarioRepository, // Fica
-            // JogadorRepository jogadorRepository, // <-- REMOVE ESTA LINHA
-            ClubeRepository clubeRepository) {  // Fica
+            UsuarioRepository usuarioRepository, 
+            
+            ClubeRepository clubeRepository) {  
         
-        // Chama o novo construtor de 2 argumentos
-        return new LoginService(usuarioRepository, clubeRepository); // <-- REMOVE O 'jogadorRepository' DAQUI
+        return new LoginService(usuarioRepository, clubeRepository); 
     }
     
     @Bean
@@ -198,7 +186,6 @@ public class AplicacaoBackend {
             RegistroCartoesRepository cartaoRepository, 
             SuspensaoRepository suspensaoRepository) {
         
-        // Chama o único construtor que existe agora
         return new RegistroCartoesService(cartaoRepository, suspensaoRepository);
     }
 
@@ -234,7 +221,6 @@ public class AplicacaoBackend {
         return new CompeticaoServicoAplicacao(repositorio);
     }
 
-    // --- MÉTODO PRINCIPAL ---
     public static void main(String[] args) {
         run(AplicacaoBackend.class, args);
     }

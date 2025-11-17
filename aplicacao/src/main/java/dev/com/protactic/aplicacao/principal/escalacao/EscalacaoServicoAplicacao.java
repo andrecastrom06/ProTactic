@@ -4,7 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 
-@Service // 1. Define como um "Bean" do Spring
+@Service 
 public class EscalacaoServicoAplicacao {
     
     private final EscalacaoRepositorioAplicacao repositorio;

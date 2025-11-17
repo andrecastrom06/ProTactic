@@ -3,7 +3,7 @@ package dev.com.protactic.aplicacao.principal.clube;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-@Service // 1. Define como um "Bean" do Spring
+@Service
 public class ClubeServicoAplicacao {
     
     private final ClubeRepositorioAplicacao repositorio;

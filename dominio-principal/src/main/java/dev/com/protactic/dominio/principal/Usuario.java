@@ -6,7 +6,7 @@ public class Usuario {
     private String senha;
     private String nome;
     private String funcao; 
-    private Integer clubeId; // <-- ADICIONA ISTO
+    private Integer clubeId; 
 
     public Usuario() {}
 

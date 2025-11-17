@@ -8,12 +8,8 @@ import java.util.List;
 
 @Repository
 public interface JogadorRepositorySpringData extends JpaRepository<JogadorJPA, Integer> {
-    
-    // --- (INÍCIO DA CORREÇÃO) ---
-    // Alteramos de 'Optional<JogadorJPA>' para 'List<JogadorJPA>'
-    // Isto permite que a query retorne múltiplos jogadores com o mesmo nome.
+
     List<JogadorJPA> findByNomeIgnoreCase(String nome);
-    // --- (FIM DA CORREÇÃO) ---
     
     boolean existsByNome(String nome);
 

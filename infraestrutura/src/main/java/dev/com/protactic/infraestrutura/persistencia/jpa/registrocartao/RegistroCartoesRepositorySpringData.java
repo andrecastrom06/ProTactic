@@ -12,7 +12,6 @@ import java.util.List;
 @Repository
 public interface RegistroCartoesRepositorySpringData extends JpaRepository<RegistroCartaoJPA, Integer> {
 
-    // --- Métodos do Domínio (que já corrigimos) ---
 
     @Query("SELECT rc FROM RegistroCartao rc WHERE rc.idJogador = :idJogador")
     List<RegistroCartaoJPA> findByIdJogador(@Param("idJogador") Integer idJogador);
@@ -22,8 +21,6 @@ public interface RegistroCartoesRepositorySpringData extends JpaRepository<Regis
     @Query("DELETE FROM RegistroCartao rc WHERE rc.idJogador = :idJogador")
     void deleteByIdJogador(@Param("idJogador") Integer idJogador);
 
-    // --- (INÍCIO DA CORREÇÃO) Métodos da Aplicação (Resumo) ---
-    // Precisamos de queries customizadas para fazer o JOIN com Jogador e pegar o NOME
     
     @Query("SELECT rc.id as id, j.nome as atleta, rc.tipo as tipo " +
            "FROM RegistroCartao rc JOIN Jogador j ON rc.idJogador = j.id")

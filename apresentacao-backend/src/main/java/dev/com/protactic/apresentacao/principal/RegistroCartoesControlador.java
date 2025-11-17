@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// Importa os SERVIÇOS DE APLICAÇÃO (Queries)
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoResumo;
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoServicoAplicacao;
 
-// Importa o SERVIÇO DE DOMÍNIO
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
 
 @RestController
@@ -26,7 +24,6 @@ public class RegistroCartoesControlador {
     private @Autowired RegistroCartaoServicoAplicacao registroCartaoServicoAplicacao;
     private @Autowired RegistroCartoesService registroCartoesService;
 
-    // --- Endpoints de CONSULTA (GET) ---
 
     @GetMapping(path = "pesquisa")
     public List<RegistroCartaoResumo> pesquisarResumos() {
@@ -44,7 +41,6 @@ public class RegistroCartoesControlador {
     }
 
 
-    // --- Endpoints de COMANDO (POST) ---
 
     public record CartaoFormulario(
         String atleta,
@@ -61,12 +57,9 @@ public class RegistroCartoesControlador {
         try {
             registroCartoesService.registrarCartao(formulario.atleta(), formulario.tipo());
         } catch (Exception e) {
-            // --- (INÍCIO DA MODIFICAÇÃO PARA DEBUG) ---
-            // Adicionamos estas linhas para vermos o erro no terminal
+
             System.err.println("### ERRO AO REGISTRAR CARTÃO ###");
-            e.printStackTrace(); 
-            // --- (FIM DA MODIFICAÇÃO PARA DEBUG) ---
-            
+            e.printStackTrace();             
             throw new RuntimeException("Erro ao registrar cartão: " + e.getMessage(), e);
         }
     }
@@ -77,10 +70,8 @@ public class RegistroCartoesControlador {
         try {
             registroCartoesService.limparCartoes(atleta);
         } catch (Exception e) {
-            // --- (INÍCIO DA MODIFICAÇÃO PARA DEBUG) ---
             System.err.println("### ERRO AO LIMPAR CARTÕES ###");
             e.printStackTrace();
-            // --- (FIM DA MODIFICAÇÃO PARA DEBUG) ---
             
             throw new RuntimeException("Erro ao limpar cartões: " + e.getMessage(), e);
         }

@@ -8,6 +8,5 @@ import java.util.List;
 @Repository
 public interface CompeticaoRepositorySpringData extends JpaRepository<CompeticaoJPA, Integer> {
     
-    // Método de projeção para a Aplicação
     List<CompeticaoResumo> findAllBy();
 }

@@ -19,10 +19,8 @@ public class UsuarioJPA {
     private String nome;
     private String funcao; 
 
-    // Construtor vazio para JPA
     public UsuarioJPA() {}
 
-    // Getters e Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getLogin() { return login; }

@@ -23,21 +23,16 @@ public class SuspensaoRepositoryImpl implements SuspensaoRepository {
 
     @Override
     public void salvarOuAtualizar(Suspensao suspensao) {
-        // 1. Traduzir Nome -> ID
         Integer idJogador = buscarIdJogadorPeloNome(suspensao.getAtleta());
 
-        // 2. Tentar buscar se o registro já existe
         SuspensaoJPA jpa = suspensaoJPA.findByIdJogador(idJogador)
-                .orElse(new SuspensaoJPA()); // Se não existe, cria um novo
+                .orElse(new SuspensaoJPA()); 
 
-        // 3. Atualizar os dados do objeto JPA
         jpa.setIdJogador(idJogador);
         jpa.setSuspenso(suspensao.isSuspenso());
         jpa.setAmarelo(suspensao.getAmarelo());
         jpa.setVermelho(suspensao.getVermelho());
-        // O ID (PK) será gerenciado pelo JPA (se for novo) ou mantido (se for update)
 
-        // 4. Salvar
         suspensaoJPA.save(jpa);
     }
 
@@ -46,7 +41,7 @@ public class SuspensaoRepositoryImpl implements SuspensaoRepository {
         Integer idJogador = buscarIdJogadorPeloNome(atleta);
         
         return suspensaoJPA.findByIdJogador(idJogador)
-                .map(jpa -> new Suspensao( // Mapear de volta para o objeto de domínio
+                .map(jpa -> new Suspensao( 
                         jpa.getId(),
                         atleta, 
                         jpa.isSuspenso(),
@@ -55,9 +50,8 @@ public class SuspensaoRepositoryImpl implements SuspensaoRepository {
                 ));
     }
 
-    // Método auxiliar (corrigido para Ignorar Case)
     private Integer buscarIdJogadorPeloNome(String nomeAtleta) {
-        return jogadorJPA.findByNomeIgnoreCase(nomeAtleta) // Usando findByNomeIgnoreCase
+        return jogadorJPA.findByNomeIgnoreCase(nomeAtleta) 
                 .stream()
                 .findFirst()
                 .map(JogadorJPA::getId) 
