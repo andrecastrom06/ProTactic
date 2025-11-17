@@ -16,8 +16,6 @@ import dev.com.protactic.aplicacao.principal.contrato.ContratoResumo;
 import dev.com.protactic.aplicacao.principal.contrato.ContratoServicoAplicacao;
 
 import dev.com.protactic.dominio.principal.Contrato; 
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.dominio.principal.dispensa.DispensaService;
 import dev.com.protactic.dominio.principal.contrato.ContratoService; 
 
@@ -29,7 +27,6 @@ public class ContratoControlador {
 
     private @Autowired ContratoServicoAplicacao contratoServicoAplicacao;
     private @Autowired DispensaService dispensaService;
-    private @Autowired JogadorRepository jogadorRepository;
     
     private @Autowired ContratoService contratoService;
     
@@ -48,12 +45,8 @@ public class ContratoControlador {
     @PostMapping(path = "/dispensar/{jogadorId}")
     public void dispensarJogador(@PathVariable("jogadorId") Integer jogadorId) {
         
-        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
-        if (jogador == null) {
-            throw new RuntimeException("Jogador não encontrado: " + jogadorId);
-        }
         try {
-            dispensaService.dispensarJogador(jogador);
+            dispensaService.dispensarJogadorPorId(jogadorId);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao tentar dispensar o jogador: " + e.getMessage(), e);
         }

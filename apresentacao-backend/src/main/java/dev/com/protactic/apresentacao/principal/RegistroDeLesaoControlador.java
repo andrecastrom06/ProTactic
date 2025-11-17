@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity; 
+import org.springframework.http.HttpStatus; 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,22 +19,13 @@ import dev.com.protactic.aplicacao.principal.lesao.LesaoServicoAplicacao;
 
 import dev.com.protactic.dominio.principal.lesao.RegistroLesoesServico;
 
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.Lesao;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.lesao.LesaoRepository;
-
-
 @RestController
 @RequestMapping("backend/lesao") 
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class RegistroDeLesaoControlador {
 
     private @Autowired LesaoServicoAplicacao lesaoServicoAplicacao;
     private @Autowired RegistroLesoesServico registroLesoesServico;
-    private @Autowired LesaoRepository lesaoRepository;
-    private @Autowired JogadorRepository jogadorRepository;
 
     @GetMapping(path = "pesquisa")
     public List<LesaoResumo> pesquisarResumos() {
@@ -50,31 +42,24 @@ public class RegistroDeLesaoControlador {
         return lesaoServicoAplicacao.pesquisarResumoAtivoPorJogador(jogadorId);
     }
 
-
-
     public record RegistrarLesaoFormulario(
         int grau
     ) {}
 
     @PostMapping(path = "/registrar/{jogadorId}")
-    public ResponseEntity<Void> registrarLesao(
+    public ResponseEntity<String> registrarLesao(
             @PathVariable("jogadorId") Integer jogadorId, 
             @RequestBody RegistrarLesaoFormulario formulario) {
         
         if (formulario == null) {
-            throw new IllegalArgumentException("O corpo da requisição (formulário) não pode ser nulo.");
+            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
         }
         
-        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
-        if (jogador == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         try {
-            registroLesoesServico.registrarLesao(jogador.getNome(), formulario.grau());
+            registroLesoesServico.registrarLesaoPorId(jogadorId, formulario.grau());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao registrar lesão para " + jogador.getNome() + ": " + e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -85,46 +70,34 @@ public class RegistroDeLesaoControlador {
     ) {}
 
     @PostMapping(path = "/cadastrar-plano/{jogadorId}")
-    public ResponseEntity<Void> cadastrarPlanoRecuperacao(
+    public ResponseEntity<String> cadastrarPlanoRecuperacao(
             @PathVariable("jogadorId") Integer jogadorId, 
             @RequestBody PlanoRecuperacaoFormulario formulario) {
 
         if (formulario == null) {
-            throw new IllegalArgumentException("O corpo da requisição (formulário) não pode ser nulo.");
-        }
-        
-        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
-        if (jogador == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Optional<Lesao> lesaoOpt = lesaoRepository.buscarAtivaPorJogadorId(jogador.getId());
-        if (lesaoOpt.isEmpty()) {
-            return ResponseEntity.status(404).body(null); 
-        }
-        
-        Lesao lesao = lesaoOpt.get();
-
-        lesao.setTempo(formulario.tempo());
-        lesao.setPlano(formulario.plano());
-        
-        lesaoRepository.salvar(lesao);
-        return ResponseEntity.ok().build();
-    }
-    @PostMapping(path = "/encerrar/{jogadorId}")
-    public ResponseEntity<Void> encerrarLesao(@PathVariable("jogadorId") Integer jogadorId) { 
-        
-        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
-        if (jogador == null) {
-            return ResponseEntity.notFound().build();
+             return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
         }
         
         try {
-            registroLesoesServico.encerrarRecuperacao(jogador.getNome());
+            registroLesoesServico.cadastrarPlanoRecuperacaoPorId(
+                jogadorId, 
+                formulario.tempo(), 
+                formulario.plano()
+            );
             return ResponseEntity.ok().build();
-
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao tentar encerrar lesão para ID " + jogadorId + ": " + e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+    
+    @PostMapping(path = "/encerrar/{jogadorId}")
+    public ResponseEntity<String> encerrarLesao(@PathVariable("jogadorId") Integer jogadorId) { 
+        
+        try {
+            registroLesoesServico.encerrarRecuperacaoPorId(jogadorId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }

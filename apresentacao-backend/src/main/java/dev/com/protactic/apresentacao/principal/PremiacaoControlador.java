@@ -1,29 +1,26 @@
 package dev.com.protactic.apresentacao.principal;
 
-import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoResumo;
-import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoServicoAplicacao;
-import dev.com.protactic.dominio.principal.Premiacao;
-import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoRepository;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-
-import java.util.Date;
+import java.util.Date; // Corrigido de LocalDate para Date
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+
+import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoResumo;
+import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoServicoAplicacao;
+import dev.com.protactic.dominio.principal.Premiacao;
+import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoService;
+
 
 @RestController
 @RequestMapping("backend/premiacao")
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class PremiacaoControlador {
 
     private @Autowired PremiacaoServicoAplicacao servicoAplicacao;
-    
-    private @Autowired PremiacaoRepository repositorioDominio;
-
-    private @Autowired JogadorRepository jogadorRepository;
+    private @Autowired PremiacaoService servicoDominio;
 
     public record PremiacaoFormulario(
         Integer jogadorId,
@@ -32,25 +29,26 @@ public class PremiacaoControlador {
     ) {}
 
     @PostMapping("/salvar")
-    public void salvarPremiacao(@RequestBody PremiacaoFormulario formulario) {
+    public ResponseEntity<Premiacao> salvarPremiacao(@RequestBody PremiacaoFormulario formulario) {
         
         if (formulario.jogadorId() == null) {
-            throw new IllegalArgumentException("O 'jogadorId' é obrigatório.");
+            return ResponseEntity.badRequest().build();
         }
-        
-        Jogador jogador = jogadorRepository.buscarPorId(formulario.jogadorId());
-        if (jogador == null) {
-            throw new RuntimeException("Jogador com ID " + formulario.jogadorId() + " não encontrado.");
-        }
-        
-        Premiacao novoPremio = new Premiacao(
-            0,
-            jogador, 
-            formulario.nome(),
-            formulario.dataPremiacao()
-        );
 
-        repositorioDominio.salvarPremiacao(novoPremio);
+        try {
+            PremiacaoService.DadosPremiacao dados = new PremiacaoService.DadosPremiacao(
+                formulario.jogadorId(),
+                formulario.nome(),
+                formulario.dataPremiacao()
+            );
+
+            Premiacao premiacaoSalva = servicoDominio.salvarPremiacaoPorDados(dados);
+            
+            return ResponseEntity.ok(premiacaoSalva);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
 

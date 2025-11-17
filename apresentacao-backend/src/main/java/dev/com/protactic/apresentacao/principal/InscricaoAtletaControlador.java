@@ -3,29 +3,23 @@ package dev.com.protactic.apresentacao.principal;
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.InscricaoAtletaResumo;
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.InscricaoAtletaServicoAplicacao;
 import dev.com.protactic.dominio.principal.InscricaoAtleta;
-import dev.com.protactic.dominio.principal.Jogador;
-
 
 import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoService;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("backend/inscricao")
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class InscricaoAtletaControlador {
 
     private @Autowired InscricaoAtletaServicoAplicacao servicoAplicacao;
     
     private @Autowired RegistroInscricaoService servicoDominio;
-
-    private @Autowired JogadorRepository jogadorRepository;
-    private @Autowired RegistroLesoesRepository lesoesRepository;
 
     public record InscricaoFormulario(
         String atleta,
@@ -33,23 +27,24 @@ public class InscricaoAtletaControlador {
     ) {}
 
     @PostMapping("/salvar")
-    public InscricaoAtleta salvarInscricao(@RequestBody InscricaoFormulario formulario) {
+    public ResponseEntity<?> salvarInscricao(@RequestBody InscricaoFormulario formulario) {
 
-        Jogador jogador = jogadorRepository.findByNomeIgnoreCase(formulario.atleta())
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Jogador " + formulario.atleta() + " não encontrado"));
-        
-        int idade = jogador.getIdade(); 
-        
-        boolean contratoAtivo = lesoesRepository.contratoAtivo(formulario.atleta()); 
+        try {
+            InscricaoAtleta resultado = servicoDominio.registrarInscricaoPorNome(
+                formulario.atleta(),
+                formulario.competicao()
+            );
+            
+            if (!resultado.isInscrito()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultado);
+            }
+            
+            
+            return ResponseEntity.ok(resultado);
 
-        return servicoDominio.registrarInscricao(
-            formulario.atleta(),
-            idade,
-            contratoAtivo,
-            formulario.competicao()
-        );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
 

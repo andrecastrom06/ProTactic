@@ -22,6 +22,8 @@ import dev.com.protactic.aplicacao.principal.premiacao.*;
 import dev.com.protactic.aplicacao.principal.proposta.*;
 import dev.com.protactic.aplicacao.principal.registrocartao.*;
 import dev.com.protactic.aplicacao.principal.sessaotreino.*;
+import dev.com.protactic.aplicacao.principal.usuario.UsuarioRepositorioAplicacao;
+import dev.com.protactic.aplicacao.principal.usuario.UsuarioServicoAplicacao;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;
 import dev.com.protactic.dominio.principal.login.LoginService; 
@@ -34,8 +36,11 @@ import dev.com.protactic.dominio.principal.definirEsquemaTatico.*;
 import dev.com.protactic.dominio.principal.dispensa.*;
 import dev.com.protactic.dominio.principal.lesao.*;
 import dev.com.protactic.dominio.principal.nota.*;
+import dev.com.protactic.dominio.principal.partida.PartidaRepository;
 import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalRepositoryMock;
 import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalService;
+import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
+import dev.com.protactic.dominio.principal.planejamentoFisico.PlanejamentoFisicoService;
 import dev.com.protactic.dominio.principal.premiacaoInterna.*;
 import dev.com.protactic.dominio.principal.proposta.*;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.*;
@@ -98,7 +103,7 @@ public class AplicacaoBackend {
         return new SessaoTreinoServicoAplicacao(repositorio);
     }
 
-    @Bean
+   @Bean
     public CadastroDeAtletaService cadastroDeAtletaService(
             JogadorRepository jogadorRepo,
             ClubeRepository clubeRepo, 
@@ -108,13 +113,22 @@ public class AplicacaoBackend {
 
     @Bean
     public RegistroInscricaoService registroInscricaoService(
-            RegistroInscricaoRepository repository) {     
-        return new RegistroInscricaoService(repository);
+            RegistroInscricaoRepository repository,
+            JogadorRepository jogadorRepository,
+            RegistroLesoesRepository lesoesRepository) {    
+        return new RegistroInscricaoService(repository, jogadorRepository, lesoesRepository);
     }
 
     @Bean
-    public CapitaoService capitaoService(CapitaoRepository capitaoRepo) {
-        return new CapitaoService(capitaoRepo);
+    public UsuarioServicoAplicacao usuarioServicoAplicacao(UsuarioRepositorioAplicacao repositorio) {
+        return new UsuarioServicoAplicacao(repositorio);
+    }
+
+    @Bean
+    public CapitaoService capitaoService(
+            CapitaoRepository capitaoRepo,
+            JogadorRepository jogadorRepo) { 
+        return new CapitaoService(capitaoRepo, jogadorRepo); 
     }
 
     @Bean
@@ -167,8 +181,10 @@ public class AplicacaoBackend {
     }
     
     @Bean
-    public PremiacaoService premiacaoService(PremiacaoRepository premiacaoRepo) {
-        return new PremiacaoService(premiacaoRepo);
+    public PremiacaoService premiacaoService(
+            PremiacaoRepository premiacaoRepo,
+            JogadorRepository jogadorRepo) { 
+        return new PremiacaoService(premiacaoRepo, jogadorRepo);
     }
 
     @Bean
@@ -177,10 +193,12 @@ public class AplicacaoBackend {
     }
 
     @Bean
-    public RegistroLesoesServico registroLesoesServico(RegistroLesoesRepository lesoesRepo) {
-        return new RegistroLesoesServico(lesoesRepo);
+    public RegistroLesoesServico registroLesoesServico(
+            RegistroLesoesRepository lesoesRepo,
+            JogadorRepository jogadorRepo,      
+            LesaoRepository lesaoRepo) {        
+        return new RegistroLesoesServico(lesoesRepo, jogadorRepo, lesaoRepo); 
     }
-
     @Bean
     public RegistroCartoesService registroCartoesService(
             RegistroCartoesRepository cartaoRepository, 
@@ -191,13 +209,25 @@ public class AplicacaoBackend {
 
     @Bean
     public DefinirEsquemaTaticoService definirEsquemaTaticoService(
-            EscalacaoRepository escalacaoRepo) {
-        return new DefinirEsquemaTaticoService(escalacaoRepo);
+            EscalacaoRepository escalacaoRepo,
+            JogadorRepository jogadorRepo,
+            RegistroLesoesRepository lesoesRepo,
+            RegistroCartoesService cartoesService
+            ) {
+        return new DefinirEsquemaTaticoService(
+            escalacaoRepo, 
+            jogadorRepo,
+            lesoesRepo,
+            cartoesService
+        );
     }
 
     @Bean
-    public SessaoTreinoService sessaoTreinoService(SessaoTreinoRepository sessaoRepo) {
-        return new SessaoTreinoService(sessaoRepo);
+    public SessaoTreinoService sessaoTreinoService(
+            SessaoTreinoRepository sessaoRepo,
+            PartidaRepository partidaRepo,      
+            JogadorRepository jogadorRepo) {    
+        return new SessaoTreinoService(sessaoRepo, partidaRepo, jogadorRepo); 
     }
 
     @Bean
@@ -207,8 +237,9 @@ public class AplicacaoBackend {
 
     @Bean
     public PlanejamentoCargaSemanalService planejamentoCargaSemanalService(
-            PlanejamentoCargaSemanalRepositoryMock repository) {
-        return new PlanejamentoCargaSemanalService(repository);
+            PlanejamentoCargaSemanalRepositoryMock repository,
+            JogadorRepository jogadorRepository) { 
+        return new PlanejamentoCargaSemanalService(repository, jogadorRepository); 
     }
 
     @Bean
@@ -216,6 +247,17 @@ public class AplicacaoBackend {
         return new FisicoServicoAplicacao(repositorio);
     }
     
+    @Bean
+    public PlanejamentoFisicoService planejamentoFisicoService(
+            FisicoRepository fisicoRepository,
+            JogadorRepository jogadorRepository,
+            PlanejamentoCargaSemanalService planejamentoCargaSemanalService) {
+        return new PlanejamentoFisicoService(
+            fisicoRepository, 
+            jogadorRepository, 
+            planejamentoCargaSemanalService
+        );
+    }
     @Bean
     public CompeticaoServicoAplicacao competicaoServicoAplicacao(CompeticaoRepositorioAplicacao repositorio) {
         return new CompeticaoServicoAplicacao(repositorio);

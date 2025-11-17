@@ -3,19 +3,16 @@ package dev.com.protactic.apresentacao.principal;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoResumo;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;
 import dev.com.protactic.dominio.principal.Fisico;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalService;
-import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
+import dev.com.protactic.dominio.principal.planejamentoFisico.PlanejamentoFisicoService; 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus; 
 
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional; 
 
 @RestController
 @RequestMapping("backend/treino-fisico")
@@ -23,20 +20,13 @@ import java.util.Optional;
 
 public class TreinoFisicoControlador {
 
-    private @Autowired FisicoRepository fisicoRepository;
-
     private @Autowired FisicoServicoAplicacao fisicoServicoAplicacao;
-
-    private @Autowired PlanejamentoCargaSemanalService planejamentoCargaSemanalService;
-
-    private @Autowired JogadorRepository jogadorRepository;
+    private @Autowired PlanejamentoFisicoService planejamentoFisicoService;
 
     @GetMapping("/por-jogador/{jogadorId}")
     public List<FisicoResumo> buscarTreinosPorJogador(@PathVariable("jogadorId") Integer jogadorId) {
         return fisicoServicoAplicacao.pesquisarResumosPorJogador(jogadorId);
     }
-
-
 
     public record TreinoFisicoFormulario(
         String nome,
@@ -48,61 +38,56 @@ public class TreinoFisicoControlador {
     ) {}
 
     @PostMapping("/salvar/{jogadorId}")
-    public ResponseEntity<Fisico> salvarTreinoFisico(
+    public ResponseEntity<?> salvarTreinoFisico(
             @PathVariable("jogadorId") Integer jogadorId,
             @RequestBody TreinoFisicoFormulario formulario) {
 
-        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
-        if (jogador == null) {
-            return ResponseEntity.notFound().build(); // Retorna 404
+        try {
+            PlanejamentoFisicoService.DadosTreinoFisico dados = 
+                new PlanejamentoFisicoService.DadosTreinoFisico(
+                    jogadorId,
+                    formulario.nome(),
+                    formulario.musculo(),
+                    formulario.intensidade(),
+                    formulario.descricao(),
+                    formulario.dataInicio(),
+                    formulario.dataFim()
+                );
+
+            Fisico treinoSalvo = planejamentoFisicoService.salvarTreinoFisico(dados);
+            return ResponseEntity.ok(treinoSalvo);
+            
+        } catch (Exception e) {
+            if (e.getMessage().contains("não encontrado")) {
+                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
-    
-        boolean aptoParaTreino = planejamentoCargaSemanalService.registrarTreino(jogador);
-
-        if (!aptoParaTreino) {
-            return ResponseEntity.badRequest().build(); 
-        }
-
-        Fisico novoTreino = new Fisico(
-            0, 
-            jogador,
-            formulario.nome(),
-            formulario.musculo(),
-            formulario.intensidade(),
-            formulario.descricao(),
-            formulario.dataInicio(),
-            formulario.dataFim(),
-            "PLANEJADO" 
-        );
-       
-        Fisico treinoSalvo = fisicoRepository.salvar(novoTreino);
-        return ResponseEntity.ok(treinoSalvo);
     }
     
     @PutMapping("/editar/{treinoId}")
-    public ResponseEntity<Fisico> editarTreinoFisico(
+    public ResponseEntity<?> editarTreinoFisico(
             @PathVariable("treinoId") Integer treinoId,
             @RequestBody TreinoFisicoFormulario formulario) {
 
-        Optional<Fisico> treinoOpt = fisicoRepository.buscarPorId(treinoId);
-
-        if (treinoOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        try {
+             PlanejamentoFisicoService.DadosTreinoFisico dados = 
+                new PlanejamentoFisicoService.DadosTreinoFisico(
+                    null, 
+                    formulario.nome(),
+                    formulario.musculo(),
+                    formulario.intensidade(),
+                    formulario.descricao(),
+                    formulario.dataInicio(),
+                    formulario.dataFim()
+                );
+                
+            Fisico treinoAtualizado = planejamentoFisicoService.editarTreinoFisico(treinoId, dados);
+            return ResponseEntity.ok(treinoAtualizado);
+            
+        } catch (Exception e) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-        Fisico treinoExistente = treinoOpt.get();
-
-        treinoExistente.setNome(formulario.nome());
-        treinoExistente.setMusculo(formulario.musculo());
-        treinoExistente.setIntensidade(formulario.intensidade());
-        treinoExistente.setDescricao(formulario.descricao());
-        treinoExistente.setDataInicio(formulario.dataInicio());
-        treinoExistente.setDataFim(formulario.dataFim());
-
-        Fisico treinoAtualizado = fisicoRepository.salvar(treinoExistente);
-
-        return ResponseEntity.ok(treinoAtualizado);
     }
 
     public record StatusUpdateFormulario(
@@ -110,49 +95,40 @@ public class TreinoFisicoControlador {
     ) {}
 
     @PatchMapping("/atualizar-status/{treinoId}")
-    public ResponseEntity<Fisico> atualizarStatusTreino(
+    public ResponseEntity<?> atualizarStatusTreino(
             @PathVariable("treinoId") Integer treinoId,
             @RequestBody StatusUpdateFormulario formulario) {
 
-        Optional<Fisico> treinoOpt = fisicoRepository.buscarPorId(treinoId);
-
-        if (treinoOpt.isEmpty()) {
-            return ResponseEntity.notFound().build(); // Retorna 404
+        try {
+            Fisico treinoAtualizado = planejamentoFisicoService.atualizarStatusTreino(treinoId, formulario.status());
+            return ResponseEntity.ok(treinoAtualizado);
+        } catch (Exception e) {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-        Fisico treinoExistente = treinoOpt.get();
-
-        treinoExistente.setStatus(formulario.status());
-
-        Fisico treinoAtualizado = fisicoRepository.salvar(treinoExistente);
-
-        return ResponseEntity.ok(treinoAtualizado);
     }
     
     @PostMapping("/criar-protocolo-retorno/{jogadorId}")
-    public ResponseEntity<Fisico> criarProtocoloDeRetorno(
+    public ResponseEntity<?> criarProtocoloDeRetorno(
             @PathVariable("jogadorId") Integer jogadorId,
             @RequestBody TreinoFisicoFormulario formulario) {
 
-        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
-        if (jogador == null) {
-            return ResponseEntity.notFound().build(); // Retorna 404
+         try {
+            PlanejamentoFisicoService.DadosTreinoFisico dados = 
+                new PlanejamentoFisicoService.DadosTreinoFisico(
+                    jogadorId,
+                    formulario.nome(),
+                    formulario.musculo(),
+                    formulario.intensidade(),
+                    formulario.descricao(),
+                    formulario.dataInicio(),
+                    formulario.dataFim()
+                );
+
+            Fisico protocoloSalvo = planejamentoFisicoService.criarProtocoloDeRetorno(dados);
+            return ResponseEntity.ok(protocoloSalvo);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-        Fisico novoProtocolo = new Fisico(
-            0, 
-            jogador,
-            formulario.nome(),
-            formulario.musculo(),
-            formulario.intensidade(),
-            formulario.descricao(),
-            formulario.dataInicio(),
-            formulario.dataFim(),
-            "PROTOCOLO_RETORNO" 
-        );
-
-        Fisico protocoloSalvo = fisicoRepository.salvar(novoProtocolo);
-
-        return ResponseEntity.ok(protocoloSalvo);
     }
 }

@@ -15,11 +15,9 @@ import dev.com.protactic.aplicacao.principal.jogador.JogadorServicoAplicacao;
 import dev.com.protactic.aplicacao.principal.clube.ClubeResumo;
 import dev.com.protactic.aplicacao.principal.clube.ClubeServicoAplicacao;
 import dev.com.protactic.dominio.principal.Capitao;
-import dev.com.protactic.dominio.principal.capitao.CapitaoRepository;
 
-import dev.com.protactic.dominio.principal.Jogador;
+
 import dev.com.protactic.dominio.principal.capitao.CapitaoService;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -28,9 +26,7 @@ public class DefinirCapitaoControlador {
 
     private @Autowired JogadorServicoAplicacao jogadorServicoAplicacao;
     private @Autowired CapitaoService capitaoService;
-    private @Autowired JogadorRepository jogadorRepository; 
     private @Autowired ClubeServicoAplicacao clubeServicoAplicacao;
-    private @Autowired CapitaoRepository capitaoRepository;
     
 
     @GetMapping(path = "pesquisa-jogadores")
@@ -45,7 +41,7 @@ public class DefinirCapitaoControlador {
     
     @GetMapping(path = "buscar-por-clube/{clubeId}")
     public Capitao buscarCapitaoDoClube(@PathVariable("clubeId") Integer clubeId) {
-        return capitaoRepository.buscarCapitaoPorClube(clubeId);
+        return capitaoService.buscarCapitaoPorClube(clubeId);
     }
 
     @GetMapping(path = "listar-todos")
@@ -56,11 +52,10 @@ public class DefinirCapitaoControlador {
     @PostMapping(path = "definir/{jogadorId}") 
     public void definirCapitao(@PathVariable("jogadorId") Integer jogadorId) {
         
-        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
-        if (jogador == null) {
-            throw new RuntimeException("Jogador não encontrado: " + jogadorId);
+        try {
+            capitaoService.definirCapitaoPorId(jogadorId);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao definir capitão: " + e.getMessage(), e);
         }
-        
-        capitaoService.definirCapitao(jogador);
     }
 }

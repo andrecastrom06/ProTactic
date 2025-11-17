@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.com.protactic.aplicacao.principal.proposta.PropostaResumo;
 import dev.com.protactic.aplicacao.principal.proposta.PropostaServicoAplicacao;
 
-import dev.com.protactic.dominio.principal.Clube;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.dominio.principal.proposta.PropostaService;
 
 import org.springframework.http.ResponseEntity; 
@@ -31,11 +27,7 @@ public class PropostaControlador {
 
     private @Autowired PropostaServicoAplicacao propostaServicoAplicacao;
     private @Autowired PropostaService propostaService;
-    private @Autowired JogadorRepository jogadorRepository;
-    private @Autowired ClubeRepository clubeRepository;
     
-
-
     @GetMapping(path = "pesquisa")
     public List<PropostaResumo> pesquisarResumos() {
         return propostaServicoAplicacao.pesquisarResumos();
@@ -56,7 +48,6 @@ public class PropostaControlador {
         return propostaServicoAplicacao.pesquisarResumosPorReceptor(clubeId);
     }
 
-
     public record PropostaFormulario(
         Integer jogadorId,
         Integer clubeId,
@@ -70,24 +61,16 @@ public class PropostaControlador {
             throw new IllegalArgumentException("O corpo da requisição (formulário) não pode ser nulo.");
         }
 
-
-        Jogador jogador = jogadorRepository.buscarPorId(formulario.jogadorId());
-        if (jogador == null) {
-            throw new RuntimeException("Jogador não encontrado: " + formulario.jogadorId());
-        }
-
-        Clube clubePropositor = clubeRepository.buscarPorId(formulario.clubeId());
-        if (clubePropositor == null) {
-            throw new RuntimeException("Clube propositor não encontrado: " + formulario.clubeId());
-        }
-
         try {
-            propostaService.criarProposta(
-                jogador, 
-                clubePropositor, 
-                formulario.valor(), 
+            PropostaService.DadosNovaProposta dados = new PropostaService.DadosNovaProposta(
+                formulario.jogadorId(),
+                formulario.clubeId(),
+                formulario.valor(),
                 new Date()
             );
+            
+            propostaService.criarPropostaPorIds(dados);
+
         } catch (Exception e) {
             throw new RuntimeException("Erro ao tentar criar a proposta: " + e.getMessage(), e);
         }
@@ -119,7 +102,6 @@ public class PropostaControlador {
         }
     }
 
-
     @PostMapping(path = "/recusar/{propostaId}")
     public ResponseEntity<Void> recusarProposta(@PathVariable("propostaId") Integer propostaId) {
         try {
@@ -129,7 +111,6 @@ public class PropostaControlador {
             throw new RuntimeException("Erro ao recusar proposta: " + e.getMessage(), e);
         }
     }
-
  
     @DeleteMapping(path = "/excluir/{propostaId}")
     public ResponseEntity<Void> excluirProposta(@PathVariable("propostaId") Integer propostaId) {

@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import org.springframework.web.bind.annotation.GetMapping; 
-import dev.com.protactic.infraestrutura.persistencia.jpa.usuario.UsuarioJPA; 
-import dev.com.protactic.infraestrutura.persistencia.jpa.usuario.UsuarioRepositorySpringData; 
 import java.util.List; 
+
+import dev.com.protactic.aplicacao.principal.usuario.UsuarioResumo;
+import dev.com.protactic.aplicacao.principal.usuario.UsuarioServicoAplicacao;
 
 import dev.com.protactic.dominio.principal.Usuario;
 import dev.com.protactic.dominio.principal.login.LoginService;
@@ -26,8 +27,7 @@ public class LoginControlador {
     private LoginService loginService;
 
     @Autowired
-    private UsuarioRepositorySpringData usuarioRepositoryJPA;
-
+    private UsuarioServicoAplicacao usuarioServicoAplicacao;
 
     public record LoginFormulario(
         String login,
@@ -48,8 +48,8 @@ public class LoginControlador {
     }
 
     @GetMapping("/debug-users")
-    public List<UsuarioJPA> getTodosOsUsuarios() {
-        return usuarioRepositoryJPA.findAll();
+    public List<UsuarioResumo> getTodosOsUsuarios() {
+        return usuarioServicoAplicacao.pesquisarResumos();
     }
   
 }

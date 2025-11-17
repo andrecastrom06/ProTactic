@@ -1,9 +1,9 @@
 package dev.com.protactic.apresentacao.principal;
 
 import java.util.List;
-import java.util.ArrayList; 
-import java.util.Objects; 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,13 +18,6 @@ import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoServicoApl
 import dev.com.protactic.dominio.principal.SessaoTreino; 
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoService;
 
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.Partida;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-
-import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
-import dev.com.protactic.infraestrutura.persistencia.jpa.partida.PartidaRepositorySpringData;
-
 
 @RestController
 @RequestMapping("backend/sessao-treino")
@@ -33,9 +26,7 @@ public class SessaoTreinoControlador {
 
     private @Autowired SessaoTreinoServicoAplicacao sessaoTreinoServicoAplicacao;
     private @Autowired SessaoTreinoService sessaoTreinoService;
-    private @Autowired JogadorRepository jogadorRepository;
-    private @Autowired PartidaRepositorySpringData partidaRepositoryJPA;
-    private @Autowired JpaMapeador mapeador;
+    
 
     @GetMapping(path = "pesquisa")
     public List<SessaoTreinoResumo> pesquisarResumos() {
@@ -54,8 +45,6 @@ public class SessaoTreinoControlador {
         return sessaoTreinoService.listarSessoesPorPartida(partidaNome);
     }
 
-
-
     public record SessaoTreinoFormulario(
         String nome,
         Integer partidaId,
@@ -63,48 +52,22 @@ public class SessaoTreinoControlador {
     ) {}
 
     @PostMapping(path = "/criar")
-    public void criarSessao(@RequestBody SessaoTreinoFormulario formulario) {
+    public ResponseEntity<?> criarSessao(@RequestBody SessaoTreinoFormulario formulario) {
         
         if (formulario == null) {
-            throw new IllegalArgumentException("O corpo da requisição (formulário) não pode ser nulo.");
-        }
-
-        Objects.requireNonNull(formulario.partidaId(), "O 'partidaId' no formulário não pode ser nulo.");
-
-        Integer partidaId = formulario.partidaId();
-        Objects.requireNonNull(partidaId, "O 'partidaId' no formulário não pode ser nulo.");
-
-        Partida partida = partidaRepositoryJPA.findById(partidaId)
-            .map(partidaJPA -> mapeador.map(partidaJPA, Partida.class))
-            .orElse(null); 
-
-        if (partida == null) {
-            throw new RuntimeException("Partida não encontrada: " + formulario.partidaId());
-        }
-
-        List<Jogador> jogadores = new ArrayList<>();
-        if (formulario.convocadosIds() != null) {
-            for (Integer jogadorId : formulario.convocadosIds()) {
-                Jogador j = jogadorRepository.buscarPorId(jogadorId);
-                if (j != null) {
-                    jogadores.add(j);
-                } else {
-                    System.err.println("Aviso: Jogador com ID " + jogadorId + " não encontrado ao criar sessão.");
-                }
-            }
+            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
         }
         
         try {
-            sessaoTreinoService.criarSessao(
+            sessaoTreinoService.criarSessaoPorIds(
                 formulario.nome(),
-                partida,
-                jogadores
+                formulario.partidaId(),
+                formulario.convocadosIds()
             );
-        } catch (Exception e) {
+            return ResponseEntity.ok().build();
 
-            System.err.println("### OCORREU UM ERRO GRAVE ###");
-            e.printStackTrace();
-            throw new RuntimeException("Erro ao criar sessão de treino: " + e.getMessage(), e);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-} 
+}

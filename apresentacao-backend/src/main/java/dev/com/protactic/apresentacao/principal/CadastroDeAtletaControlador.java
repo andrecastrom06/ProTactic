@@ -11,13 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity; 
+import org.springframework.http.HttpStatus; 
+
 import dev.com.protactic.aplicacao.principal.clube.ClubeResumo;
 import dev.com.protactic.aplicacao.principal.clube.ClubeServicoAplicacao;
-
-import dev.com.protactic.dominio.principal.Clube;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.dominio.principal.cadastroAtleta.CadastroDeAtletaService;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -27,10 +24,6 @@ public class CadastroDeAtletaControlador {
 
     private @Autowired ClubeServicoAplicacao clubeServicoAplicacao;
     private @Autowired CadastroDeAtletaService cadastroDeAtletaService;
-    private @Autowired ClubeRepository clubeRepository;
-    private @Autowired JogadorRepository jogadorRepository;
-    
-
     @GetMapping(path = "pesquisa")
     public List<ClubeResumo> pesquisarResumos() {
         return clubeServicoAplicacao.pesquisarResumos();
@@ -48,30 +41,30 @@ public class CadastroDeAtletaControlador {
     ) {}
 
     @PostMapping(path = "{clubeId}/contratar")
-    public ResponseEntity<Void> contratarAtleta(
+    public ResponseEntity<?> contratarAtleta( 
             @PathVariable("clubeId") Integer clubeId, 
             @RequestBody ContratacaoFormulario formulario) { 
         
         if (formulario == null || formulario.jogadorId() == null || formulario.data() == null) {
-            throw new IllegalArgumentException("O formulário de contratação (com jogadorId e data) não pode ser nulo.");
+            return ResponseEntity
+                .badRequest()
+                .body("O formulário de contratação (com jogadorId e data) não pode ser nulo.");
         }
 
-        Clube clube = clubeRepository.buscarPorId(clubeId);
-        if (clube == null) {
-            throw new RuntimeException("Clube não encontrado: " + clubeId);
-        }
+        try {
+            boolean resultado = cadastroDeAtletaService.contratarPorId(
+                clubeId, 
+                formulario.jogadorId(), 
+                formulario.data()
+            );
 
-        Jogador jogador = jogadorRepository.buscarPorId(formulario.jogadorId());
-        if (jogador == null) {
-            throw new RuntimeException("Jogador não encontrado: " + formulario.jogadorId());
-        }
-
-        boolean resultado = cadastroDeAtletaService.contratar(clube, jogador, formulario.data());
-
-        if (resultado) {
-            return ResponseEntity.ok().build(); 
-        } else {
-            return ResponseEntity.badRequest().build(); 
+            if (resultado) {
+                return ResponseEntity.ok().build(); 
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Contratação não permitida (Ex: Janela fechada)."); 
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
   

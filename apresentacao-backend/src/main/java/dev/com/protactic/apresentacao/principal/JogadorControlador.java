@@ -5,9 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.Contrato;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.CadastroDeAtletaService; 
 
 import java.time.LocalDate; 
 
@@ -17,9 +15,7 @@ import java.time.LocalDate;
 public class JogadorControlador {
 
     @Autowired
-    private JogadorRepository jogadorRepository;
-    @Autowired
-    private ContratoRepository contratoRepository;
+    private CadastroDeAtletaService cadastroDeAtletaService;
 
 
     public record CadastrarAtletaFormulario(
@@ -36,35 +32,17 @@ public class JogadorControlador {
             @RequestBody CadastrarAtletaFormulario formulario) {
         
         try {
-
-            Contrato novoContrato = new Contrato();
-            novoContrato.setClubeId(formulario.clubeId());
-            novoContrato.setStatus(formulario.situacaoContratual());
+            CadastroDeAtletaService.DadosNovoAtleta dados = 
+                new CadastroDeAtletaService.DadosNovoAtleta(
+                    formulario.nomeCompleto(),
+                    formulario.posicao(),
+                    formulario.idade(),
+                    formulario.validadeDoContrato(),
+                    formulario.situacaoContratual(),
+                    formulario.clubeId()
+                );
             
-            novoContrato.setDuracaoMeses(36); 
-            novoContrato.setSalario(0); 
-            
-            contratoRepository.salvar(novoContrato); 
-
-            
-            Jogador novoJogador = new Jogador();
-            novoJogador.setNome(formulario.nomeCompleto());
-            novoJogador.setPosicao(formulario.posicao());
-            novoJogador.setIdade(formulario.idade());
-            
-         
-            novoJogador.setContratoId(novoContrato.getId());
-            novoJogador.setClubeId(formulario.clubeId());
-            
-
-            novoJogador.setCompeticaoId(1);
-            novoJogador.setContratoAtivo(true);
-            novoJogador.setSaudavel(true);
-            novoJogador.setGrauLesao(-1);
-            novoJogador.setStatus("Disponível");
-            novoJogador.setChegadaNoClube(LocalDate.now()); 
-
-            jogadorRepository.salvar(novoJogador); 
+            Jogador novoJogador = cadastroDeAtletaService.cadastrarNovoAtleta(dados);
 
             return ResponseEntity.ok(novoJogador);
 
