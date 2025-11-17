@@ -1,45 +1,67 @@
 package dev.com.protactic.dominio.principal;
 
+// ... (todos os imports)
 import dev.com.protactic.dominio.principal.definirEsquemaTatico.DefinirEsquemaTaticoService;
+import dev.com.protactic.dominio.principal.definirEsquemaTatico.EscalacaoRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
+import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesRepository;
+import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
+import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.SuspensaoRepository;
+
 import dev.com.protactic.mocks.EscalacaoMock;
+import dev.com.protactic.mocks.JogadorMock;
+import dev.com.protactic.mocks.RegistroLesoesMock;
+import dev.com.protactic.mocks.RegistroCartoesMock;
+import dev.com.protactic.mocks.SuspensaoMock;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.E;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import io.cucumber.java.Before;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DefinirEsquemaTaticoFeature {
 
-    private static class Jogador {
-        final String nome;
-        int grauLesao = -1;
-        boolean contratoAtivo = false;
-        boolean suspenso = false;
-
-        Jogador(String nome) {
-            this.nome = nome;
-        }
-    }
-
-    private final Map<String, Jogador> jogadores = new HashMap<>();
+    private EscalacaoRepository repository;
+    private JogadorRepository jogadorRepo;
+    private RegistroLesoesRepository lesoesRepo;
+    private RegistroCartoesRepository cartoesRepo;
+    private SuspensaoRepository suspensaoRepo;
+    private RegistroCartoesService cartoesService;
+    private DefinirEsquemaTaticoService service;
+    
     private String jogoEmContexto;
+    private String ultimoJogadorSalvo;
+    private Exception excecaoOcorrida;
 
-    private final EscalacaoMock repository = new EscalacaoMock();
-    private final DefinirEsquemaTaticoService service = new DefinirEsquemaTaticoService(repository);
+    @Before
+    public void setup() {
+        repository = new EscalacaoMock();
+        jogadorRepo = new JogadorMock();
+        lesoesRepo = new RegistroLesoesMock(); 
+        cartoesRepo = new RegistroCartoesMock();
+        suspensaoRepo = new SuspensaoMock(); 
+
+        cartoesService = new RegistroCartoesService(cartoesRepo, suspensaoRepo);
+
+        service = new DefinirEsquemaTaticoService(
+            repository,
+            jogadorRepo,
+            lesoesRepo,
+            cartoesService
+        );
+        
+        excecaoOcorrida = null;
+    }
 
     @Dado("que o treinador está na tela de gerenciamento de escalação e tática")
     public void que_o_treinador_esta_na_tela_de_gerenciamento_de_escalacao_e_tatica() {
-        System.out.println("Contexto: Treinador na tela de gerenciamento.");
     }
 
     @Dado("que existe um jogo marcado para {string}")
     public void que_existe_um_jogo_marcado_para(String data) {
         jogoEmContexto = data;
-        System.out.println("Dado que existe um jogo marcado para " + data);
     }
 
     @Quando("o treinador cadastrar a escalação")
@@ -50,98 +72,99 @@ public class DefinirEsquemaTaticoFeature {
     @Então("a escalação aparecerá vinculada ao jogo do dia {string}")
     public void a_escalacao_aparecera_vinculada_ao_jogo_do_dia(String data) {
         var escalacaoPersistida = repository.obterEscalacaoPorData(data);
-
         assertNotNull(escalacaoPersistida, "Nenhuma escalação encontrada para o jogo.");
-        assertFalse(escalacaoPersistida.isEmpty(), "Escalação não foi registrada para o jogo do dia " + data);
+        assertFalse(escalacaoPersistida.isEmpty(), "Escalação não foi registrada para o jogo.");
+    }
 
-        assertEquals(escalacaoPersistida, repository.obterEscalacaoPorData(data),
-                "A escalação persistida não corresponde à data esperada.");
+    private Jogador garantirJogadorExiste(String nomeJogador) {
+        Jogador j = jogadorRepo.buscarPorNome(nomeJogador);
+        if (j == null) {
+            j = new Jogador(nomeJogador);
+            jogadorRepo.salvar(j);
+        }
+        lesoesRepo.cadastrarAtleta(nomeJogador);
+        return j;
     }
 
     @E("o jogador {string} tem uma lesão de grau {int}")
     public void o_jogador_tem_uma_lesao_de_grau(String nomeJogador, Integer grau) {
-        jogadores.computeIfAbsent(nomeJogador, Jogador::new).grauLesao = grau;
+        garantirJogadorExiste(nomeJogador);
+        if (grau >= 0) {
+            lesoesRepo.salvarLesaoAtiva(nomeJogador, grau);
+        } else {
+            lesoesRepo.encerrarLesaoAtiva(nomeJogador);
+        }
     }
 
     @E("{string} possui contrato ativo e não está suspenso")
     public void possui_contrato_ativo_e_nao_esta_suspenso(String nomeJogador) {
-        Jogador j = jogadores.computeIfAbsent(nomeJogador, Jogador::new);
-        j.contratoAtivo = true;
-        j.suspenso = false;
+        garantirJogadorExiste(nomeJogador);
+        lesoesRepo.definirContratoAtivo(nomeJogador, true);
+        Suspensao s = suspensaoRepo.buscarPorAtleta(nomeJogador).orElse(null);
+        if (s != null) {
+            s.setSuspenso(false);
+            suspensaoRepo.salvarOuAtualizar(s);
+        } else {
+            Suspensao nova = new Suspensao(0, nomeJogador, false, 0, 0);
+            suspensaoRepo.salvarOuAtualizar(nova);
+        }
+    }
+
+    @E("o jogador {string} está suspenso")
+    public void o_jogador_esta_suspenso(String nomeJogador) {
+        garantirJogadorExiste(nomeJogador);
+        cartoesRepo.salvarCartao(new RegistroCartao(nomeJogador, "amarelo"));
+        cartoesRepo.salvarCartao(new RegistroCartao(nomeJogador, "amarelo"));
+        cartoesRepo.salvarCartao(new RegistroCartao(nomeJogador, "amarelo"));
+        
+        cartoesService.verificarSuspensao(nomeJogador);
+    }
+  
+
+    @E("{string} possui contrato ativo e não está lesionado")
+    public void possui_contrato_ativo_e_nao_esta_lesionado(String nomeJogador) {
+        garantirJogadorExiste(nomeJogador);
+        lesoesRepo.definirContratoAtivo(nomeJogador, true);
+        lesoesRepo.encerrarLesaoAtiva(nomeJogador); 
     }
 
     @Quando("o treinador cadastrar a escalação incluindo {string}")
     public void o_treinador_cadastrar_a_escalacao_incluindo(String nomeJogador) {
-        Jogador jogador = jogadores.get(nomeJogador);
-        boolean sucesso = service.registrarEscalacao(
-                jogoEmContexto,
-                nomeJogador,
-                jogador.contratoAtivo,
-                jogador.suspenso,
-                jogador.grauLesao
-        );
-
-        jogador.contratoAtivo = sucesso;
+        this.ultimoJogadorSalvo = nomeJogador;
+        try {
+            service.registrarJogadorEmEscalacao(
+                    jogoEmContexto,
+                    nomeJogador
+            );
+        } catch (Exception e) {
+            this.excecaoOcorrida = e;
+        }
     }
 
     @Então("a escalação será registrada com sucesso")
     public void a_escalacao_sera_registrada_com_sucesso() {
+        assertNull(excecaoOcorrida, "Não deveria ter ocorrido exceção");
         var escalacaoPersistida = repository.obterEscalacaoPorData(jogoEmContexto);
 
-        assertNotNull(escalacaoPersistida,
-                "Nenhuma escalação foi encontrada no repositório para o jogo.");
-        assertFalse(escalacaoPersistida.isEmpty(),
-                "A escalação deveria ter sido registrada, mas está vazia.");
+        assertNotNull(escalacaoPersistida, "Nenhuma escalação foi encontrada para o jogo.");
+        assertFalse(escalacaoPersistida.isEmpty(), "A escalação deveria ter sido registrada.");
 
-      
         boolean contemJogador = escalacaoPersistida.stream()
-                .anyMatch(jogador -> jogadores.containsKey(jogador));
+                .anyMatch(jogador -> jogador.equals(ultimoJogadorSalvo));
 
-        assertTrue(contemJogador,
-                "O jogador escalado não foi persistido na escalação do repositório.");
-
-      
-        assertEquals(escalacaoPersistida, repository.obterEscalacaoPorData(jogoEmContexto),
-                "Os dados persistidos no repositório não correspondem à data do jogo.");
+        assertTrue(contemJogador, "O jogador '" + ultimoJogadorSalvo + "' não foi persistido na escalação.");
     }
 
     @Então("a escalação não poderá ser registrada")
     public void a_escalacao_nao_podera_ser_registrada() {
         var escalacaoPersistida = repository.obterEscalacaoPorData(jogoEmContexto);
 
-  
-        assertTrue(escalacaoPersistida == null || escalacaoPersistida.isEmpty(),
-                "A escalação não deveria ter sido persistida, mas há dados salvos no repositório.");
-    }
-
-    @E("o jogador {string} está suspenso")
-    public void o_jogador_esta_suspenso(String nomeJogador) {
-        jogadores.computeIfAbsent(nomeJogador, Jogador::new).suspenso = true;
-    }
-
-    @E("{string} possui contrato ativo e não está lesionado")
-    public void possui_contrato_ativo_e_nao_esta_lesionado(String nomeJogador) {
-        Jogador j = jogadores.computeIfAbsent(nomeJogador, Jogador::new);
-        j.contratoAtivo = true;
-        j.grauLesao = -1;
-    }
-
-    @E("o jogador {string} tem a condição {string}")
-    public void o_jogador_tem_a_condicao(String nome, String condicao) {
-        Jogador j = jogadores.computeIfAbsent(nome, Jogador::new);
-        String cond = condicao.toLowerCase();
-
-        if (cond.contains("lesão grau")) {
-            j.grauLesao = Integer.parseInt(cond.replaceAll("\\D+", ""));
-        } else if (cond.equals("suspenso")) {
-            j.suspenso = true;
-        } else if (cond.equals("saudável")) {
-            j.grauLesao = -1;
-            j.suspenso = false;
+        if (escalacaoPersistida != null) {
+             boolean contemJogador = escalacaoPersistida.stream()
+                .anyMatch(jogador -> jogador.equals(ultimoJogadorSalvo));
+             assertFalse(contemJogador, "O jogador '" + ultimoJogadorSalvo + "' foi escalado indevidamente.");
+        } else {
+            assertTrue(true, "Escalação não foi registrada, como esperado.");
         }
-    }
-    @E("{string} possui contrato {string}")
-    public void possui_contrato(String nome, String statusContrato) {
-        jogadores.computeIfAbsent(nome, Jogador::new).contratoAtivo = statusContrato.equalsIgnoreCase("ativo");
     }
 }

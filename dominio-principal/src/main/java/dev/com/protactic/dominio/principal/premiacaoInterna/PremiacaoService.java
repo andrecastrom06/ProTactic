@@ -1,30 +1,64 @@
 package dev.com.protactic.dominio.principal.premiacaoInterna;
 
-import dev.com.protactic.dominio.principal.*;
-import java.util.*;
+import dev.com.protactic.dominio.principal.Jogador;
+import dev.com.protactic.dominio.principal.Premiacao;
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 public class PremiacaoService {
 
     private final PremiacaoRepository repository;
+    private final JogadorRepository jogadorRepository; 
 
-    public PremiacaoService(PremiacaoRepository repository) {
+    public PremiacaoService(PremiacaoRepository repository, JogadorRepository jogadorRepository) { 
         this.repository = repository;
+        this.jogadorRepository = jogadorRepository; 
     }
+    
+    public record DadosPremiacao(
+        Integer jogadorId,
+        String nome,
+        Date dataPremiacao 
+    ) {}
 
-   
+    public Premiacao salvarPremiacaoPorDados(DadosPremiacao dados) throws Exception {
+        Objects.requireNonNull(dados.jogadorId(), "O ID do Jogador não pode ser nulo.");
+        
+        Jogador jogador = jogadorRepository.buscarPorId(dados.jogadorId());
+        if (jogador == null) {
+            throw new Exception("Jogador com ID " + dados.jogadorId() + " não encontrado.");
+        }
+        
+        Premiacao novaPremiacao = new Premiacao(
+            0, 
+            jogador,
+            dados.nome(),
+            dados.dataPremiacao()
+        );
+
+        
+        return this.salvarPremiacao(novaPremiacao);
+    }
+    
+    public Premiacao salvarPremiacao(Premiacao premiacao) {
+        repository.salvarPremiacao(premiacao);
+        return premiacao;
+    }
     public Premiacao criarPremiacaoMensal(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores) {
         Premiacao premiacao = repository.criarPremiacao(nomePremiacao, dataPremiacao);
         Jogador vencedor = definirVencedor(jogadores);
 
         if (vencedor == null) {
-            System.out.println("DEBUG >> Nenhum vencedor definido para " + nomePremiacao);
             return null;
         }
 
         premiacao.setJogador(vencedor);
         repository.salvarPremiacao(premiacao);
-
-        System.out.println("DEBUG >> Vencedor definitivo: " + vencedor.getNome());
         return premiacao;
     }
 
@@ -60,7 +94,6 @@ public class PremiacaoService {
             return empatados.get(0);
         }
     }
-
     
     public boolean verificarSeVencedorTemMenorDesvio(Jogador vencedor, List<Jogador> jogadores) {
         double menorDesvio = jogadores.stream()

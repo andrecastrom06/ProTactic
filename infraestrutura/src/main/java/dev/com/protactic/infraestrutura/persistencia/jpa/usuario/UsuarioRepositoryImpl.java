@@ -1,14 +1,17 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.usuario;
 
 import dev.com.protactic.dominio.principal.Usuario;
-import dev.com.protactic.dominio.principal.login.UsuarioRepository; // A interface do Domínio
-import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador; // O teu ModelMapper
+import dev.com.protactic.dominio.principal.login.UsuarioRepository;
+import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import org.springframework.stereotype.Component;
 import java.util.Optional;
+import java.util.List;
 
+import dev.com.protactic.aplicacao.principal.usuario.UsuarioRepositorioAplicacao;
+import dev.com.protactic.aplicacao.principal.usuario.UsuarioResumo;
 
 @Component 
-public class UsuarioRepositoryImpl implements UsuarioRepository {
+public class UsuarioRepositoryImpl implements UsuarioRepository, UsuarioRepositorioAplicacao {
 
     private final UsuarioRepositorySpringData repositoryJPA;
     private final JpaMapeador mapeador;
@@ -24,5 +27,10 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
         Optional<UsuarioJPA> jpaOpt = repositoryJPA.findByLoginAndSenha(login, senha);
         
         return jpaOpt.map(jpa -> mapeador.map(jpa, Usuario.class));
+    }
+
+    @Override
+    public List<UsuarioResumo> pesquisarResumos() {
+        return repositoryJPA.findAllResumosBy();
     }
 }

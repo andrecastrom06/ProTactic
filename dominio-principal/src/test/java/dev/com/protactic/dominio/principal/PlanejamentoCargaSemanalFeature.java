@@ -2,9 +2,13 @@ package dev.com.protactic.dominio.principal;
 
 import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalRepositoryMock;
 import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalService;
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository; 
+import dev.com.protactic.mocks.JogadorMock; 
+
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Então;
+import io.cucumber.java.Before; 
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,21 +17,33 @@ import java.util.Map;
 
 public class PlanejamentoCargaSemanalFeature {
 
-    private final PlanejamentoCargaSemanalRepositoryMock repository = new PlanejamentoCargaSemanalRepositoryMock();
-    private final PlanejamentoCargaSemanalService service = new PlanejamentoCargaSemanalService(repository);
+    private PlanejamentoCargaSemanalRepositoryMock repository;
+    private PlanejamentoCargaSemanalService service;
+    private JogadorRepository jogadorRepo; 
 
     private final Map<String, Jogador> jogadores = new HashMap<>();
     private String ultimoJogadorEmContexto;
 
+    @Before
+    public void setup() {
+        this.repository = new PlanejamentoCargaSemanalRepositoryMock();
+        this.jogadorRepo = new JogadorMock(); 
+        this.service = new PlanejamentoCargaSemanalService(repository, jogadorRepo); 
+        this.jogadores.clear();
+        this.ultimoJogadorEmContexto = null;
+    }
+
+
     @Dado("que o preparador físico está na tela de planejamento de cargas semanais")
     public void preparador_esta_na_tela() {
-        System.out.println("Contexto: Preparador físico na tela de planejamento semanal.");
+       
     }
 
     @Dado("que o jogador {string} tem uma lesão de grau {int}")
     public void jogador_tem_lesao(String nome, Integer grau) {
         Jogador j = jogadores.computeIfAbsent(nome, Jogador::new);
         j.setGrauLesao(grau);
+        jogadorRepo.salvar(j); 
         ultimoJogadorEmContexto = nome;
     }
 
@@ -35,6 +51,7 @@ public class PlanejamentoCargaSemanalFeature {
     public void jogador_esta_saudavel(String nome) {
         Jogador j = jogadores.computeIfAbsent(nome, Jogador::new);
         j.setGrauLesao(-1);
+        jogadorRepo.salvar(j); 
         ultimoJogadorEmContexto = nome;
     }
 
@@ -42,6 +59,7 @@ public class PlanejamentoCargaSemanalFeature {
     public void possui_contrato_ativo(String nome) {
         Jogador j = jogadores.computeIfAbsent(nome, Jogador::new);
         j.setContratoAtivo(true);
+        jogadorRepo.salvar(j); 
         ultimoJogadorEmContexto = nome;
     }
 
@@ -49,6 +67,7 @@ public class PlanejamentoCargaSemanalFeature {
     public void nao_possui_contrato_ativo(String nome) {
         Jogador j = jogadores.computeIfAbsent(nome, Jogador::new);
         j.setContratoAtivo(false);
+        jogadorRepo.salvar(j); 
         ultimoJogadorEmContexto = nome;
     }
 
@@ -56,12 +75,17 @@ public class PlanejamentoCargaSemanalFeature {
     public void possui_contrato_inativo(String nome) {
         Jogador j = jogadores.computeIfAbsent(nome, Jogador::new);
         j.setContratoAtivo(false);
+        jogadorRepo.salvar(j);
         ultimoJogadorEmContexto = nome;
     }
 
     private void tentarRegistrarTreinamento() {
         Jogador j = jogadores.get(ultimoJogadorEmContexto);
         assertNotNull(j, "Nenhum jogador em contexto para registrar treino.");
+        
+    
+        jogadorRepo.salvar(j); 
+        
         service.registrarTreino(j);
     }
 

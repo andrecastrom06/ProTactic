@@ -43,7 +43,9 @@ public class DefinicaoCapitaoFeature {
         jogadorRepo = new JogadorMock();
         contratoRepo = new ContratoMock();
 
-        service = new CapitaoService(repo); 
+
+        service = new CapitaoService(repo, jogadorRepo); 
+        
         jogadores = new ArrayList<>();
     }
 

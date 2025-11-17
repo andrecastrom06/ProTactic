@@ -3,21 +3,34 @@ package dev.com.protactic.dominio.principal;
 import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
+import dev.com.protactic.dominio.principal.lesao.LesaoRepository;
 import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
 import dev.com.protactic.dominio.principal.lesao.RegistroLesoesServico;
+import dev.com.protactic.mocks.JogadorMock;
+import dev.com.protactic.mocks.LesaoMock;
 import dev.com.protactic.mocks.RegistroLesoesMock;
 
 public class RegistroLesoesFeature {
 
     private RegistroLesoesRepository repo;
+    private JogadorRepository jogadorRepo; // NOVO
+    private LesaoRepository lesaoRepo;     // NOVO
+    
     private RegistroLesoesServico servico;
     private Exception erro;
     private String atletaCorrente;
 
     @io.cucumber.java.Before
     public void setup() {
+        // Inicializa TODOS os mocks
         repo = new RegistroLesoesMock();
-        servico = new RegistroLesoesServico(repo);
+        jogadorRepo = new JogadorMock();
+        lesaoRepo = new LesaoMock();
+        
+        // Usa o novo construtor com os 3 mocks
+        servico = new RegistroLesoesServico(repo, jogadorRepo, lesaoRepo);
+        
         erro = null;
         atletaCorrente = null;
     }
@@ -27,6 +40,7 @@ public class RegistroLesoesFeature {
     @Dado("que o atleta {string} está saudável e com contrato ativo")
     public void atleta_saudavel_contrato_ativo(String atletaId) {
         atletaCorrente = atletaId;
+        repo.cadastrarAtleta(atletaId); // Garante que o atleta existe no mock
         repo.definirContratoAtivo(atletaId, true);
         repo.atualizarStatusAtleta(atletaId, "Saudável");
         repo.atualizarDisponibilidade(atletaId, "disponível");
@@ -36,6 +50,7 @@ public class RegistroLesoesFeature {
     @Dado("que o atleta {string} está saudável e sem contrato ativo")
     public void atleta_saudavel_sem_contrato_ativo(String atletaId) {
         atletaCorrente = atletaId;
+        repo.cadastrarAtleta(atletaId); // Garante que o atleta existe no mock
         repo.definirContratoAtivo(atletaId, false);
         repo.atualizarStatusAtleta(atletaId, "Saudável");
         repo.atualizarDisponibilidade(atletaId, "disponível");
@@ -45,7 +60,7 @@ public class RegistroLesoesFeature {
     @Dado("que o atleta {string} possui uma lesão de grau {int} registrada e ativa")
     public void atleta_possui_lesao_ativa(String atletaId, Integer grau) {
         atletaCorrente = atletaId;
-        // garantir contrato ativo para poder registrar a lesão
+        repo.cadastrarAtleta(atletaId); 
         repo.definirContratoAtivo(atletaId, true);
         servico.registrarLesao(atletaId, grau);
     }

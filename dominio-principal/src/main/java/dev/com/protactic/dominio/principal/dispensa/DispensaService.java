@@ -6,6 +6,7 @@ import dev.com.protactic.dominio.principal.Jogador;
 import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
 import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
 import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
+import java.util.Objects; 
 
 public class DispensaService {
     
@@ -17,6 +18,17 @@ public class DispensaService {
         this.contratoRepo = contratoRepo;
         this.jogadorRepo = jogadorRepo;
         this.clubeRepo = clubeRepo;
+    }
+
+    public void dispensarJogadorPorId(Integer jogadorId) throws Exception {
+        Objects.requireNonNull(jogadorId, "O ID do Jogador não pode ser nulo.");
+        
+        Jogador jogador = jogadorRepo.buscarPorId(jogadorId);
+        if (jogador == null) {
+            throw new Exception("Jogador não encontrado: " + jogadorId);
+        }
+        
+        this.dispensarJogador(jogador);
     }
 
     public void dispensarJogador(Jogador jogador) throws Exception {

@@ -4,15 +4,29 @@ import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
+import io.cucumber.java.Before; 
 
 import dev.com.protactic.mocks.PremiacaoMock;
+import dev.com.protactic.mocks.JogadorMock; 
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository; 
 import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoService;
 
 public class PremiacaoInternaFeature {
 
-    private PremiacaoMock mock = new PremiacaoMock();
+    private PremiacaoMock mock;
     private Premiacao premiacao;
-    private PremiacaoService service = new PremiacaoService(mock);
+    private PremiacaoService service;
+    private JogadorRepository jogadorRepo; 
+
+    @Before
+    public void setup() {
+        this.mock = new PremiacaoMock();
+        this.jogadorRepo = new JogadorMock(); 
+        this.service = new PremiacaoService(mock, jogadorRepo); 
+        
+        this.premiacao = null;
+        this.mock.clear();
+    }
 
     @Dado("que {string} com média {string} no período de {string} existe")
     @Dado("{string} com média {string} no período de {string} existe")

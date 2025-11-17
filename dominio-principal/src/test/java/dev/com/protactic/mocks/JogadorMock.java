@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors; 
 
 public class JogadorMock implements JogadorRepository {
     
@@ -53,6 +54,9 @@ public class JogadorMock implements JogadorRepository {
 
     @Override
     public List<Jogador> findByNomeIgnoreCase(String nome) {
-        throw new UnsupportedOperationException("Unimplemented method 'findByNomeIgnoreCase'");
+        return jogadores.values().stream()
+                .filter(jogador -> jogador.getNome().equalsIgnoreCase(nome))
+                .collect(Collectors.toList());
     }
+
 }

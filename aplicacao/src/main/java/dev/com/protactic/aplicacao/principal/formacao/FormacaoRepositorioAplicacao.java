@@ -1,0 +1,13 @@
+package dev.com.protactic.aplicacao.principal.formacao;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface FormacaoRepositorioAplicacao {
+
+    Optional<FormacaoResumo> buscarResumoPorId(Integer formacaoId);
+
+    FormacaoResumo salvar(Integer partidaId, String esquema, List<Integer> jogadoresIds);
+    
+    FormacaoResumo editar(Integer formacaoId, Integer partidaId, String esquema, List<Integer> jogadoresIds) throws Exception;
+}
