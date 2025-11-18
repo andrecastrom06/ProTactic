@@ -145,7 +145,7 @@ create table if not exists Partida (
     id_clube_casa int not null,
     id_clube_visitante int not null,
     data_jogo date not null,
-    hora time,
+    hora varchar(10),
     placar_clube_casa int,
     placar_clube_visitante int,
     primary key (id),

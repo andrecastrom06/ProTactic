@@ -30,7 +30,7 @@ public class PartidaJPA {
 
     @Column(name = "hora")
     @Temporal(TemporalType.TIME)
-    private Date hora;
+    private String hora;
 
     @Column(name = "placar_clube_casa")
     private int placarClubeCasa;
@@ -48,8 +48,8 @@ public class PartidaJPA {
     public void setClubeVisitanteId(Integer clubeVisitanteId) { this.clubeVisitanteId = clubeVisitanteId; }
     public Date getDataJogo() { return dataJogo; }
     public void setDataJogo(Date dataJogo) { this.dataJogo = dataJogo; }
-    public Date getHora() { return hora; }
-    public void setHora(Date hora) { this.hora = hora; }
+    public String getHora() { return hora; }
+    public void setHora(String hora) { this.hora = hora; }
     public int getPlacarClubeCasa() { return placarClubeCasa; }
     public void setPlacarClubeCasa(int placarClubeCasa) { this.placarClubeCasa = placarClubeCasa; }
     public int getPlacarClubeVisitante() { return placarClubeVisitante; }

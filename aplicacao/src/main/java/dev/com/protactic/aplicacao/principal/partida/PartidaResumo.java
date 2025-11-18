@@ -9,7 +9,7 @@ public interface PartidaResumo {
     Integer getClubeCasaId();
     Integer getClubeVisitanteId();
     Date getDataJogo();
-    Date getHora();
+    String getHora();
     int getPlacarClubeCasa();
     int getPlacarClubeVisitante();
 

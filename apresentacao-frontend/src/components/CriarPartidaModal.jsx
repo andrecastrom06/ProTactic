@@ -9,7 +9,7 @@ export const CriarPartidaModal = ({ onClose, onSuccess, clubeIdLogado }) => {
     const [data, setData] = useState('');
     const [hora, setHora] = useState('');
     const [local, setLocal] = useState('Casa'); 
-    const [error, setError] = useState(''); // Adicionado estado para mostrar erro no modal
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const loadClubes = async () => {
@@ -33,15 +33,17 @@ export const CriarPartidaModal = ({ onClose, onSuccess, clubeIdLogado }) => {
             return;
         }
 
-        // CORREÇÃO: Removemos a concatenação desnecessária de ":00"
-        // ... dentro de handleSubmit
+        // --- ALTERAÇÃO AQUI ---
+        // Adicionamos ":00" se a hora vier apenas como HH:mm
+        const horaFormatada = hora.length === 5 ? hora + ":00" : hora;
+
         const dados = {
             clubeCasaId: local === 'Casa' ? clubeIdLogado : parseInt(adversarioId),
             clubeVisitanteId: local === 'Casa' ? parseInt(adversarioId) : clubeIdLogado,
-            dataJogo: data, // Deve ser STRING pura "YYYY-MM-DD"
-            hora: hora // Deve ser STRING pura "HH:MM"
+            dataJogo: data, 
+            hora: horaFormatada // Envia HH:mm:ss
         };
-
+        // ----------------------
 
         try {
             const novaPartida = await criarNovaPartida(dados);
@@ -50,8 +52,7 @@ export const CriarPartidaModal = ({ onClose, onSuccess, clubeIdLogado }) => {
             onClose();
         } catch (err) {
             console.error("Detalhes do erro:", err);
-            // Mensagem mais informativa
-            setError("Erro ao criar partida. (400 ou 405). Por favor, reinicie o servidor Java e verifique a formatação.");
+            setError("Erro ao criar partida. Verifique se o servidor está rodando.");
         }
     };
 
