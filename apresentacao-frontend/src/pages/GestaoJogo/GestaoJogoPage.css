@@ -136,3 +136,49 @@
     /* Adiciona scroll se a lista ficar muito grande */
     overflow-y: auto;
 }
+.btn-novo-jogo {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-salvar-escalacao {
+    background-color: #28a745; /* Verde */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.btn-salvar-escalacao:hover {
+    background-color: #218838;
+}
+
+.esquema-tatico-box {
+    background-color: #f0f4f8;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #d1d9e6;
+    display: flex;
+    flex-direction: column;
+}
+.esquema-tatico-box label {
+    font-size: 12px;
+    color: #555;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.input-esquema {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #333;
+}

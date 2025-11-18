@@ -9,17 +9,17 @@ import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional; 
+import java.util.Optional;
 
 @Component
-public class PartidaRepositoryImpl implements PartidaRepositorioAplicacao, PartidaRepository { 
+public class PartidaRepositoryImpl implements PartidaRepositorioAplicacao, PartidaRepository {
 
     private final PartidaRepositorySpringData repositoryJPA;
-    private final JpaMapeador mapeador; 
+    private final JpaMapeador mapeador;
 
-    public PartidaRepositoryImpl(PartidaRepositorySpringData repositoryJPA, JpaMapeador mapeador) { 
+    public PartidaRepositoryImpl(PartidaRepositorySpringData repositoryJPA, JpaMapeador mapeador) {
         this.repositoryJPA = repositoryJPA;
-        this.mapeador = mapeador; 
+        this.mapeador = mapeador;
     }
 
     @Override
@@ -30,19 +30,24 @@ public class PartidaRepositoryImpl implements PartidaRepositorioAplicacao, Parti
     }
 
     @Override
+    public Partida salvar(Partida partida) {
+        PartidaJPA jpa = mapeador.map(partida, PartidaJPA.class);
+        PartidaJPA salvo = repositoryJPA.save(jpa);
+        return mapeador.map(salvo, Partida.class);
+    }
+
+    @Override
     public List<PartidaResumo> pesquisarResumos() {
         return repositoryJPA.findAllBy();
     }
-    
+
     @Override
     public List<PartidaResumo> pesquisarResumosPorClubeCasa(Integer clubeCasaId) {
-        Objects.requireNonNull(clubeCasaId, "O ID do Clube da Casa não pode ser nulo.");
         return repositoryJPA.findByClubeCasaId(clubeCasaId);
     }
 
     @Override
     public List<PartidaResumo> pesquisarResumosPorClubeVisitante(Integer clubeVisitanteId) {
-        Objects.requireNonNull(clubeVisitanteId, "O ID do Clube Visitante não pode ser nulo.");
         return repositoryJPA.findByClubeVisitanteId(clubeVisitanteId);
     }
 }

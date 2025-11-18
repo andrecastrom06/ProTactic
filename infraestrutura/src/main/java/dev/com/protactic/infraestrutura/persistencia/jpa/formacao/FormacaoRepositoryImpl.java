@@ -24,44 +24,55 @@ public class FormacaoRepositoryImpl implements FormacaoRepositorioAplicacao {
     }
 
     @Override
+    public Optional<FormacaoResumo> buscarResumoPorPartidaId(Integer partidaId) {
+        return repositoryJPA.findResumoByPartidaId(partidaId);
+    }
+
+    @Override
     public FormacaoResumo salvar(Integer partidaId, String esquema, List<Integer> jogadoresIds) {
-        EscalacaoJPA novaEscalacao = new EscalacaoJPA();
-        novaEscalacao.setPartidaId(partidaId);
-        novaEscalacao.setEsquema(esquema);
-        preencherJogadores(novaEscalacao, jogadoresIds);
+        // Verifica se já existe
+        Optional<EscalacaoJPA> existente = repositoryJPA.findByPartidaId(partidaId);
+        EscalacaoJPA escalacao = existente.orElse(new EscalacaoJPA());
         
-        EscalacaoJPA entidadeSalva = repositoryJPA.save(novaEscalacao);
+        escalacao.setPartidaId(partidaId);
+        escalacao.setEsquema(esquema);
+        preencherJogadores(escalacao, jogadoresIds);
         
-        return repositoryJPA.findResumoById(entidadeSalva.getId())
-            .orElseThrow(() -> new RuntimeException("Não foi possível buscar o resumo da formação salva."));
+        EscalacaoJPA salva = repositoryJPA.save(escalacao);
+        
+        return repositoryJPA.findResumoById(salva.getId())
+                .orElseThrow(() -> new RuntimeException("Erro ao recuperar resumo após salvar."));
     }
 
     @Override
     public FormacaoResumo editar(Integer formacaoId, Integer partidaId, String esquema, List<Integer> jogadoresIds) throws Exception {
         EscalacaoJPA formacaoExistente = repositoryJPA.findById(formacaoId)
-            .orElseThrow(() -> new Exception("Formação com ID " + formacaoId + " não encontrada."));
-
+            .orElseThrow(() -> new Exception("Formação não encontrada."));
+            
         formacaoExistente.setPartidaId(partidaId);
         formacaoExistente.setEsquema(esquema);
         preencherJogadores(formacaoExistente, jogadoresIds);
-
-        EscalacaoJPA entidadeAtualizada = repositoryJPA.save(formacaoExistente);
         
-        return repositoryJPA.findResumoById(entidadeAtualizada.getId())
-             .orElseThrow(() -> new RuntimeException("Não foi possível buscar o resumo da formação editada."));
+        
+        EscalacaoJPA salva = repositoryJPA.save(formacaoExistente);
+        
+        return repositoryJPA.findResumoById(salva.getId())
+                .orElseThrow(() -> new RuntimeException("Erro ao recuperar resumo após editar."));
     }
-    
+
     private void preencherJogadores(EscalacaoJPA escalacao, List<Integer> jogadoresIds) {
-        escalacao.setIdJogador1(jogadoresIds.get(0));
-        escalacao.setIdJogador2(jogadoresIds.get(1));
-        escalacao.setIdJogador3(jogadoresIds.get(2));
-        escalacao.setIdJogador4(jogadoresIds.get(3));
-        escalacao.setIdJogador5(jogadoresIds.get(4));
-        escalacao.setIdJogador6(jogadoresIds.get(5));
-        escalacao.setIdJogador7(jogadoresIds.get(6));
-        escalacao.setIdJogador8(jogadoresIds.get(7));
-        escalacao.setIdJogador9(jogadoresIds.get(8));
-        escalacao.setIdJogador10(jogadoresIds.get(9));
-        escalacao.setIdJogador11(jogadoresIds.get(10));
+        escalacao.setIdJogador1(null); escalacao.setIdJogador2(null); 
+        
+        if (jogadoresIds.size() > 0) escalacao.setIdJogador1(jogadoresIds.get(0));
+        if (jogadoresIds.size() > 1) escalacao.setIdJogador2(jogadoresIds.get(1));
+        if (jogadoresIds.size() > 2) escalacao.setIdJogador3(jogadoresIds.get(2));
+        if (jogadoresIds.size() > 3) escalacao.setIdJogador4(jogadoresIds.get(3));
+        if (jogadoresIds.size() > 4) escalacao.setIdJogador5(jogadoresIds.get(4));
+        if (jogadoresIds.size() > 5) escalacao.setIdJogador6(jogadoresIds.get(5));
+        if (jogadoresIds.size() > 6) escalacao.setIdJogador7(jogadoresIds.get(6));
+        if (jogadoresIds.size() > 7) escalacao.setIdJogador8(jogadoresIds.get(7));
+        if (jogadoresIds.size() > 8) escalacao.setIdJogador9(jogadoresIds.get(8));
+        if (jogadoresIds.size() > 9) escalacao.setIdJogador10(jogadoresIds.get(9));
+        if (jogadoresIds.size() > 10) escalacao.setIdJogador11(jogadoresIds.get(10));
     }
 }

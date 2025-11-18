@@ -16,5 +16,6 @@ public interface JogadorResumo {
     int getGrauLesao();         
     LocalDate getChegadaNoClube(); 
     boolean isCapitao();       
+    boolean isContratoAtivo();
 
 }

@@ -18,7 +18,8 @@ const StarDisplay = ({ nota }) => {
     );
 };
 
-export const AbaAtribuirNotas = ({ atletas }) => {
+// 1. Recebe 'onSalvar' nas props
+export const AbaAtribuirNotas = ({ atletas, onSalvar }) => {
     const [notas, setNotas] = useState({});
 
     const handleNotaChange = (atletaId, valor) => {
@@ -30,9 +31,15 @@ export const AbaAtribuirNotas = ({ atletas }) => {
         }));
     };
 
-    const handleSalvar = () => {
-        console.log("Salvando notas:", notas);
-        alert("Notas salvas com sucesso!");
+    const handleSalvarClick = () => {
+        if (onSalvar) {
+            // 2. Chama a função passada pelo pai (GestaoJogoPage)
+            // Isso enviará as notas para o backend
+            onSalvar(notas);
+        } else {
+            console.warn("Função onSalvar não fornecida.");
+            console.log("Notas (Local):", notas);
+        }
     };
 
     return (
@@ -79,7 +86,7 @@ export const AbaAtribuirNotas = ({ atletas }) => {
             </div>
 
             <div className="aba-notas-footer">
-                <button onClick={handleSalvar} className="btn-salvar-notas">
+                <button onClick={handleSalvarClick} className="btn-salvar-notas">
                     Salvar Avaliações
                 </button>
             </div>

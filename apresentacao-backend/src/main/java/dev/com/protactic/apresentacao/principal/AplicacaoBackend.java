@@ -37,6 +37,7 @@ import dev.com.protactic.dominio.principal.dispensa.*;
 import dev.com.protactic.dominio.principal.lesao.*;
 import dev.com.protactic.dominio.principal.nota.*;
 import dev.com.protactic.dominio.principal.partida.PartidaRepository;
+import dev.com.protactic.dominio.principal.partida.PartidaService;
 import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalRepositoryMock;
 import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalService;
 import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
@@ -233,6 +234,11 @@ public class AplicacaoBackend {
     @Bean
     public PlanejamentoCargaSemanalRepositoryMock planejamentoCargaSemanalRepositoryMock() {
         return new PlanejamentoCargaSemanalRepositoryMock();
+    }
+    
+    @Bean
+    public PartidaService partidaService(PartidaRepository partidaRepo, ClubeRepository clubeRepo) {
+        return new PartidaService(partidaRepo, clubeRepo);
     }
 
     @Bean

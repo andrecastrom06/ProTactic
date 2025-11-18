@@ -1,19 +1,15 @@
 package dev.com.protactic.apresentacao.principal;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity; 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping; 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable; 
-import org.springframework.web.bind.annotation.RestController;
+import java.util.Optional; 
 
-import dev.com.protactic.aplicacao.principal.formacao.FormacaoServicoAplicacao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import dev.com.protactic.aplicacao.principal.formacao.FormacaoResumo;
+import dev.com.protactic.aplicacao.principal.formacao.FormacaoServicoAplicacao;
 
 @RestController
 @RequestMapping("backend/formacao")
@@ -31,21 +27,13 @@ public class FormacaoControlador {
 
     @PostMapping(path = "/salvar")
     public ResponseEntity<?> salvarFormacao(@RequestBody FormacaoFormulario formulario) {
-        
-        if (formulario == null) {
-            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
-        }
-        
+        if (formulario == null) return ResponseEntity.badRequest().body("Formulário nulo.");
         try {
             FormacaoServicoAplicacao.FormacaoDados dados = new FormacaoServicoAplicacao.FormacaoDados(
-                formulario.partidaId(),
-                formulario.esquema(),
-                formulario.jogadoresIds()
+                formulario.partidaId(), formulario.esquema(), formulario.jogadoresIds()
             );
-            
             FormacaoResumo escalacaoSalva = formacaoServicoAplicacao.salvarFormacao(dados);
             return ResponseEntity.ok(escalacaoSalva); 
-
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -55,26 +43,26 @@ public class FormacaoControlador {
     public ResponseEntity<?> editarFormacao(
             @PathVariable("formacaoId") Integer formacaoId,
             @RequestBody FormacaoFormulario formulario) {
-
-        if (formulario == null) {
-            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
-        }
-
+        if (formulario == null) return ResponseEntity.badRequest().body("Formulário nulo.");
         try {
             FormacaoServicoAplicacao.FormacaoDados dados = new FormacaoServicoAplicacao.FormacaoDados(
-                formulario.partidaId(),
-                formulario.esquema(),
-                formulario.jogadoresIds()
+                formulario.partidaId(), formulario.esquema(), formulario.jogadoresIds()
             );
-
             FormacaoResumo escalacaoAtualizada = formacaoServicoAplicacao.editarFormacao(formacaoId, dados);
             return ResponseEntity.ok(escalacaoAtualizada); 
-
         } catch (Exception e) {
             if (e.getMessage().contains("não encontrada")) {
                  return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
             }
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/buscar-por-partida/{partidaId}")
+    public ResponseEntity<FormacaoResumo> buscarPorPartida(@PathVariable Integer partidaId) {
+        Optional<FormacaoResumo> formacao = formacaoServicoAplicacao.buscarPorPartida(partidaId);
+        
+        return formacao.map(ResponseEntity::ok)
+                       .orElse(ResponseEntity.noContent().build());
     }
 }

@@ -5,4 +5,5 @@ import java.util.Optional;
 
 public interface PartidaRepository {
     Optional<Partida> buscarPorId(Integer id);
+    Partida salvar(Partida partida);
 }

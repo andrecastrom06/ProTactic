@@ -9,6 +9,7 @@ import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCar
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FormacaoServicoAplicacao {
@@ -60,6 +61,10 @@ public class FormacaoServicoAplicacao {
             formulario.esquema(),
             formulario.jogadoresIds()
         );
+    }
+    
+    public Optional<FormacaoResumo> buscarPorPartida(Integer partidaId) {
+        return formacaoRepository.buscarResumoPorPartidaId(partidaId);
     }
 
     private List<String> validarAptidaoJogadores(List<Integer> jogadoresIds, Integer partidaId) {
