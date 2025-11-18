@@ -4,6 +4,13 @@
     flex-direction: column;
 }
 
+/* Container do topo para o botão */
+.aba-notas-header-actions {
+    display: flex;
+    justify-content: flex-end; /* Botão à direita */
+    margin-bottom: 16px;
+}
+
 .aba-notas-tabela-wrapper {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
@@ -18,10 +25,10 @@
 
 .aba-notas-tabela th,
 .aba-notas-tabela td {
-    padding: 16px;
+    padding: 12px; /* Padding um pouco menor */
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
-    vertical-align: middle; /* Alinha o conteúdo no meio */
+    vertical-align: middle;
 }
 
 .aba-notas-tabela th {
@@ -30,46 +37,31 @@
     color: #333;
 }
 
-.aba-notas-tabela tr:last-child td {
-    border-bottom: none;
-}
-
-.coluna-nota-visual {
-    display: flex;
-    align-items: center;
-    gap: 12px; /* Espaço entre o texto e as estrelas */
-}
-
-.nota-texto {
-    font-weight: 600;
-    color: #333;
-    font-size: 14px;
-    width: 35px; 
-    text-align: right;
-}
-
 .star-display {
-    display: flex; /* Garante que as estrelas fiquem em linha */
+    display: flex;
     gap: 2px;
 }
 
 .input-nota {
-    width: 70px;
-    padding: 8px;
+    width: 60px;
+    padding: 6px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 14px;
-    font-weight: 600;
     text-align: center;
 }
-.aba-notas-footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 24px;
+
+/* Estilo reduzido para o input de observação */
+.input-obs {
+    width: 100%;
+    max-width: 250px; /* Limita a largura máxima */
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
 }
 
 .btn-salvar-notas {
-    background-color: #004d40; /* Verde escuro */
+    background-color: #004d40;
     color: white;
     border: none;
     padding: 10px 20px;

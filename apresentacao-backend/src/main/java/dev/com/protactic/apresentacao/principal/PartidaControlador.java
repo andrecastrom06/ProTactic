@@ -5,6 +5,9 @@ import dev.com.protactic.aplicacao.principal.partida.PartidaServicoAplicacao;
 import dev.com.protactic.dominio.principal.Partida;
 import dev.com.protactic.dominio.principal.partida.PartidaService;
 
+// 1. IMPORTAÇÃO CRUCIAL
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,7 @@ public class PartidaControlador {
     public record CriarPartidaFormulario(
         Integer clubeCasaId,
         Integer clubeVisitanteId,
+        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
         Date dataJogo,
         String hora
     ) {}
@@ -46,6 +50,7 @@ public class PartidaControlador {
             );
             return ResponseEntity.ok(nova);
         } catch (Exception e) {
+            e.printStackTrace(); 
             return ResponseEntity.badRequest().build();
         }
     }

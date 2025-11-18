@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 
 import { CampoTatico } from './components/CampoTatico';
@@ -9,53 +9,54 @@ import './GestaoJogoPage.css';
 
 import { useAuth } from '../../store/AuthContext';
 import { buscarTodosJogadores } from '../../services/jogadorService';
-// Importamos o serviço atualizado (ver passo 2 abaixo)
 import { buscarJogosDoClube, salvarEscalacao, buscarEscalacaoPorPartida } from '../../services/jogoService'; 
+// IMPORTA OS SERVIÇOS DE NOTAS
+import { atribuirNota, buscarNotasPorJogo } from '../../services/notaService';
 
 export const GestaoJogoPage = () => {
     const { clubeIdLogado } = useAuth();
     const [abaAtiva, setAbaAtiva] = useState('ESCALACAO');
 
     // --- Estados de Dados ---
-    const [todosAtletas, setTodosAtletas] = useState([]); // Cache de todos os atletas do clube
+    const [todosAtletas, setTodosAtletas] = useState([]); 
     const [atletasDisponiveis, setAtletasDisponiveis] = useState([]);
     const [reservas, setReservas] = useState([]); 
     const [atletasNoCampo, setAtletasNoCampo] = useState([]);
     
     const [partidas, setPartidas] = useState([]);
-    const [partidaSelecionada, setPartidaSelecionada] = useState(''); // ID da partida (string para o select)
+    const [partidaSelecionada, setPartidaSelecionada] = useState('');
     
+    // Estado para controle de sobrescrita
+    const [escalacaoJaExiste, setEscalacaoJaExiste] = useState(false);
+
+    // Estado para guardar as notas vindas do banco
+    const [notasDoBanco, setNotasDoBanco] = useState([]);
+
     const [esquemaTatico, setEsquemaTatico] = useState('4-3-3'); 
     const [showModalCriar, setShowModalCriar] = useState(false);
-
     const [loading, setLoading] = useState(true);
     const campoTaticoRef = useRef(null);
 
-    // 1. Carrega Dados Iniciais (Jogadores e Partidas)
+    // 1. Carrega Dados Iniciais
     useEffect(() => {
         const carregarDados = async () => {
             if (!clubeIdLogado) return;
             setLoading(true);
             try {
-                // A. Busca Jogadores
                 const players = await buscarTodosJogadores();
-                // Filtra: Do meu clube + Saudáveis + Contrato Ativo
                 const meusJogadores = players.filter(j => 
                     j.clubeId === clubeIdLogado && j.saudavel && j.contratoAtivo
                 ).map(j => ({ ...j, numero: j.id, posicao: j.posicao || '?' }));
                 
                 setTodosAtletas(meusJogadores);
-                setAtletasDisponiveis(meusJogadores); // Inicialmente todos disponíveis
+                setAtletasDisponiveis(meusJogadores);
 
-                // B. Busca Partidas
                 const jogos = await buscarJogosDoClube(clubeIdLogado);
                 setPartidas(jogos);
                 
-                // Seleciona a primeira partida automaticamente se existir
                 if (jogos.length > 0) {
                     setPartidaSelecionada(String(jogos[0].id));
                 }
-
             } catch (error) {
                 console.error("Erro inicial:", error);
             } finally {
@@ -65,26 +66,27 @@ export const GestaoJogoPage = () => {
         carregarDados();
     }, [clubeIdLogado]);
 
-    // 2. Carrega a Escalação quando muda a Partida Selecionada
+    // 2. Carrega a Escalação E AS NOTAS quando muda a Partida Selecionada
     useEffect(() => {
-        const carregarEscalacao = async () => {
+        const carregarDetalhesPartida = async () => {
             if (!partidaSelecionada || todosAtletas.length === 0) return;
 
             try {
-                // Reseta as listas para o estado inicial (todos disponíveis)
+                // Reset visual
                 setAtletasNoCampo([]);
                 setReservas([]);
-                // Cria uma cópia para manipular
+                setEscalacaoJaExiste(false);
+                setNotasDoBanco([]); // Limpa notas antigas
+
                 let poolDeAtletas = [...todosAtletas];
 
-                // Busca no backend
+                // --- A. Busca Escalação ---
                 const escalacao = await buscarEscalacaoPorPartida(partidaSelecionada);
                 
                 if (escalacao) {
-                    // Se já existe escalação salva, aplica:
+                    setEscalacaoJaExiste(true); // Ativa flag de aviso
                     setEsquemaTatico(escalacao.esquema || '4-3-3');
                     
-                    // Recupera IDs dos 11 titulares
                     const idsTitulares = [
                         escalacao.idJogador1, escalacao.idJogador2, escalacao.idJogador3,
                         escalacao.idJogador4, escalacao.idJogador5, escalacao.idJogador6,
@@ -92,35 +94,34 @@ export const GestaoJogoPage = () => {
                         escalacao.idJogador10, escalacao.idJogador11
                     ].filter(id => id !== null); 
 
-                    // Distribui os jogadores
                     const novosTitulares = [];
-                    
                     idsTitulares.forEach(id => {
                         const index = poolDeAtletas.findIndex(a => a.id === id);
                         if (index !== -1) {
-                            // Move do pool para titulares
                             const atleta = poolDeAtletas[index];
-                            // (Futuramente podemos salvar coordenadas X/Y no banco, por enquanto fixamos centro)
                             novosTitulares.push({ ...atleta, position: { x: 50, y: 50 } });
-                            poolDeAtletas.splice(index, 1); // Remove do pool
+                            poolDeAtletas.splice(index, 1); 
                         }
                     });
-
                     setAtletasNoCampo(novosTitulares);
-                    setAtletasDisponiveis(poolDeAtletas); // O resto fica disponível
+                    setAtletasDisponiveis(poolDeAtletas); 
                 } else {
-                    // Se não tem escalação salva, reseta tudo
                     setAtletasDisponiveis(todosAtletas);
                 }
+
+                // --- B. Busca Notas ---
+                // O backend espera "JOGO-ID" como string para a chave composta
+                const notas = await buscarNotasPorJogo("JOGO-" + partidaSelecionada);
+                setNotasDoBanco(notas);
+
             } catch (error) {
-                console.error("Erro ao carregar escalação:", error);
+                console.error("Erro ao carregar detalhes:", error);
             }
         };
-        carregarEscalacao();
+        carregarDetalhesPartida();
     }, [partidaSelecionada, todosAtletas]);
 
-
-    // 3. Lógica de Drag & Drop
+    // 3. Drag & Drop (Inalterado)
     const handleDragEnd = (event) => {
         const { active, over, delta } = event;
         if (!over) return; 
@@ -130,7 +131,6 @@ export const GestaoJogoPage = () => {
         const idDestino = over.id; 
         const campoRect = campoTaticoRef.current?.getBoundingClientRect();
 
-        // Movimento dentro do campo
         if (tipoOrigem === 'NO_CAMPO' && idDestino === 'CAMPO_TATICO') {
             if (!campoRect) return;
             const percentDeltaX = (delta.x / campoRect.width) * 100;
@@ -141,14 +141,12 @@ export const GestaoJogoPage = () => {
             return;
         }
         
-        // Remove da origem
         if (tipoOrigem === 'DISPONIVEL') setAtletasDisponiveis(p => p.filter(a => a.id !== atletaArrastado.id));
         else if (tipoOrigem === 'RESERVA') setReservas(p => p.filter(a => a.id !== atletaArrastado.id));
         else if (tipoOrigem === 'NO_CAMPO') setAtletasNoCampo(p => p.filter(a => a.id !== atletaArrastado.id));
 
         const { position, ...atletaLimpo } = atletaArrastado;
 
-        // Adiciona no destino
         if (idDestino === 'CAMPO_TATICO') {
             let newPosition = { x: 50, y: 50 }; 
             if (campoRect && event.active.rect.current.translated) {
@@ -160,9 +158,7 @@ export const GestaoJogoPage = () => {
                      y: (relativeY / campoRect.height) * 100 
                  };
             }
-            if (atletasNoCampo.length >= 11) {
-                alert("Atenção: Já existem 11 jogadores em campo.");
-            }
+            if (atletasNoCampo.length >= 11) alert("Atenção: Já existem 11 jogadores em campo.");
             setAtletasNoCampo(prev => [...prev, { ...atletaLimpo, position: newPosition }]);
         } else if (idDestino === 'DISPONIVEIS_LIST') {
             setAtletasDisponiveis(p => [...p, atletaLimpo]);
@@ -171,13 +167,19 @@ export const GestaoJogoPage = () => {
         }
     };
 
-    // 4. Salvar no Backend
+    // 4. Salvar Escalação COM AVISO
     const handleSalvarEscalacao = async () => {
         if (!partidaSelecionada) {
             alert("Selecione uma partida primeiro.");
             return;
         }
         
+        // Lógica do Aviso
+        if (escalacaoJaExiste) {
+            const confirmar = window.confirm("Já existe uma escalação salva para este jogo. Ao salvar a nova escalação, a antiga será substituída. Deseja continuar?");
+            if (!confirmar) return;
+        }
+
         if (atletasNoCampo.length !== 11) {
             if(!window.confirm(`Tens ${atletasNoCampo.length} jogadores em campo. O jogo requer 11. Salvar mesmo assim?`)) {
                 return;
@@ -185,7 +187,6 @@ export const GestaoJogoPage = () => {
         }
 
         const idsJogadores = atletasNoCampo.map(a => a.id);
-
         const payload = {
             partidaId: parseInt(partidaSelecionada, 10),
             esquema: esquemaTatico,
@@ -195,20 +196,43 @@ export const GestaoJogoPage = () => {
         try {
             await salvarEscalacao(payload);
             alert("Escalação salva com sucesso!");
+            setEscalacaoJaExiste(true); // Atualiza para evitar duplo aviso imediato
         } catch (err) {
             alert("Erro ao salvar: " + err.message);
         }
     };
 
-    // Callback do Modal de Criar Partida
-    const handlePartidaCriada = (novaPartida) => {
-        setPartidas([...partidas, novaPartida]);
-        setPartidaSelecionada(String(novaPartida.id)); // Seleciona a nova
+    // 5. Salvar Notas (Integrado)
+    const handleSalvarNotas = async (avaliacoes) => {
+        if (!partidaSelecionada) return;
+        try {
+            const promises = Object.entries(avaliacoes).map(([jogadorIdStr, dados]) => {
+                // Envia se tiver nota OU observação
+                if (dados.nota > 0 || dados.observacao) {
+                    return atribuirNota({
+                        jogoId: "JOGO-" + partidaSelecionada,
+                        jogadorId: jogadorIdStr,
+                        nota: dados.nota || 0,
+                        observacao: dados.observacao || ""
+                    });
+                }
+                return Promise.resolve();
+            });
+
+            await Promise.all(promises);
+            alert("Avaliações salvas com sucesso!");
+        } catch (error) {
+            alert("Erro ao salvar avaliações: " + error.message);
+        }
     };
 
-    // Filtra quem aparece na aba de notas: Só quem está no campo ou reserva
-    const atletasParaAvaliacao = [...atletasNoCampo, ...reservas];
-    
+    // Jogadores elegíveis para nota (Titulares + Reservas definidos na aba escalação)
+    // Nota: Se quiseres que apareçam TODOS, usa 'todosAtletas'. 
+    // Aqui usamos 'atletasNoCampo + reservas' assumindo que o usuário montou o time.
+    const atletasParaAvaliacao = [...atletasNoCampo, ...reservas]; 
+    // Se a lista estiver vazia (ex: user foi direto para notas), usa todosAtletas como fallback seguro?
+    const listaFinalAvaliacao = atletasParaAvaliacao.length > 0 ? atletasParaAvaliacao : todosAtletas;
+
     const partidaObj = partidas.find(p => p.id === Number(partidaSelecionada));
     const tituloPartida = partidaObj ? `Jogo: ${partidaObj.id}` : "Selecione uma Partida";
 
@@ -217,13 +241,10 @@ export const GestaoJogoPage = () => {
     return (
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <div className="gestao-jogo-page">
-                
                 <header className="gestao-jogo-header">
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <h2>{tituloPartida}</h2>
-                        {/* O seletor foi removido daqui para limpar o header, conforme pediste */}
                     </div>
-
                     <nav className="gestao-jogo-tabs">
                         <span className={`tab-item ${abaAtiva === 'ESCALACAO' ? 'active' : ''}`} onClick={() => setAbaAtiva('ESCALACAO')}>
                             Escalação Tática
@@ -244,46 +265,27 @@ export const GestaoJogoPage = () => {
                                         💾 Salvar Escalação
                                     </button>
                                 </div>
-
                                 <CampoTatico atletas={atletasNoCampo} fieldRef={campoTaticoRef} />
                             </div>
-                            
                             <div className="lista-column">
-                                
-                                {/* --- NOVO: Seletor de Partida na coluna direita --- */}
                                 <div className="partida-selector-box" style={{marginBottom: '15px', padding: '10px', background: '#eef', borderRadius: '5px'}}>
                                     <label style={{display: 'block', fontWeight: 'bold', marginBottom: '5px'}}>Selecionar Partida:</label>
                                     <div style={{display: 'flex', gap: '5px'}}>
-                                        <select 
-                                            value={partidaSelecionada} 
-                                            onChange={(e) => setPartidaSelecionada(e.target.value)}
-                                            style={{flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc'}}
-                                        >
+                                        <select value={partidaSelecionada} onChange={(e) => setPartidaSelecionada(e.target.value)} style={{flex: 1}}>
                                             <option value="">Selecione...</option>
                                             {partidas.map(p => (
                                                 <option key={p.id} value={p.id}>
-                                                    {/* Formata a data se existir, ou usa ID */}
                                                     Jogo #{p.id} {p.dataJogo ? ` - ${new Date(p.dataJogo).toLocaleDateString()}` : ''}
                                                 </option>
                                             ))}
                                         </select>
-                                        <button className="btn-novo-jogo" onClick={() => setShowModalCriar(true)} style={{fontSize: '18px', padding: '0 10px'}}>
-                                            +
-                                        </button>
+                                        <button className="btn-novo-jogo" onClick={() => setShowModalCriar(true)}>+</button>
                                     </div>
                                 </div>
-
                                 <div className="esquema-tatico-box">
                                     <label>Esquema Tático:</label>
-                                    <input 
-                                        type="text" 
-                                        value={esquemaTatico} 
-                                        onChange={(e) => setEsquemaTatico(e.target.value)}
-                                        placeholder="ex: 4-3-3"
-                                        className="input-esquema"
-                                    />
+                                    <input type="text" value={esquemaTatico} onChange={(e) => setEsquemaTatico(e.target.value)} className="input-esquema"/>
                                 </div>
-
                                 <ListaAtletas disponiveis={atletasDisponiveis} reservas={reservas} />
                             </div>
                         </>
@@ -291,8 +293,9 @@ export const GestaoJogoPage = () => {
 
                     {abaAtiva === 'NOTAS' && (
                         <AbaAtribuirNotas 
-                            atletas={atletasParaAvaliacao} // Passa apenas quem jogou
-                            onSalvar={(notas) => console.log("Salvar notas (TODO):", notas)} 
+                            atletas={listaFinalAvaliacao}
+                            notasIniciais={notasDoBanco} // Passa as notas carregadas
+                            onSalvar={handleSalvarNotas} 
                         />
                     )}
                 </div>
@@ -301,7 +304,10 @@ export const GestaoJogoPage = () => {
             {showModalCriar && (
                 <CriarPartidaModal 
                     onClose={() => setShowModalCriar(false)} 
-                    onSuccess={handlePartidaCriada} 
+                    onSuccess={(novaPartida) => {
+                        setPartidas([...partidas, novaPartida]);
+                        setPartidaSelecionada(String(novaPartida.id));
+                    }} 
                     clubeIdLogado={clubeIdLogado}
                 />
             )}
