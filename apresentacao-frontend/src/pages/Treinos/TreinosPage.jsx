@@ -7,7 +7,6 @@ import { GiSoccerField } from "react-icons/gi";
 import { FaPlus } from "react-icons/fa";
 import './TreinosPage.css';
 
-// --- DADOS INICIAIS ---
 const DADOS_INICIAIS_SEMANA = [
     { dia: 'Segunda', tipo: 'Físico', hora: '09:00', duracao: '90min', foco: 'Resistência Anaeróbica', intensidade: 85, cor: 'green' },
     { dia: 'Terça', tipo: 'Tático', hora: '10:00', duracao: '120min', foco: 'Construção Ofensiva', intensidade: 70, cor: 'teal' },
@@ -18,7 +17,6 @@ const DADOS_INICIAIS_SEMANA = [
     { dia: 'Domingo', tipo: 'Folga', hora: '', duracao: '', foco: '', intensidade: 0, cor: 'gray' }
 ];
 
-// ... (Mantenha KPI_DATA, CARGA_ATLETAS, HISTORICO_TREINOS iguais) ...
 const KPI_DATA = { agendados: 5, cargaMedia: 74, participacao: "25/28", horasTotais: "8.5h" };
 const CARGA_ATLETAS = [
     { id: 1, nome: 'João Silva', posicao: 'Atacante', status: 'Disponível', carga: 85, corCarga: 'red' },
@@ -36,7 +34,6 @@ export const TreinosPage = () => {
     const [modalAberto, setModalAberto] = useState(false);
     const [tipoTreinoSelecionado, setTipoTreinoSelecionado] = useState(''); 
     
-    // Novo estado com o campo 'foco'
     const [novoTreino, setNovoTreino] = useState({
         dia: 'Segunda',
         hora: '09:00',
@@ -48,7 +45,6 @@ export const TreinosPage = () => {
     const abrirModal = (tipo) => {
         setTipoTreinoSelecionado(tipo);
         setModalAberto(true);
-        // Reseta o form ao abrir
         setNovoTreino({ dia: 'Segunda', hora: '09:00', duracao: '90min', foco: '', intensidade: 50 });
     };
 
@@ -74,7 +70,7 @@ export const TreinosPage = () => {
                     tipo: tipoTreinoSelecionado,
                     hora: novoTreino.hora,
                     duracao: novoTreino.duracao,
-                    foco: novoTreino.foco, // Salvando o foco
+                    foco: novoTreino.foco,
                     intensidade: novoTreino.intensidade,
                     cor: cor
                 };
@@ -95,11 +91,9 @@ export const TreinosPage = () => {
 
     return (
         <div className="treinos-page">
-            {/* --- MODAL DE ADICIONAR TREINO (REDESENHADO) --- */}
             {modalAberto && (
                 <div className="modal-overlay" onClick={(e) => { if(e.target.className === 'modal-overlay') fecharModal() }}>
                     <div className="modal-content">
-                        {/* Header Dinâmico baseado no tipo */}
                         <div className={`modal-header ${tipoTreinoSelecionado.toLowerCase()}`}>
                             <div className="header-icon-title">
                                 {tipoTreinoSelecionado === 'Físico' ? <LuDumbbell size={24}/> : <GiSoccerField size={24}/>}
@@ -198,9 +192,7 @@ export const TreinosPage = () => {
                 </div>
             </header>
 
-            {/* KPI Grid (Igual) */}
             <section className="kpi-grid">
-                {/* ... (Código KPI igual) ... */}
                 <div className="kpi-card">
                     <div className="kpi-info">
                         <span>Treinos Agendados</span>
@@ -235,7 +227,6 @@ export const TreinosPage = () => {
                 </div>
             </section>
 
-            {/* Calendário Semanal (Atualizado para mostrar o Foco) */}
             <section className="section-container">
                 <div className="section-header">
                     <h2>Calendário Semanal</h2>
