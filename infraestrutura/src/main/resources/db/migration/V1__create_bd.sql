@@ -187,21 +187,6 @@ create table if not exists Escalacao (
 );
 
 -- ===========================
--- Tabela Tático
--- ===========================
-create table if not exists Tatico (
-    id int not null auto_increment,
-    id_jogador int not null,
-    id_partida int not null,
-    categoria varchar(50),
-    nome varchar(100),
-    descricao varchar(255),
-    primary key (id),
-    foreign key (id_jogador) references Jogador(id),
-    foreign key (id_partida) references Partida(id)
-);
-
--- ===========================
 -- Tabela Proposta (BDD 5)
 -- (UNIFICADA - 'data' adicionada diretamente)
 -- ===========================

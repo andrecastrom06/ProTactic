@@ -70,3 +70,15 @@ export const buscarEscalacaoPorPartida = async (partidaId) => {
         throw error;
     }
 };
+export const buscarEscalacaoDaPartida = async (partidaId) => {
+    try {
+        // Endpoint hipotético baseado na existência do EscalacaoControlador
+        const response = await fetch(`${API_BASE_URL}/escalacao/partida/${partidaId}`);
+        if (!response.ok) return []; 
+        // O retorno deve ser a lista de jogadores ou objeto escalacao contendo jogadores
+        return await response.json(); 
+    } catch (error) {
+        console.error("Erro ao buscar escalação:", error);
+        return [];
+    }
+};

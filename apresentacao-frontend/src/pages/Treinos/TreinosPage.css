@@ -337,3 +337,214 @@
         text-align: left;
     }
 }
+/* Estilos Gerais */
+.section-header.tatico-border { border-left: 5px solid teal; padding-left: 15px; }
+.section-header.fisico-border { border-left: 5px solid #4caf50; padding-left: 15px; }
+
+.header-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Cards em Lista */
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.training-card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid transparent;
+}
+
+.training-card.tatico { border-left-color: teal; }
+.training-card.fisico { border-left-color: #4caf50; }
+
+.card-left h3 { margin: 4px 0; font-size: 1.1rem; color: #333; }
+.card-meta { display: flex; gap: 15px; font-size: 0.85rem; color: #666; margin-top: 5px; }
+
+.match-badge {
+    background: #e0f2f1;
+    color: teal;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.convocados-tag { display: flex; align-items: center; gap: 5px; color: #f57c00; }
+.convocados-tag.all { color: #666; }
+
+/* Botão de Atualizar Status */
+.btn-update-status {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.2s;
+}
+.btn-update-status:hover { background: #f5f5f5; transform: rotate(180deg); }
+
+.card-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Modal Específico */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.player-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.player-avatar {
+    width: 24px;
+    height: 24px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #555;
+}
+
+.intensity-mini-bar {
+    width: 100px;
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+.intensity-mini-bar div {
+    height: 100%;
+    background: #4caf50;
+}
+
+/* Status Colors */
+.status-success { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
+.status-warning { background: #fef9c3; color: #854d0e; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
+.status-gray { background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
+
+.fisico-header { border-bottom: 3px solid #4caf50; }
+.tatico-header { border-bottom: 3px solid teal; }
+
+/* --- KPIS DETALHADOS (Status) --- */
+.status-kpi-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.status-kpi-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.status-kpi-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 10%;
+    height: 80%;
+    width: 1px;
+    background: #cbd5e1;
+}
+
+.status-kpi-value { font-size: 1.2rem; font-weight: bold; color: #334155; }
+.status-kpi-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
+
+/* Cores dos KPIs */
+.kpi-plan { color: #64748b; }
+.kpi-prog { color: #d97706; }
+.kpi-done { color: #059669; }
+
+/* --- TOGGLE ESCOPO (Equipe vs Individual) --- */
+.scope-toggle {
+    display: flex;
+    background: #e2e8f0;
+    padding: 4px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.scope-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.scope-btn.active {
+    background: white;
+    color: #0f172a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- CARGA NO CARD TÁTICO --- */
+.tactical-load-bar {
+    margin-top: 8px;
+    background: #f1f5f9;
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+    display: flex;
+}
+.tactical-load-fill {
+    height: 100%;
+    background-color: #3b82f6;
+}
+.load-label { font-size: 0.7rem; color: #64748b; margin-top: 2px; display: block; }
+/* Animação para o botão de refresh */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+    color: #009688;
+}
