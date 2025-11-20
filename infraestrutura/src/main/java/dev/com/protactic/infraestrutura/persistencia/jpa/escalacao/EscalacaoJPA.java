@@ -14,6 +14,9 @@ public class EscalacaoJPA {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "id_clube") 
+    private Integer clubeId;
     
     @Column(name = "id_partida")
     private Integer partidaId;
@@ -73,4 +76,6 @@ public class EscalacaoJPA {
     public void setIdJogador10(Integer idJogador10) { this.idJogador10 = idJogador10; }
     public Integer getIdJogador11() { return idJogador11; }
     public void setIdJogador11(Integer idJogador11) { this.idJogador11 = idJogador11; }
+    public Integer getClubeId() { return clubeId; }
+    public void setClubeId(Integer clubeId) { this.clubeId = clubeId; }
 }

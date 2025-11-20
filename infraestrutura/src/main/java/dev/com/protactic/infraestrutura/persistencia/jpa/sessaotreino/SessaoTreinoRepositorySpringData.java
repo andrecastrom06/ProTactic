@@ -26,4 +26,7 @@ public interface SessaoTreinoRepositorySpringData extends JpaRepository<SessaoTr
     List<SessaoTreinoResumo> findByPartidaId(Integer partidaId);
 
     List<SessaoTreinoResumo> findByConvocadosIdsContaining(Integer jogadorId);
+
+    List<SessaoTreinoJPA> findByPartidaIdAndClubeId(Integer partidaId, Integer clubeId);
+    
 }

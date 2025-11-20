@@ -3,7 +3,6 @@ package dev.com.protactic.aplicacao.principal.escalacao;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-
 @Service 
 public class EscalacaoServicoAplicacao {
     
@@ -13,7 +12,7 @@ public class EscalacaoServicoAplicacao {
         this.repositorio = repositorio;
     }
 
-    public List<EscalacaoResumo> pesquisarResumosPorData(String jogoData) {
-        return repositorio.pesquisarResumosPorData(jogoData);
+    public List<EscalacaoResumo> pesquisarResumosPorData(String jogoData, Integer clubeId) {
+        return repositorio.pesquisarResumosPorData(jogoData, clubeId);
     }
 }

@@ -4,7 +4,7 @@ import { API_BASE_URL } from '../config/apiConfig';
 
 export const buscarTodasSessoesTaticas = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}/sessao-treino/pesquisa`); // Ajuste conforme seu endpoint real
+        const response = await fetch(`${API_BASE_URL}/sessao-treino/pesquisa`); 
         if (!response.ok) return []; 
         return await response.json();
     } catch (error) {
@@ -26,7 +26,24 @@ export const criarSessaoTatica = async (payload) => {
     return true;
 };
 
-// --- TREINOS FÍSICOS ---
+export const buscarSessoesPorPartida = async (partidaId, clubeId) => {
+    try {
+        let url = `${API_BASE_URL}/sessao-treino/listar-por-partida/${partidaId}`;
+        if (clubeId) {
+            url += `?clubeId=${clubeId}`;
+        }
+        const response = await fetch(url);
+        
+        if (response.status === 204) return [];
+        if (!response.ok) throw new Error('Erro ao buscar sessões.');
+
+        return await response.json();
+    } catch (error) {
+        console.error("Erro no service buscarSessoesPorPartida:", error);
+        return [];
+    }
+};
+
 
 export const buscarTreinosFisicosPorJogador = async (jogadorId) => {
     try {
@@ -55,7 +72,7 @@ export const salvarTreinoFisico = async (jogadorId, treinoData) => {
 export const atualizarStatusTreinoFisico = async (treinoId, novoStatus) => {
     try {
         const response = await fetch(`${API_BASE_URL}/treino-fisico/atualizar-status/${treinoId}`, {
-            method: 'PATCH', // O Controlador usa @PatchMapping
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: novoStatus })
         });

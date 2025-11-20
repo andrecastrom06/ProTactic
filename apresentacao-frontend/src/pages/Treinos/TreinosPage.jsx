@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
-    LuCalendarDays, LuActivity, LuUsers, LuClock, LuDumbbell,
+    LuCalendarDays, LuUsers, LuDumbbell,
     LuX, LuCheck, LuZap, LuUser, LuRefreshCw
 } from "react-icons/lu";
 import { GiSoccerField, GiWhistle } from "react-icons/gi";
 import { FaPlus } from "react-icons/fa";
 import './TreinosPage.css';
 
-// Serviços Reais
 import { useAuth } from '../../store/AuthContext';
 import { buscarTodosJogadores } from '../../services/jogadorService';
 import { buscarJogosDoClube, buscarEscalacaoDaPartida } from '../../services/jogoService';
@@ -17,13 +16,13 @@ import {
     criarSessaoTatica, 
     salvarTreinoFisico, 
     buscarTreinosFisicosPorJogador,
-    atualizarStatusTreinoFisico // Nova função importada
+    atualizarStatusTreinoFisico,
+    buscarSessoesPorPartida // Importando a função correta
 } from '../../services/treinoService';
 
 export const TreinosPage = () => {
     const { clubeIdLogado } = useAuth();
     
-    // --- ESTADOS DE DADOS ---
     const [jogadores, setJogadores] = useState([]); 
     const [jogadoresEscalados, setJogadoresEscalados] = useState([]); 
     const [partidas, setPartidas] = useState([]);
@@ -33,19 +32,21 @@ export const TreinosPage = () => {
     const [listaFisicos, setListaFisicos] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // --- CONTROLE UI ---
     const [modalAberto, setModalAberto] = useState(false);
     const [tipoTreinoSelecionado, setTipoTreinoSelecionado] = useState(''); 
-    const [loadingStatus, setLoadingStatus] = useState(null); // ID do item sendo atualizado
+    const [loadingStatus, setLoadingStatus] = useState(null);
 
-    // --- FORMULÁRIO ---
+    // Estado para listar sessões já criadas da partida selecionada
+    const [sessoesSalvas, setSessoesSalvas] = useState([]);
+    const [partidaSelecionada, setPartidaSelecionada] = useState('');
+
     const [novoTreino, setNovoTreino] = useState({
         nome: '', intensidade: 50, partidaId: '', 
         escopoTatico: 'EQUIPE', jogadorTaticoId: '',
         jogadorFisicoId: '', dataInicio: '', dataFim: '', musculo: ''
     });
+    const [convocados, setConvocados] = useState([]);
 
-    // --- FUNÇÕES AUXILIARES ---
     const formatarData = (dataString) => {
         if (!dataString) return 'Data Indef.';
         const date = new Date(dataString);
@@ -62,10 +63,8 @@ export const TreinosPage = () => {
         return clubeAdv ? clubeAdv.nome : `Time #${idAdversario}`;
     }, [clubeIdLogado]);
 
-    // --- 1. CARREGAMENTO DE DADOS ---
     const carregarDados = useCallback(async () => {
         if (!clubeIdLogado) return;
-        // Não ativamos setLoading(true) aqui para evitar piscar a tela ao atualizar status
         try {
             const [todosJogadores, todosJogos, sessoesTaticas, listaClubes] = await Promise.all([
                 buscarTodosJogadores(),
@@ -79,7 +78,6 @@ export const TreinosPage = () => {
             setPartidas(todosJogos);
             setClubes(listaClubes);
 
-            // Táticos
             const taticosFormatados = sessoesTaticas.map(s => {
                 const jogo = todosJogos.find(p => p.id === s.partidaId);
                 const nomeAdversario = jogo ? resolverNomeAdversario(jogo, listaClubes) : 'Partida não encontrada';
@@ -92,14 +90,11 @@ export const TreinosPage = () => {
             });
             setListaTaticos(taticosFormatados);
 
-            // Físicos
             let acumuladorFisicos = [];
             await Promise.all(meusJogadores.map(async (j) => {
                 const treinosDoAtleta = await buscarTreinosFisicosPorJogador(j.id);
                 
-                // Calcula Carga (Alta=30, Media=20, Baixa=10)
                 const cargaTotal = treinosDoAtleta.reduce((acc, t) => {
-                    // Só conta carga se não estiver concluído (opcional, mas faz sentido)
                     if (t.status === 'Concluído') return acc;
                     const valor = t.intensidade === 'Alta' ? 30 : (t.intensidade === 'Media' ? 20 : 10);
                     return acc + valor;
@@ -129,36 +124,39 @@ export const TreinosPage = () => {
         carregarDados();
     }, [carregarDados]);
 
+    // Buscar sessões existentes ao selecionar partida no modal
+    useEffect(() => {
+        const carregarSessoesExistentes = async () => {
+            if (!novoTreino.partidaId || !clubeIdLogado) return;
+            const sess = await buscarSessoesPorPartida(novoTreino.partidaId, clubeIdLogado);
+            setSessoesSalvas(sess);
+        };
+        carregarSessoesExistentes();
+    }, [novoTreino.partidaId, clubeIdLogado]);
 
-    // --- CORREÇÃO DO PROBLEMA DA ESCALAÇÃO ---
+
     const handlePartidaChange = async (e) => {
-        const idPartida = e.target.value; // Vem como string do select
+        const idPartida = e.target.value; 
         setNovoTreino(prev => ({ ...prev, partidaId: idPartida }));
         setJogadoresEscalados([]); 
 
         if (idPartida && novoTreino.escopoTatico === 'INDIVIDUAL') {
             try {
-                const resposta = await buscarEscalacaoDaPartida(idPartida);
+                // Correção: Passa o clubeId para buscar a escalação correta
+                const resposta = await buscarEscalacaoDaPartida(idPartida, clubeIdLogado);
                 
-                console.log("Resposta da Escalação:", resposta); // DEBUG: Veja o console do navegador
-
                 if (resposta) {
-                     // Extrai os IDs e converte para String para garantir a comparação
-                     const idsEscalados = [
-                        resposta.idJogador1, resposta.idJogador2, resposta.idJogador3, resposta.idJogador4,
-                        resposta.idJogador5, resposta.idJogador6, resposta.idJogador7, resposta.idJogador8,
-                        resposta.idJogador9, resposta.idJogador10, resposta.idJogador11
-                     ]
-                     .filter(id => id !== null && id !== undefined)
-                     .map(id => String(id)); // Converte tudo para string
-
-                     console.log("IDs Escalados (String):", idsEscalados);
-                     console.log("Jogadores Disponíveis:", jogadores);
-
-                     // Filtra comparando String com String
-                     const escalados = jogadores.filter(j => idsEscalados.includes(String(j.id)));
-                     
-                     setJogadoresEscalados(escalados);
+                    // A resposta pode ser uma lista de strings (nomes) ou objeto de escalação
+                    // Aqui assumimos que o seu service 'buscarEscalacaoDaPartida' retorna o que o back manda
+                    // Se for 'EscalacaoControlador.obterEscalacao', ele retorna lista de nomes.
+                    // Se for 'FormacaoControlador', retorna objeto.
+                    // Vamos assumir que retorna lista de nomes (strings) pelo código anterior
+                    
+                    const nomesEscalados = Array.isArray(resposta) ? resposta : [];
+                    
+                    // Filtra jogadores pelo nome (fallback se não tiver ID na resposta)
+                    const escalados = jogadores.filter(j => nomesEscalados.includes(j.nome));
+                    setJogadoresEscalados(escalados);
                 }
             } catch (err) {
                 console.error("Erro escalação:", err);
@@ -166,21 +164,16 @@ export const TreinosPage = () => {
         }
     };
 
-    // --- ATUALIZAR STATUS NO BACKEND (FÍSICO) ---
     const handleAtualizarStatusFisico = async (id, statusAtual) => {
-        setLoadingStatus(id); // Ativa spinner no botão
-        
+        setLoadingStatus(id); 
         let novoStatus = 'Planejado';
         if (statusAtual === 'Planejado') novoStatus = 'Em Andamento';
         else if (statusAtual === 'Em Andamento') novoStatus = 'Concluído';
-        else if (statusAtual === 'Concluído') novoStatus = 'Planejado'; // Ciclo
+        else if (statusAtual === 'Concluído') novoStatus = 'Planejado'; 
         
         try {
             await atualizarStatusTreinoFisico(id, novoStatus);
-            // Atualiza localmente para feedback instantâneo
             setListaFisicos(prev => prev.map(t => t.id === id ? { ...t, status: novoStatus } : t));
-            // Recarrega dados para atualizar cargas se necessário
-            carregarDados();
         } catch (err) {
             alert("Erro ao atualizar status: " + err.message);
         } finally {
@@ -188,7 +181,6 @@ export const TreinosPage = () => {
         }
     };
 
-    // --- HANDLERS MODAL ---
     const abrirModal = (tipo) => {
         setTipoTreinoSelecionado(tipo);
         setModalAberto(true);
@@ -234,15 +226,21 @@ export const TreinosPage = () => {
                 if (!novoTreino.partidaId) return alert("Selecione uma partida.");
                 
                 let listaConvocados = [];
+                
+                // Se for INDIVIDUAL, pega o selecionado. Se for EQUIPE, pega todos os jogadores do time.
                 if (novoTreino.escopoTatico === 'INDIVIDUAL') {
                     if(!novoTreino.jogadorTaticoId) return alert("Selecione o jogador escalado.");
                     listaConvocados = [parseInt(novoTreino.jogadorTaticoId)];
-                } 
+                } else {
+                    // Equipe toda: envia IDs de todos os jogadores do clube
+                    listaConvocados = jogadores.map(j => j.id);
+                }
                 
                 const payload = {
                     nome: novoTreino.nome,
-                    partidaId: parseInt(novoTreino.partidaId),
-                    convocadosIds: listaConvocados
+                    partidaId: parseInt(novoTreino.partidaId, 10), // Garante Inteiro
+                    convocadosIds: listaConvocados,
+                    clubeId: parseInt(clubeIdLogado, 10) // Garante Inteiro
                 };
 
                 await criarSessaoTatica(payload);
@@ -272,7 +270,7 @@ export const TreinosPage = () => {
                 </div>
             </header>
 
-            {/* --- SEÇÃO 1: TÁTICO --- */}
+            {/* SEÇÃO 1: TÁTICO */}
             <section className="section-container">
                 <div className="section-header tatico-border">
                     <div className="header-title-group">
@@ -309,7 +307,7 @@ export const TreinosPage = () => {
                 </div>
             </section>
 
-            {/* --- SEÇÃO 2: FÍSICO --- */}
+            {/* SEÇÃO 2: FÍSICO */}
             <section className="section-container">
                 <div className="section-header fisico-border">
                     <div className="header-title-group">
@@ -343,15 +341,13 @@ export const TreinosPage = () => {
                                 </div>
                                 <small style={{color:'#666', fontSize:'0.7rem'}}>Intensidade: {treino.intensidadeLabel}</small>
                             </div>
-                            
-                            {/* BOTÃO DE ATUALIZAR STATUS */}
                             <div className="card-right">
                                 <span className={`status-pill ${getStatusColor(treino.status)}`}>{treino.status}</span>
                                 <button 
                                     className="btn-update-status" 
                                     onClick={() => handleAtualizarStatusFisico(treino.id, treino.status)}
                                     disabled={loadingStatus === treino.id}
-                                    title="Mudar Status (Planejado -> Em Andamento -> Concluído)"
+                                    title="Mudar Status"
                                 >
                                     <LuRefreshCw className={loadingStatus === treino.id ? 'spinning' : ''}/>
                                 </button>
@@ -361,7 +357,7 @@ export const TreinosPage = () => {
                 </div>
             </section>
 
-            {/* --- MODAL --- */}
+            {/* MODAL */}
             {modalAberto && (
                 <div className="modal-overlay" onClick={(e) => { if(e.target.className === 'modal-overlay') fecharModal() }}>
                     <div className="modal-content">
@@ -377,7 +373,6 @@ export const TreinosPage = () => {
 
                         <form onSubmit={handleSalvarTreino} className="modal-form">
                             
-                            {/* --- CAMPOS TÁTICOS --- */}
                             {tipoTreinoSelecionado === 'Tático' && (
                                 <>
                                     <label>Escopo</label>
@@ -423,7 +418,6 @@ export const TreinosPage = () => {
                                         <input type="text" name="nome" value={novoTreino.nome} onChange={handleInputChange} placeholder="Ex: Tático Defensivo" required />
                                     </div>
 
-                                    {/* SELEÇÃO DE JOGADOR FILTRADA POR ESCALAÇÃO */}
                                     {novoTreino.escopoTatico === 'INDIVIDUAL' && (
                                         <div className="form-section animated-fade">
                                             <label>Jogador Convocado</label>
@@ -440,17 +434,11 @@ export const TreinosPage = () => {
                                                     )}
                                                 </select>
                                             </div>
-                                            {novoTreino.partidaId && jogadoresEscalados.length === 0 && (
-                                                <small style={{color: 'red', display:'block', marginTop:5}}>
-                                                    Atenção: Esta partida não possui escalação definida ou não foi selecionada.
-                                                </small>
-                                            )}
                                         </div>
                                     )}
                                 </>
                             )}
 
-                            {/* --- CAMPOS FÍSICOS --- */}
                             {tipoTreinoSelecionado === 'Físico' && (
                                 <>
                                     <div className="form-section">

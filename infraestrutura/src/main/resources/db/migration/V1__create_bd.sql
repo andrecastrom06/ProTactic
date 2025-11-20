@@ -288,3 +288,11 @@ CREATE TABLE IF NOT EXISTS sessao_treino_convocados (
     FOREIGN KEY (jogador_id) REFERENCES Jogador(id),
     PRIMARY KEY (sessao_treino_id, jogador_id)
 );
+
+-- Adiciona coluna de clube na tabela de Escalação
+ALTER TABLE Escalacao ADD COLUMN id_clube INT;
+ALTER TABLE Escalacao ADD CONSTRAINT fk_escalacao_clube FOREIGN KEY (id_clube) REFERENCES Clube(id);
+
+-- Adiciona coluna de clube na tabela de Sessão de Treino
+ALTER TABLE sessao_treino ADD COLUMN id_clube INT;
+ALTER TABLE sessao_treino ADD CONSTRAINT fk_sessao_treino_clube FOREIGN KEY (id_clube) REFERENCES Clube(id);

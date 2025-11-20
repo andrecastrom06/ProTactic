@@ -7,15 +7,12 @@ import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.infraestrutura.persistencia.jpa.partida.PartidaRepositorySpringData;
 import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-
 import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoResumo;
-
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
 
 @Component
 public class SessaoTreinoRepositoryImpl implements SessaoTreinoRepository, SessaoTreinoRepositorioAplicacao {
@@ -35,12 +32,18 @@ public class SessaoTreinoRepositoryImpl implements SessaoTreinoRepository, Sessa
         this.partidaRepositoryJPA = partidaRepositoryJPA;
     }
 
-    
     @Override
     public void salvar(SessaoTreino sessao) {
-        Objects.requireNonNull(sessao, "A SessaoTreino a ser salva não pode ser nula.");
         SessaoTreinoJPA jpa = mapeador.map(sessao, SessaoTreinoJPA.class);
-        Objects.requireNonNull(jpa, "O resultado do mapeamento de SessaoTreino para JPA não pode ser nulo.");
+        
+      
+        jpa.setClubeId(sessao.getClubeId()); 
+        
+       
+        if (jpa.getId() != null && jpa.getId() == 0) {
+            jpa.setId(null);
+        }
+
         repositoryJPA.save(jpa);
     }
 
@@ -50,32 +53,33 @@ public class SessaoTreinoRepositoryImpl implements SessaoTreinoRepository, Sessa
         List<SessaoTreinoJPA> jpaList = repositoryJPA.findByPartidaNome(partidaNome);
         return jpaList.stream()
                 .map(this::converterParaDominio)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     private SessaoTreino converterParaDominio(SessaoTreinoJPA jpa) {
-
         if (jpa == null) return null;
+        
         Integer partidaId = jpa.getPartidaId();
         Objects.requireNonNull(partidaId, "O ID da Partida na SessaoTreinoJPA não pode ser nulo.");
+        
         Partida partida = partidaRepositoryJPA.findById(partidaId)
                 .map(partidaJPA -> mapeador.map(partidaJPA, Partida.class))
-                .orElse(null); 
+                .orElse(null);
+                
         if (partida == null) {
-            throw new RuntimeException("Partida não encontrada para a Sessão de Treino: " + jpa.getId());
+            return null;
         }
-        List<Jogador> convocados = new ArrayList<>();
+        
+        SessaoTreino dominio = new SessaoTreino(jpa.getId(), jpa.getNome(), partida, jpa.getClubeId());
+        
         if (jpa.getConvocadosIds() != null) {
             for (Integer jogadorId : jpa.getConvocadosIds()) {
                 Jogador j = jogadorRepository.buscarPorId(jogadorId);
                 if (j != null) {
-                    convocados.add(j);
+                    dominio.adicionarConvocado(j);
                 }
             }
-        }
-        SessaoTreino dominio = new SessaoTreino(jpa.getNome(), partida);
-        for (Jogador j : convocados) {
-            dominio.adicionarConvocado(j);
         }
         return dominio;
     }
@@ -96,5 +100,4 @@ public class SessaoTreinoRepositoryImpl implements SessaoTreinoRepository, Sessa
         Objects.requireNonNull(jogadorId, "O ID do Jogador não pode ser nulo.");
         return repositoryJPA.findByConvocadosIdsContaining(jogadorId);
     }
-    
 }

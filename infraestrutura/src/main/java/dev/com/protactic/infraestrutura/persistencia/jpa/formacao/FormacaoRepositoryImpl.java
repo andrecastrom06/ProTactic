@@ -29,13 +29,16 @@ public class FormacaoRepositoryImpl implements FormacaoRepositorioAplicacao {
     }
 
     @Override
-    public FormacaoResumo salvar(Integer partidaId, String esquema, List<Integer> jogadoresIds) {
-        // Verifica se já existe
-        Optional<EscalacaoJPA> existente = repositoryJPA.findByPartidaId(partidaId);
+    public FormacaoResumo salvar(Integer partidaId, String esquema, List<Integer> jogadoresIds, Integer clubeId) {
+        // CORREÇÃO: Busca se já existe formacao DESTE CLUBE para esta partida
+        Optional<EscalacaoJPA> existente = repositoryJPA.findByPartidaIdAndClubeId(partidaId, clubeId);
+        
         EscalacaoJPA escalacao = existente.orElse(new EscalacaoJPA());
         
         escalacao.setPartidaId(partidaId);
         escalacao.setEsquema(esquema);
+        escalacao.setClubeId(clubeId); // <--- AQUI O ID É FINALMENTE SALVO
+        
         preencherJogadores(escalacao, jogadoresIds);
         
         EscalacaoJPA salva = repositoryJPA.save(escalacao);
@@ -45,14 +48,20 @@ public class FormacaoRepositoryImpl implements FormacaoRepositorioAplicacao {
     }
 
     @Override
-    public FormacaoResumo editar(Integer formacaoId, Integer partidaId, String esquema, List<Integer> jogadoresIds) throws Exception {
+    public FormacaoResumo editar(Integer formacaoId, Integer partidaId, String esquema, List<Integer> jogadoresIds, Integer clubeId) throws Exception {
         EscalacaoJPA formacaoExistente = repositoryJPA.findById(formacaoId)
             .orElseThrow(() -> new Exception("Formação não encontrada."));
             
+        // Segurança adicional: verificar se a formação pertence ao clube
+        if (formacaoExistente.getClubeId() != null && !formacaoExistente.getClubeId().equals(clubeId)) {
+             throw new Exception("Você não tem permissão para editar esta formação.");
+        }
+            
         formacaoExistente.setPartidaId(partidaId);
         formacaoExistente.setEsquema(esquema);
-        preencherJogadores(formacaoExistente, jogadoresIds);
+        formacaoExistente.setClubeId(clubeId); // Garante atualização
         
+        preencherJogadores(formacaoExistente, jogadoresIds);
         
         EscalacaoJPA salva = repositoryJPA.save(formacaoExistente);
         
@@ -62,7 +71,12 @@ public class FormacaoRepositoryImpl implements FormacaoRepositorioAplicacao {
 
     private void preencherJogadores(EscalacaoJPA escalacao, List<Integer> jogadoresIds) {
         escalacao.setIdJogador1(null); escalacao.setIdJogador2(null); 
-        
+        escalacao.setIdJogador3(null); escalacao.setIdJogador4(null);
+        escalacao.setIdJogador5(null); escalacao.setIdJogador6(null);
+        escalacao.setIdJogador7(null); escalacao.setIdJogador8(null);
+        escalacao.setIdJogador9(null); escalacao.setIdJogador10(null);
+        escalacao.setIdJogador11(null);
+
         if (jogadoresIds.size() > 0) escalacao.setIdJogador1(jogadoresIds.get(0));
         if (jogadoresIds.size() > 1) escalacao.setIdJogador2(jogadoresIds.get(1));
         if (jogadoresIds.size() > 2) escalacao.setIdJogador3(jogadoresIds.get(2));

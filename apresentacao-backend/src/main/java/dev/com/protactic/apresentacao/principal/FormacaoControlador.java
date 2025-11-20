@@ -1,68 +1,65 @@
 package dev.com.protactic.apresentacao.principal;
 
-import java.util.List;
-import java.util.Optional; 
+import dev.com.protactic.aplicacao.principal.formacao.FormacaoResumo;
+import dev.com.protactic.aplicacao.principal.formacao.FormacaoServicoAplicacao;
 
-import org.springframework.beans.factory.annotation.Autowired;
+// IMPORTS QUE FALTAVAM
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import dev.com.protactic.aplicacao.principal.formacao.FormacaoResumo;
-import dev.com.protactic.aplicacao.principal.formacao.FormacaoServicoAplicacao;
+import java.util.List;
+import java.util.Optional; // <--- Corrigi o erro "cannot find symbol class Optional"
 
 @RestController
-@RequestMapping("backend/formacao")
+@RequestMapping("/backend/formacao")
 @CrossOrigin(origins = "http://localhost:3000")
 public class FormacaoControlador {
-    
-    @Autowired
-    private FormacaoServicoAplicacao formacaoServicoAplicacao;
 
-    public record FormacaoFormulario(
-        Integer partidaId,
-        String esquema,
-        List<Integer> jogadoresIds
-    ) {}
+    private final FormacaoServicoAplicacao formacaoServicoAplicacao;
 
-    @PostMapping(path = "/salvar")
-    public ResponseEntity<?> salvarFormacao(@RequestBody FormacaoFormulario formulario) {
-        if (formulario == null) return ResponseEntity.badRequest().body("Formulário nulo.");
-        try {
-            FormacaoServicoAplicacao.FormacaoDados dados = new FormacaoServicoAplicacao.FormacaoDados(
-                formulario.partidaId(), formulario.esquema(), formulario.jogadoresIds()
-            );
-            FormacaoResumo escalacaoSalva = formacaoServicoAplicacao.salvarFormacao(dados);
-            return ResponseEntity.ok(escalacaoSalva); 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public FormacaoControlador(FormacaoServicoAplicacao formacaoServicoAplicacao) {
+        this.formacaoServicoAplicacao = formacaoServicoAplicacao;
     }
 
-    @PutMapping(path = "/editar/{formacaoId}")
-    public ResponseEntity<?> editarFormacao(
-            @PathVariable("formacaoId") Integer formacaoId,
-            @RequestBody FormacaoFormulario formulario) {
-        if (formulario == null) return ResponseEntity.badRequest().body("Formulário nulo.");
+
+    public record FormacaoFormulario(
+        Integer partidaId, 
+        String esquema, 
+        List<Integer> jogadoresIds,
+        Integer clubeId
+    ) {}
+
+    @PostMapping("/salvar")
+    public ResponseEntity<?> salvarFormacao(@RequestBody FormacaoFormulario form) {
         try {
-            FormacaoServicoAplicacao.FormacaoDados dados = new FormacaoServicoAplicacao.FormacaoDados(
-                formulario.partidaId(), formulario.esquema(), formulario.jogadoresIds()
-            );
-            FormacaoResumo escalacaoAtualizada = formacaoServicoAplicacao.editarFormacao(formacaoId, dados);
-            return ResponseEntity.ok(escalacaoAtualizada); 
-        } catch (Exception e) {
-            if (e.getMessage().contains("não encontrada")) {
-                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            if (form.clubeId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro de segurança: ID do clube não informado.");
             }
-            return ResponseEntity.badRequest().body(e.getMessage());
+
+            var dadosServico = new FormacaoServicoAplicacao.FormacaoDados(
+                form.partidaId(),
+                form.esquema(),
+                form.jogadoresIds(),
+                form.clubeId() 
+            );
+
+            FormacaoResumo resumo = formacaoServicoAplicacao.salvarFormacao(dadosServico);
+            return ResponseEntity.ok(resumo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @GetMapping("/buscar-por-partida/{partidaId}")
-    public ResponseEntity<FormacaoResumo> buscarPorPartida(@PathVariable Integer partidaId) {
-        Optional<FormacaoResumo> formacao = formacaoServicoAplicacao.buscarPorPartida(partidaId);
+    public ResponseEntity<?> buscarPorPartida(@PathVariable Integer partidaId, @RequestParam(required = false) Integer clubeId) {
         
-        return formacao.map(ResponseEntity::ok)
-                       .orElse(ResponseEntity.noContent().build());
+        Optional<FormacaoResumo> resumo = formacaoServicoAplicacao.buscarPorPartida(partidaId);
+        
+        if (resumo.isPresent()) {
+             return ResponseEntity.ok(resumo.get());
+        } else {
+             return ResponseEntity.noContent().build();
+        }
     }
 }

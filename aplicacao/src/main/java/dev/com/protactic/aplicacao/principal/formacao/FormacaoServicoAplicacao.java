@@ -30,10 +30,12 @@ public class FormacaoServicoAplicacao {
         this.registroCartoesService = registroCartoesService;
     }
 
+    // CORREÇÃO AQUI: Adicionado clubeId
     public record FormacaoDados(
         Integer partidaId,
         String esquema,
-        List<Integer> jogadoresIds
+        List<Integer> jogadoresIds,
+        Integer clubeId 
     ) {}
 
     public FormacaoResumo salvarFormacao(FormacaoDados formulario) throws Exception {
@@ -42,10 +44,12 @@ public class FormacaoServicoAplicacao {
             throw new Exception("A escalação não pôde ser salva: " + String.join(", ", erros));
         }
         
+        // Repassa o clubeId para o repositório
         return formacaoRepository.salvar(
             formulario.partidaId(),
             formulario.esquema(),
-            formulario.jogadoresIds()
+            formulario.jogadoresIds(),
+            formulario.clubeId()
         );
     }
 
@@ -59,7 +63,8 @@ public class FormacaoServicoAplicacao {
             formacaoId,
             formulario.partidaId(),
             formulario.esquema(),
-            formulario.jogadoresIds()
+            formulario.jogadoresIds(),
+            formulario.clubeId() 
         );
     }
     
@@ -68,6 +73,7 @@ public class FormacaoServicoAplicacao {
     }
 
     private List<String> validarAptidaoJogadores(List<Integer> jogadoresIds, Integer partidaId) {
+        // ... (seu código de validação permanece igual) ...
         List<String> jogadoresInaptos = new ArrayList<>();
         if (jogadoresIds == null || jogadoresIds.size() != 11) {
              jogadoresInaptos.add("A escalação deve ter exatamente 11 jogadores.");
@@ -98,7 +104,6 @@ public class FormacaoServicoAplicacao {
                 jogadoresInaptos.add("Erro ao verificar jogador " + atletaNome + ": " + e.getMessage());
             }
         }
-        
         return jogadoresInaptos;
     }
 }

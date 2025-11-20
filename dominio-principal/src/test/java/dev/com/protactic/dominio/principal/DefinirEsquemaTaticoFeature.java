@@ -34,6 +34,7 @@ public class DefinirEsquemaTaticoFeature {
     private String jogoEmContexto;
     private String ultimoJogadorSalvo;
     private Exception excecaoOcorrida;
+    private final int CLUBE_ID_TESTE = 1; // ID fixo para testes
 
     @Before
     public void setup() {
@@ -66,12 +67,12 @@ public class DefinirEsquemaTaticoFeature {
 
     @Quando("o treinador cadastrar a escalação")
     public void o_treinador_cadastrar_a_escalacao() {
-        repository.salvarJogadorNaEscalacao(jogoEmContexto, "ESCALAÇÃO_VAZIA");
+        repository.salvarJogadorNaEscalacao(jogoEmContexto, "ESCALAÇÃO_VAZIA", CLUBE_ID_TESTE);
     }
 
     @Então("a escalação aparecerá vinculada ao jogo do dia {string}")
     public void a_escalacao_aparecera_vinculada_ao_jogo_do_dia(String data) {
-        var escalacaoPersistida = repository.obterEscalacaoPorData(data);
+        var escalacaoPersistida = repository.obterEscalacaoPorData(data, CLUBE_ID_TESTE);
         assertNotNull(escalacaoPersistida, "Nenhuma escalação encontrada para o jogo.");
         assertFalse(escalacaoPersistida.isEmpty(), "Escalação não foi registrada para o jogo.");
     }
@@ -134,7 +135,8 @@ public class DefinirEsquemaTaticoFeature {
         try {
             service.registrarJogadorEmEscalacao(
                     jogoEmContexto,
-                    nomeJogador
+                    nomeJogador,
+                    CLUBE_ID_TESTE
             );
         } catch (Exception e) {
             this.excecaoOcorrida = e;
@@ -144,7 +146,7 @@ public class DefinirEsquemaTaticoFeature {
     @Então("a escalação será registrada com sucesso")
     public void a_escalacao_sera_registrada_com_sucesso() {
         assertNull(excecaoOcorrida, "Não deveria ter ocorrido exceção");
-        var escalacaoPersistida = repository.obterEscalacaoPorData(jogoEmContexto);
+        var escalacaoPersistida = repository.obterEscalacaoPorData(jogoEmContexto, CLUBE_ID_TESTE);
 
         assertNotNull(escalacaoPersistida, "Nenhuma escalação foi encontrada para o jogo.");
         assertFalse(escalacaoPersistida.isEmpty(), "A escalação deveria ter sido registrada.");
@@ -157,7 +159,7 @@ public class DefinirEsquemaTaticoFeature {
 
     @Então("a escalação não poderá ser registrada")
     public void a_escalacao_nao_podera_ser_registrada() {
-        var escalacaoPersistida = repository.obterEscalacaoPorData(jogoEmContexto);
+        var escalacaoPersistida = repository.obterEscalacaoPorData(jogoEmContexto, CLUBE_ID_TESTE);
 
         if (escalacaoPersistida != null) {
              boolean contemJogador = escalacaoPersistida.stream()

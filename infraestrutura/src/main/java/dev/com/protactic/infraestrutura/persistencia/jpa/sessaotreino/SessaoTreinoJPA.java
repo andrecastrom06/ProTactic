@@ -19,6 +19,9 @@ public class SessaoTreinoJPA {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "id_clube") 
+    private Integer clubeId;
+
     private String nome;
 
     @Column(name = "id_partida")
@@ -39,4 +42,6 @@ public class SessaoTreinoJPA {
     public void setPartidaId(Integer partidaId) { this.partidaId = partidaId; }
     public List<Integer> getConvocadosIds() { return convocadosIds; }
     public void setConvocadosIds(List<Integer> convocadosIds) { this.convocadosIds = convocadosIds; }
+    public Integer getClubeId() { return clubeId; }
+    public void setClubeId(Integer clubeId) { this.clubeId = clubeId; }
 }

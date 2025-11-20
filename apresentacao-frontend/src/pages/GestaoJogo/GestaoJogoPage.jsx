@@ -10,7 +10,6 @@ import './GestaoJogoPage.css';
 import { useAuth } from '../../store/AuthContext';
 import { buscarTodosJogadores } from '../../services/jogadorService';
 import { buscarJogosDoClube, salvarEscalacao, buscarEscalacaoPorPartida } from '../../services/jogoService'; 
-// IMPORTA OS SERVIÇOS DE NOTAS
 import { atribuirNota, buscarNotasPorJogo } from '../../services/notaService';
 
 export const GestaoJogoPage = () => {
@@ -26,10 +25,7 @@ export const GestaoJogoPage = () => {
     const [partidas, setPartidas] = useState([]);
     const [partidaSelecionada, setPartidaSelecionada] = useState('');
     
-    // Estado para controle de sobrescrita
     const [escalacaoJaExiste, setEscalacaoJaExiste] = useState(false);
-
-    // Estado para guardar as notas vindas do banco
     const [notasDoBanco, setNotasDoBanco] = useState([]);
 
     const [esquemaTatico, setEsquemaTatico] = useState('4-3-3'); 
@@ -69,22 +65,23 @@ export const GestaoJogoPage = () => {
     // 2. Carrega a Escalação E AS NOTAS quando muda a Partida Selecionada
     useEffect(() => {
         const carregarDetalhesPartida = async () => {
-            if (!partidaSelecionada || todosAtletas.length === 0) return;
+            if (!partidaSelecionada || todosAtletas.length === 0 || !clubeIdLogado) return;
 
             try {
                 // Reset visual
                 setAtletasNoCampo([]);
                 setReservas([]);
                 setEscalacaoJaExiste(false);
-                setNotasDoBanco([]); // Limpa notas antigas
+                setNotasDoBanco([]); 
 
                 let poolDeAtletas = [...todosAtletas];
 
-                // --- A. Busca Escalação ---
-                const escalacao = await buscarEscalacaoPorPartida(partidaSelecionada);
+                // --- A. Busca Escalação (AGORA COM FILTRO DE CLUBE) ---
+                // Passamos o clubeIdLogado para garantir que buscamos a NOSSA escalação
+                const escalacao = await buscarEscalacaoPorPartida(partidaSelecionada, clubeIdLogado);
                 
                 if (escalacao) {
-                    setEscalacaoJaExiste(true); // Ativa flag de aviso
+                    setEscalacaoJaExiste(true); 
                     setEsquemaTatico(escalacao.esquema || '4-3-3');
                     
                     const idsTitulares = [
@@ -111,6 +108,7 @@ export const GestaoJogoPage = () => {
 
                 // --- B. Busca Notas ---
                 // O backend espera "JOGO-ID" como string para a chave composta
+                // Idealmente também deveria filtrar por clubeId no backend futuramente
                 const notas = await buscarNotasPorJogo("JOGO-" + partidaSelecionada);
                 setNotasDoBanco(notas);
 
@@ -119,9 +117,9 @@ export const GestaoJogoPage = () => {
             }
         };
         carregarDetalhesPartida();
-    }, [partidaSelecionada, todosAtletas]);
+    }, [partidaSelecionada, todosAtletas, clubeIdLogado]);
 
-    // 3. Drag & Drop (Inalterado)
+    // 3. Drag & Drop
     const handleDragEnd = (event) => {
         const { active, over, delta } = event;
         if (!over) return; 
@@ -167,14 +165,13 @@ export const GestaoJogoPage = () => {
         }
     };
 
-    // 4. Salvar Escalação COM AVISO
+    // 4. Salvar Escalação (CORRIGIDO)
     const handleSalvarEscalacao = async () => {
         if (!partidaSelecionada) {
             alert("Selecione uma partida primeiro.");
             return;
         }
         
-        // Lógica do Aviso
         if (escalacaoJaExiste) {
             const confirmar = window.confirm("Já existe uma escalação salva para este jogo. Ao salvar a nova escalação, a antiga será substituída. Deseja continuar?");
             if (!confirmar) return;
@@ -187,28 +184,31 @@ export const GestaoJogoPage = () => {
         }
 
         const idsJogadores = atletasNoCampo.map(a => a.id);
+        
+        // MUDANÇA PRINCIPAL AQUI: Adicionado clubeId ao payload
         const payload = {
             partidaId: parseInt(partidaSelecionada, 10),
             esquema: esquemaTatico,
-            jogadoresIds: idsJogadores
+            jogadoresIds: idsJogadores,
+            clubeId: parseInt(clubeIdLogado, 10) 
         };
 
         try {
             await salvarEscalacao(payload);
             alert("Escalação salva com sucesso!");
-            setEscalacaoJaExiste(true); // Atualiza para evitar duplo aviso imediato
+            setEscalacaoJaExiste(true); 
         } catch (err) {
             alert("Erro ao salvar: " + err.message);
         }
     };
 
-    // 5. Salvar Notas (Integrado)
+    // 5. Salvar Notas
     const handleSalvarNotas = async (avaliacoes) => {
         if (!partidaSelecionada) return;
         try {
             const promises = Object.entries(avaliacoes).map(([jogadorIdStr, dados]) => {
-                // Envia se tiver nota OU observação
                 if (dados.nota > 0 || dados.observacao) {
+                    // Aqui futuramente também será necessário passar o clubeId para as notas
                     return atribuirNota({
                         jogoId: "JOGO-" + partidaSelecionada,
                         jogadorId: jogadorIdStr,
@@ -226,11 +226,7 @@ export const GestaoJogoPage = () => {
         }
     };
 
-    // Jogadores elegíveis para nota (Titulares + Reservas definidos na aba escalação)
-    // Nota: Se quiseres que apareçam TODOS, usa 'todosAtletas'. 
-    // Aqui usamos 'atletasNoCampo + reservas' assumindo que o usuário montou o time.
     const atletasParaAvaliacao = [...atletasNoCampo, ...reservas]; 
-    // Se a lista estiver vazia (ex: user foi direto para notas), usa todosAtletas como fallback seguro?
     const listaFinalAvaliacao = atletasParaAvaliacao.length > 0 ? atletasParaAvaliacao : todosAtletas;
 
     const partidaObj = partidas.find(p => p.id === Number(partidaSelecionada));
@@ -294,7 +290,7 @@ export const GestaoJogoPage = () => {
                     {abaAtiva === 'NOTAS' && (
                         <AbaAtribuirNotas 
                             atletas={listaFinalAvaliacao}
-                            notasIniciais={notasDoBanco} // Passa as notas carregadas
+                            notasIniciais={notasDoBanco} 
                             onSalvar={handleSalvarNotas} 
                         />
                     )}

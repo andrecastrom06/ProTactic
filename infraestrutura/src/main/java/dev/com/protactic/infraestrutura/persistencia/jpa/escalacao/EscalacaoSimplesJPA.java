@@ -21,6 +21,9 @@ public class EscalacaoSimplesJPA {
     @Column(name = "nome_jogador")
     private String nomeJogador;
 
+    @Column(name = "id_clube")  
+    private Integer clubeId;
+
     public EscalacaoSimplesJPA() {}
 
     public EscalacaoSimplesJPA(String jogoData, String nomeJogador) {
@@ -34,4 +37,7 @@ public class EscalacaoSimplesJPA {
     public void setJogoData(String jogoData) { this.jogoData = jogoData; }
     public String getNomeJogador() { return nomeJogador; }
     public void setNomeJogador(String nomeJogador) { this.nomeJogador = nomeJogador; }
+    
+    public Integer getClubeId() { return clubeId; }
+    public void setClubeId(Integer clubeId) { this.clubeId = clubeId; }
 }

@@ -9,7 +9,6 @@ import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import java.util.List;
 import java.util.ArrayList;
 
-
 public class SessaoTreinoService {
     private final SessaoTreinoRepository repository;
     private final PartidaRepository partidaRepository;
@@ -23,7 +22,7 @@ public class SessaoTreinoService {
         this.jogadorRepository = jogadorRepository;
     }
 
-    public SessaoTreino criarSessaoPorIds(String nome, Integer partidaId, List<Integer> convocadosIds) throws Exception {
+    public SessaoTreino criarSessaoPorIds(String nome, Integer partidaId, List<Integer> convocadosIds, Integer clubeId) throws Exception {
         
         Partida partida = null;
 
@@ -32,7 +31,6 @@ public class SessaoTreinoService {
                     .orElseThrow(() -> new Exception("Partida não encontrada: " + partidaId));
         }
     
-
         List<Jogador> jogadores = new ArrayList<>();
         if (convocadosIds != null) {
             for (Integer jogadorId : convocadosIds) {
@@ -45,17 +43,16 @@ public class SessaoTreinoService {
             }
         }
         
-        return this.criarSessao(nome, partida, jogadores);
+        return this.criarSessao(nome, partida, jogadores, clubeId);
     }
 
-
-    public SessaoTreino criarSessao(String nome, Partida partida, List<Jogador> jogadores) {
+    public SessaoTreino criarSessao(String nome, Partida partida, List<Jogador> jogadores, Integer clubeId) {
         
         if (partida == null) {
             throw new IllegalArgumentException("Não há jogo no calendário para vincular este treino.");
         }
 
-        SessaoTreino sessao = new SessaoTreino(nome, partida);
+        SessaoTreino sessao = new SessaoTreino(nome, partida, clubeId);
 
         if (jogadores != null) {
             jogadores.forEach(sessao::adicionarConvocado);

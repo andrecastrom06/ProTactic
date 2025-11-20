@@ -6,30 +6,31 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Date; // IMPORTAR DATE
+import java.util.Date; 
 
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoRepository;
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoService;
-import dev.com.protactic.dominio.principal.partida.PartidaRepository; // IMPORTAR
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository; // IMPORTAR
+import dev.com.protactic.dominio.principal.partida.PartidaRepository;
+import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 
 import dev.com.protactic.mocks.SessaoTreinoMock;
-import dev.com.protactic.mocks.PartidaMock; // IMPORTAR
-import dev.com.protactic.mocks.JogadorMock; // IMPORTAR
+import dev.com.protactic.mocks.PartidaMock;
+import dev.com.protactic.mocks.JogadorMock;
 
 import io.cucumber.java.Before;
 
 public class SessoesTreinoTaticoFeature {
 
     private SessaoTreinoRepository sessaoRepo;
-    private PartidaRepository partidaRepo; // NOVO
-    private JogadorRepository jogadorRepo; // NOVO
+    private PartidaRepository partidaRepo; 
+    private JogadorRepository jogadorRepo; 
     private SessaoTreinoService service;
 
     private Partida partidaDoTeste;
     private List<Jogador> jogadoresDoTeste;
     private SessaoTreino sessaoResultado;
     private Exception excecaoOcorrida;
+    private final int CLUBE_ID_TESTE = 1;
 
     @Before
     public void setup() {
@@ -88,7 +89,7 @@ public class SessoesTreinoTaticoFeature {
         if (partidaDoTeste == null || !partidaDoTeste.getDescricao().equals(nomeJogo)) {
              que_existe_um_jogo_no_calendario(nomeJogo);
         }
-        service.criarSessao(nomeSessao, partidaDoTeste, new ArrayList<>());
+        service.criarSessao(nomeSessao, partidaDoTeste, new ArrayList<>(), CLUBE_ID_TESTE);
     }
     
     @Dado("que não existem jogos no calendário")
@@ -110,7 +111,8 @@ public class SessoesTreinoTaticoFeature {
             sessaoResultado = service.criarSessaoPorIds(
                 nomeSessao,
                 partidaDoTeste.getId(),
-                idsJogadores
+                idsJogadores,
+                CLUBE_ID_TESTE
             );
         } catch (Exception e) {
             this.excecaoOcorrida = e;
@@ -128,7 +130,8 @@ public class SessoesTreinoTaticoFeature {
             sessaoResultado = service.criarSessaoPorIds(
                 "Sessao para " + nomeJogo, 
                 partidaDoTeste.getId(), 
-                idsJogadores
+                idsJogadores,
+                CLUBE_ID_TESTE
             );
         } catch (Exception e) {
             this.excecaoOcorrida = e;
@@ -139,7 +142,7 @@ public class SessoesTreinoTaticoFeature {
     public void o_treinador_tenta_criar_uma_sessao_de_treino_tatico() {
         try {
             Integer partidaId = (partidaDoTeste != null) ? partidaDoTeste.getId() : null;
-            sessaoResultado = service.criarSessaoPorIds("Treino Tatico Teste", partidaId, new ArrayList<>());
+            sessaoResultado = service.criarSessaoPorIds("Treino Tatico Teste", partidaId, new ArrayList<>(), CLUBE_ID_TESTE);
         } catch (Exception e) {
             this.excecaoOcorrida = e;
         }

@@ -8,9 +8,11 @@ import java.util.Optional;
 @Repository
 public interface EscalacaoRepositorySpringData extends JpaRepository<EscalacaoJPA, Integer> {
     
+    Optional<EscalacaoJPA> findByPartidaIdAndClubeId(Integer partidaId, Integer clubeId);
+
+    Optional<EscalacaoJPA> findByPartidaId(Integer partidaId);
+
     Optional<FormacaoResumo> findResumoById(Integer id);
 
     Optional<FormacaoResumo> findResumoByPartidaId(Integer partidaId);
-
-    Optional<EscalacaoJPA> findByPartidaId(Integer partidaId);
 }

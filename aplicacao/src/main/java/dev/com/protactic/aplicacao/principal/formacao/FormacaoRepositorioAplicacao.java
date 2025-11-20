@@ -9,7 +9,7 @@ public interface FormacaoRepositorioAplicacao {
     
     Optional<FormacaoResumo> buscarResumoPorPartidaId(Integer partidaId);
 
-    FormacaoResumo salvar(Integer partidaId, String esquema, List<Integer> jogadoresIds);
+    FormacaoResumo salvar(Integer partidaId, String esquema, List<Integer> jogadoresIds, Integer clubeId);
     
-    FormacaoResumo editar(Integer formacaoId, Integer partidaId, String esquema, List<Integer> jogadoresIds) throws Exception;
+    FormacaoResumo editar(Integer formacaoId, Integer partidaId, String esquema, List<Integer> jogadoresIds, Integer clubeId) throws Exception;
 }

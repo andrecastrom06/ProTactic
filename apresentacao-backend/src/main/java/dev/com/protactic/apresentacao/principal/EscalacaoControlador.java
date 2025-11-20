@@ -25,20 +25,21 @@ public class EscalacaoControlador {
     private @Autowired EscalacaoServicoAplicacao escalacaoServicoAplicacao;
     private @Autowired DefinirEsquemaTaticoService definirEsquemaTaticoService;
     
-    @GetMapping(path = "pesquisa-por-data/{jogoData}")
-    public List<EscalacaoResumo> pesquisarResumosPorData(@PathVariable("jogoData") String jogoData) {
-        return escalacaoServicoAplicacao.pesquisarResumosPorData(jogoData);
+    @GetMapping(path = "pesquisa-por-data/{jogoData}/{clubeId}")
+    public List<EscalacaoResumo> pesquisarResumosPorData(@PathVariable("jogoData") String jogoData, @PathVariable("clubeId") Integer clubeId) {
+        return escalacaoServicoAplicacao.pesquisarResumosPorData(jogoData, clubeId );
     }
     
     @GetMapping(path = "obter-por-data/{jogoData}")
-    public List<String> obterEscalacao(@PathVariable("jogoData") String jogoData) {
-        return definirEsquemaTaticoService.obterEscalacao(jogoData);
+    public List<String> obterEscalacao(@PathVariable("jogoData") String jogoData, @PathVariable("clubeId") Integer clubeId ) {
+        return definirEsquemaTaticoService.obterEscalacao(jogoData, 0);
     }
 
 
     public record EscalacaoFormulario(
         String jogoData,
-        String nomeJogador
+        String nomeJogador,
+        Integer clubeId
     ) {}
 
     @PostMapping(path = "/registrar")
@@ -51,7 +52,8 @@ public class EscalacaoControlador {
         try {
             boolean sucesso = definirEsquemaTaticoService.registrarJogadorEmEscalacao(
                 formulario.jogoData(),
-                formulario.nomeJogador()
+                formulario.nomeJogador(),
+                formulario.clubeId()
             );
 
             if (sucesso) {

@@ -8,8 +8,11 @@ import java.util.List;
 
 @Repository
 public interface EscalacaoSimplesRepositorySpringData extends JpaRepository<EscalacaoSimplesJPA, Integer> {
-        
-    List<EscalacaoSimplesJPA> findByJogoData(String jogoData);
+    
+    List<EscalacaoSimplesJPA> findByJogoDataAndClubeId(String jogoData, Integer clubeId);
 
+    List<EscalacaoResumo> findAllByJogoDataAndClubeId(String jogoData, Integer clubeId);
+
+    List<EscalacaoSimplesJPA> findByJogoData(String jogoData);
     List<EscalacaoResumo> findAllByJogoData(String jogoData);
 }

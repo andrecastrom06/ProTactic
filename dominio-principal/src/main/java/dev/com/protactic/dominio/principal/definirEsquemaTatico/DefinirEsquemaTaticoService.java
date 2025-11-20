@@ -24,7 +24,7 @@ public class DefinirEsquemaTaticoService {
         this.registroCartoesService = registroCartoesService;
     }
     
-    public boolean registrarJogadorEmEscalacao(String jogoData, String nomeJogador) throws Exception {
+    public boolean registrarJogadorEmEscalacao(String jogoData, String nomeJogador, int clubeId) throws Exception {
         Objects.requireNonNull(jogoData, "A data do jogo não pode ser nula.");
         Objects.requireNonNull(nomeJogador, "O nome do jogador não pode ser nulo.");
 
@@ -38,22 +38,22 @@ public class DefinirEsquemaTaticoService {
         
         int grauLesao = registroLesoesRepository.grauLesaoAtiva(nomeJogador).orElse(0);
 
-        return this.registrarEscalacao(jogoData, nomeJogador, contratoAtivo, suspenso, grauLesao);
+        return this.registrarEscalacao(jogoData, nomeJogador, contratoAtivo, suspenso, grauLesao, clubeId);
     }
 
     private boolean registrarEscalacao(String jogoData, String nomeJogador,
-                                      boolean contratoAtivo, boolean suspenso, int grauLesao) {
+                                      boolean contratoAtivo, boolean suspenso, int grauLesao, int clubeId) {
 
         boolean valido = contratoAtivo && !suspenso && (grauLesao <= 0);
 
         if (valido) {
-            repository.salvarJogadorNaEscalacao(jogoData, nomeJogador);
+            repository.salvarJogadorNaEscalacao(jogoData, nomeJogador, clubeId);
             return true;
         }
         return false;
     }
 
-    public List<String> obterEscalacao(String jogoData) {
-        return repository.obterEscalacaoPorData(jogoData);
+    public List<String> obterEscalacao(String jogoData, int clubeId) {
+        return repository.obterEscalacaoPorData(jogoData, clubeId);
     }
 }

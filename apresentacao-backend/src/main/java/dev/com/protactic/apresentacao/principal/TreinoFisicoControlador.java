@@ -8,20 +8,18 @@ import dev.com.protactic.dominio.principal.planejamentoFisico.PlanejamentoFisico
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus; 
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("backend/treino-fisico")
+@RequestMapping("backend/treino-fisico") // PADRONIZADO COM HÍFEN
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class TreinoFisicoControlador {
 
-    private @Autowired FisicoServicoAplicacao fisicoServicoAplicacao;
-    private @Autowired PlanejamentoFisicoService planejamentoFisicoService;
+    @Autowired private FisicoServicoAplicacao fisicoServicoAplicacao;
+    @Autowired private PlanejamentoFisicoService planejamentoFisicoService;
 
     @GetMapping("/por-jogador/{jogadorId}")
     public List<FisicoResumo> buscarTreinosPorJogador(@PathVariable("jogadorId") Integer jogadorId) {
@@ -41,7 +39,6 @@ public class TreinoFisicoControlador {
     public ResponseEntity<?> salvarTreinoFisico(
             @PathVariable("jogadorId") Integer jogadorId,
             @RequestBody TreinoFisicoFormulario formulario) {
-
         try {
             PlanejamentoFisicoService.DadosTreinoFisico dados = 
                 new PlanejamentoFisicoService.DadosTreinoFisico(
@@ -58,9 +55,6 @@ public class TreinoFisicoControlador {
             return ResponseEntity.ok(treinoSalvo);
             
         } catch (Exception e) {
-            if (e.getMessage().contains("não encontrado")) {
-                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-            }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -69,7 +63,6 @@ public class TreinoFisicoControlador {
     public ResponseEntity<?> editarTreinoFisico(
             @PathVariable("treinoId") Integer treinoId,
             @RequestBody TreinoFisicoFormulario formulario) {
-
         try {
              PlanejamentoFisicoService.DadosTreinoFisico dados = 
                 new PlanejamentoFisicoService.DadosTreinoFisico(
@@ -84,21 +77,17 @@ public class TreinoFisicoControlador {
                 
             Fisico treinoAtualizado = planejamentoFisicoService.editarTreinoFisico(treinoId, dados);
             return ResponseEntity.ok(treinoAtualizado);
-            
         } catch (Exception e) {
              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    public record StatusUpdateFormulario(
-        String status
-    ) {}
+    public record StatusUpdateFormulario(String status) {}
 
     @PatchMapping("/atualizar-status/{treinoId}")
     public ResponseEntity<?> atualizarStatusTreino(
             @PathVariable("treinoId") Integer treinoId,
             @RequestBody StatusUpdateFormulario formulario) {
-
         try {
             Fisico treinoAtualizado = planejamentoFisicoService.atualizarStatusTreino(treinoId, formulario.status());
             return ResponseEntity.ok(treinoAtualizado);
@@ -111,7 +100,6 @@ public class TreinoFisicoControlador {
     public ResponseEntity<?> criarProtocoloDeRetorno(
             @PathVariable("jogadorId") Integer jogadorId,
             @RequestBody TreinoFisicoFormulario formulario) {
-
          try {
             PlanejamentoFisicoService.DadosTreinoFisico dados = 
                 new PlanejamentoFisicoService.DadosTreinoFisico(
@@ -123,12 +111,10 @@ public class TreinoFisicoControlador {
                     formulario.dataInicio(),
                     formulario.dataFim()
                 );
-
             Fisico protocoloSalvo = planejamentoFisicoService.criarProtocoloDeRetorno(dados);
             return ResponseEntity.ok(protocoloSalvo);
-            
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

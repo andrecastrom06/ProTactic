@@ -1,10 +1,8 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.escalacao;
 
 import dev.com.protactic.dominio.principal.definirEsquemaTatico.EscalacaoRepository;
-
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoResumo;
-
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
@@ -18,34 +16,33 @@ public class EscalacaoRepositoryImpl implements EscalacaoRepository, EscalacaoRe
     public EscalacaoRepositoryImpl(EscalacaoSimplesRepositorySpringData repositoryJPA) {
         this.repositoryJPA = repositoryJPA;
     }
-
     
     @Override
-    public void salvarJogadorNaEscalacao(String jogoData, String nomeJogador) {
+    public void salvarJogadorNaEscalacao(String jogoData, String nomeJogador, Integer clubeId) {
         Objects.requireNonNull(jogoData, "O 'jogoData' não pode ser nulo.");
         Objects.requireNonNull(nomeJogador, "O 'nomeJogador' não pode ser nulo.");
+        Objects.requireNonNull(clubeId, "O 'clubeId' não pode ser nulo.");
         
         EscalacaoSimplesJPA jpa = new EscalacaoSimplesJPA(jogoData, nomeJogador);
+        jpa.setClubeId(clubeId); 
         repositoryJPA.save(jpa);
     }
 
     @Override
-    public List<String> obterEscalacaoPorData(String jogoData) {
+    public List<String> obterEscalacaoPorData(String jogoData, Integer clubeId) {
         Objects.requireNonNull(jogoData, "O 'jogoData' não pode ser nulo.");
+        Objects.requireNonNull(clubeId, "O 'clubeId' não pode ser nulo.");
         
-        List<EscalacaoSimplesJPA> jpaList = repositoryJPA.findByJogoData(jogoData);
-        
-        return jpaList.stream()
-                .map(EscalacaoSimplesJPA::getNomeJogador)
-                .collect(Collectors.toList());
+        return repositoryJPA.findByJogoDataAndClubeId(jogoData, clubeId)
+            .stream()
+            .map(EscalacaoSimplesJPA::getNomeJogador)
+            .collect(Collectors.toList());
     }
 
     @Override
-    public List<EscalacaoResumo> pesquisarResumosPorData(String jogoData) {
+    public List<EscalacaoResumo> pesquisarResumosPorData(String jogoData, Integer clubeId) {
         Objects.requireNonNull(jogoData, "O 'jogoData' não pode ser nulo.");
-        
-        return repositoryJPA.findAllByJogoData(jogoData);
+        Objects.requireNonNull(clubeId, "O 'clubeId' não pode ser nulo.");
+        return repositoryJPA.findAllByJogoDataAndClubeId(jogoData, clubeId);
     }
-    
-
 }

@@ -8,7 +8,6 @@ export const buscarJogosDoClube = async (clubeId) => {
         if (!response.ok) throw new Error('Erro ao buscar jogos.');
         const todasPartidas = await response.json();
         
-        // Filtra localmente as partidas do clube
         return todasPartidas.filter(p => 
             p.clubeCasaId === clubeId || p.clubeVisitanteId === clubeId
         );
@@ -55,13 +54,17 @@ export const salvarEscalacao = async (formulario) => {
     }
 };
 
-export const buscarEscalacaoPorPartida = async (partidaId) => {
+// Função principal usada na GestaoJogoPage
+export const buscarEscalacaoPorPartida = async (partidaId, clubeId) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/formacao/buscar-por-partida/${partidaId}`);
+        let url = `${API_BASE_URL}/formacao/buscar-por-partida/${partidaId}`;
+        if (clubeId) {
+            url += `?clubeId=${clubeId}`;
+        }
+
+        const response = await fetch(url);
         
-        // Se não houver conteúdo (204), retorna null sem erro
         if (response.status === 204) return null;
-        
         if (!response.ok) throw new Error('Erro ao buscar escalação.');
         
         return await response.json();
@@ -70,15 +73,23 @@ export const buscarEscalacaoPorPartida = async (partidaId) => {
         throw error;
     }
 };
-export const buscarEscalacaoDaPartida = async (partidaId) => {
+
+
+export const buscarEscalacaoDaPartida = async (partidaId, clubeId) => {
     try {
-        // Endpoint hipotético baseado na existência do EscalacaoControlador
-        const response = await fetch(`${API_BASE_URL}/escalacao/partida/${partidaId}`);
-        if (!response.ok) return []; 
-        // O retorno deve ser a lista de jogadores ou objeto escalacao contendo jogadores
+        let url = `${API_BASE_URL}/formacao/buscar-por-partida/${partidaId}`;
+        if(clubeId) {
+             url += `?clubeId=${clubeId}`;
+        }
+        
+        const response = await fetch(url);
+        
+        if (response.status === 204) return null; 
+        if (!response.ok) return null; 
+        
         return await response.json(); 
     } catch (error) {
         console.error("Erro ao buscar escalação:", error);
-        return [];
+        return null;
     }
 };
