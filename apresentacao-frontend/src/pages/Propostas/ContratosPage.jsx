@@ -5,11 +5,15 @@ import {
     recusarProposta       
 } from '../../services/propostaService';
 import { buscarContratosVigentes } from '../../services/contratoService';
+
+// Importação dos Modais
 import { NovaPropostaModal } from '../../components/NovaPropostaModal';
+import { RenovarContratoModal } from '../../components/RenovarContratoModal'; // NOVO
+import { ConfirmarDispensaModal } from '../../components/ConfirmarDispensaModal'; // NOVO
+
 import { useAuth } from '../../store/AuthContext';
 import './ContratosPage.css'; 
 
-// Função auxiliar para os "badges" de status
 const getStatusClass = (status) => {
     switch (status) {
         case 'PENDENTE': return 'propostas-status-pendente';
@@ -17,26 +21,23 @@ const getStatusClass = (status) => {
         case 'RECUSADA': return 'propostas-status-rejeitado';
         case 'ATIVO': return 'propostas-status-aceite';
         case 'VENCENDO': return 'propostas-status-pendente';
+        case 'RESCINDIDO': return 'propostas-status-rejeitado';
         default: return 'propostas-status-default';
     }
 };
 
-// Função auxiliar para calcular o status e a data fim
 const calcularInfoContrato = (dataInicioStr, duracaoMeses) => {
     if (!dataInicioStr || !duracaoMeses) {
         return { dataFim: 'N/A', status: 'Indefinido', diasRestantes: 0 };
     }
-    
     try {
         const dataInicio = new Date(dataInicioStr);
-        // Corrige o bug do fuso horário (converte a data 'YYYY-MM-DD' para o fuso local)
         const dataInicioUTC = new Date(dataInicio.getUTCFullYear(), dataInicio.getUTCMonth(), dataInicio.getUTCDate());
-
         const dataFim = new Date(dataInicioUTC);
         dataFim.setMonth(dataFim.getMonth() + duracaoMeses);
         
         const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0); // Zera a hora de hoje para a comparação
+        hoje.setHours(0, 0, 0, 0); 
         
         const diffTime = dataFim - hoje;
         const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -47,7 +48,6 @@ const calcularInfoContrato = (dataInicioStr, duracaoMeses) => {
         } else if (diasRestantes <= 365) {
             status = "VENCENDO";
         }
-        
         return {
             dataFim: dataFim.toLocaleDateString('pt-BR'),
             status: status,
@@ -58,44 +58,42 @@ const calcularInfoContrato = (dataInicioStr, duracaoMeses) => {
     }
 };
 
-// Estilos dos botões (igual)
 const styles = {
-    buttonAprovar: { backgroundColor: '#E0F8E0', color: '#006400', border: '1px solid #006400', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', marginRight: '5px' },
-    buttonRejeitar: { backgroundColor: '#FDE0E0', color: '#A00000', border: '1px solid #A00000', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' },
     buttonNovaProposta: { backgroundColor: '#00796b', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }
 };
 
 export const ContratosPage = () => {
-    
     const { clubeIdLogado } = useAuth();
-    
     const [activeTab, setActiveTab] = useState('vigentes');
-    const [isModalOpen, setIsModalOpen] = useState(false);
     
+    // Estados dos Modais
+    const [isNovaPropostaOpen, setIsNovaPropostaOpen] = useState(false);
+    const [isRenovarOpen, setIsRenovarOpen] = useState(false);   // NOVO
+    const [isEncerrarOpen, setIsEncerrarOpen] = useState(false); // NOVO
+    const [contratoSelecionado, setContratoSelecionado] = useState(null); // NOVO
+
     const [propostas, setPropostas] = useState([]);
     const [contratos, setContratos] = useState([]);
-    
     const [carregandoPropostas, setCarregandoPropostas] = useState(true);
     const [carregandoContratos, setCarregandoContratos] = useState(true);
-    const [erro, setErro] = useState(null);
-
+    
     const carregarPropostas = useCallback(async () => {
         if (!clubeIdLogado) return;
         try {
-            setCarregandoPropostas(true); setErro(null);
+            setCarregandoPropostas(true);
             const dados = await buscarPropostasRecebidas(clubeIdLogado);
             setPropostas(dados);
-        } catch (err) { setErro(err.message); } 
+        } catch (err) { console.error(err); } 
         finally { setCarregandoPropostas(false); }
     }, [clubeIdLogado]); 
 
     const carregarContratos = useCallback(async () => {
         if (!clubeIdLogado) return;
         try {
-            setCarregandoContratos(true); setErro(null);
+            setCarregandoContratos(true);
             const dados = await buscarContratosVigentes(clubeIdLogado);
-            setContratos(dados);
-        } catch (err) { setErro(err.message); } 
+            setContratos(dados.filter(c => c.status !== 'RESCINDIDO'));
+        } catch (err) { console.error(err); } 
         finally { setCarregandoContratos(false); }
     }, [clubeIdLogado]); 
 
@@ -103,53 +101,42 @@ export const ContratosPage = () => {
         carregarPropostas();
         carregarContratos();
     }, [carregarPropostas, carregarContratos]); 
-    
-    // --- (CORREÇÃO - BUG 1) ---
-    // Funções de clique completas (não mais resumidas)
+
+    // Handlers de Ação de Contrato
+    const abrirModalRenovar = (contrato) => {
+        setContratoSelecionado(contrato);
+        setIsRenovarOpen(true);
+    };
+
+    const abrirModalEncerrar = (contrato) => {
+        setContratoSelecionado(contrato);
+        setIsEncerrarOpen(true);
+    };
+
+    const handleSuccessContrato = () => {
+        carregarContratos(); // Recarrega a lista
+    };
+
+    // Handlers de Proposta
     const handleAceitar = async (propostaId) => {
-        if (!window.confirm("Tem a certeza que deseja ACEITAR esta proposta? Esta ação irá transferir o jogador.")) {
-            return;
-        }
+        if (!window.confirm("Aceitar proposta?")) return;
         try {
             await aceitarProposta(propostaId);
-            alert("Proposta aceite com sucesso! O jogador foi transferido.");
-            carregarPropostas(); // Recarrega as propostas
-            carregarContratos(); // Recarrega os contratos (o jogador agora é seu)
-        } catch (err) {
-            alert(`Erro ao aceitar proposta: ${err.message}`);
-        }
+            alert("Proposta aceite!");
+            carregarPropostas(); carregarContratos(); 
+        } catch (err) { alert(err.message); }
     };
 
     const handleRejeitar = async (propostaId) => {
-        if (!window.confirm("Tem a certeza que deseja REJEITAR esta proposta?")) {
-            return;
-        }
+        if (!window.confirm("Rejeitar proposta?")) return;
         try {
             await recusarProposta(propostaId);
-            alert("Proposta rejeitada com sucesso!");
-            carregarPropostas(); // Recarrega as propostas
-        } catch (err) {
-            alert(`Erro ao rejeitar proposta: ${err.message}`);
-        }
+            alert("Proposta rejeitada.");
+            carregarPropostas(); 
+        } catch (err) { alert(err.message); }
     };
-    
-    const handleProposalSuccess = () => {
-        setIsModalOpen(false);
-        carregarPropostas();
-    };
-    // --- (FIM DA CORREÇÃO - BUG 1) ---
 
-    
-    // --- Lógica dos Cards (agora dinâmica) ---
-    const contratosVencendo = contratos.filter(c => {
-        const { diasRestantes } = calcularInfoContrato(c.dataInicio, c.duracaoMeses);
-        return diasRestantes > 0 && diasRestantes <= 365;
-    }).length;
-
-    const propostasPendentes = propostas.filter(p => p.status === 'PENDENTE').length;
-
-    
-    // --- Componente Interno: Tabela de Propostas ---
+    // --- Tabelas ---
     const TabelaPropostas = () => (
         <table className="propostas-table">
             <thead>
@@ -160,144 +147,98 @@ export const ContratosPage = () => {
                 </tr>
             </thead>
             <tbody>
-                {carregandoPropostas ? (
-                    <tr><td colSpan="7" style={{ textAlign: 'center' }}>Carregando propostas...</td></tr>
-                ) : propostas.length === 0 ? (
-                    <tr><td colSpan="7" style={{ textAlign: 'center' }}>Nenhuma proposta recebida.</td></tr>
-                ) : (
-                    propostas.map((proposta) => (
-                        <tr key={proposta.id}>
-                            <td>{proposta.atletaNome}</td>
-                            <td>{proposta.atletaPosicao}</td>
-                            <td>{proposta.atletaIdade}</td>
-                            <td>{proposta.clubeAtualNome || 'Livre'}</td>
-                            <td>R$ {proposta.valor.toFixed(2)}</td>
-                            <td><span className={`propostas-status ${getStatusClass(proposta.status)}`}>{proposta.status}</span></td>
+                {propostas.length === 0 ? <tr><td colSpan="7" style={{textAlign:'center'}}>Nenhuma proposta.</td></tr> :
+                    propostas.map((p) => (
+                        <tr key={p.id}>
+                            <td>{p.atletaNome}</td> <td>{p.atletaPosicao}</td> <td>{p.atletaIdade}</td>
+                            <td>{p.clubeAtualNome || 'Livre'}</td> <td>R$ {p.valor.toFixed(2)}</td>
+                            <td><span className={`propostas-status ${getStatusClass(p.status)}`}>{p.status}</span></td>
                             <td>
-                                {proposta.status === 'PENDENTE' && (
+                                {p.status === 'PENDENTE' && (
                                     <>
-                                        {/* Os botões agora chamam os handlers corretos */}
-                                        <button className="propostas-btn propostas-btn-aprovar" onClick={() => handleAceitar(proposta.id)}>Aprovar</button>
-                                        <button className="propostas-btn propostas-btn-rejeitar" onClick={() => handleRejeitar(proposta.id)}>Rejeitar</button>
+                                        <button className="propostas-btn propostas-btn-aprovar" onClick={() => handleAceitar(p.id)}>Aprovar</button>
+                                        <button className="propostas-btn propostas-btn-rejeitar" onClick={() => handleRejeitar(p.id)}>Rejeitar</button>
                                     </>
                                 )}
                             </td>
                         </tr>
                     ))
-                )}
+                }
             </tbody>
         </table>
     );
 
-    // --- Componente Interno: Tabela de Contratos (COM DATAS CORRIGIDAS) ---
     const TabelaContratosVigentes = () => (
         <table className="propostas-table">
             <thead>
                 <tr>
-                    <th>Atleta</th> <th>Posição</th> <th>Data Início</th>
-                    <th>Data Fim</th>
-                    <th>Salário</th> <th>Status</th> <th>Ações</th>
+                    <th>Atleta</th> <th>Posição</th> <th>Início</th>
+                    <th>Fim (Dias)</th> <th>Salário</th> <th>Status</th> <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
-                {carregandoContratos ? (
-                    <tr><td colSpan="7" style={{ textAlign: 'center' }}>Carregando contratos...</td></tr>
-                ) : contratos.length === 0 ? (
-                    <tr><td colSpan="7" style={{ textAlign: 'center' }}>Nenhum contrato vigente encontrado.</td></tr>
-                ) : (
-                    contratos.map((contrato) => {
-                        // --- (CORREÇÃO - BUG 2) ---
-                        // Calcula a data fim e o status dinamicamente
-                        const { dataFim, status, diasRestantes } = calcularInfoContrato(contrato.dataInicio, contrato.duracaoMeses);
-                        // --- (FIM DA CORREÇÃO - BUG 2) ---
-
+                {contratos.length === 0 ? <tr><td colSpan="7" style={{textAlign:'center'}}>Nenhum contrato ativo.</td></tr> :
+                    contratos.map((c) => {
+                        const { dataFim, status, diasRestantes } = calcularInfoContrato(c.dataInicio, c.duracaoMeses);
                         return (
-                            <tr key={contrato.id}>
-                                <td>{contrato.atletaNome}</td>
-                                <td>{contrato.atletaPosicao}</td>
-                                <td>{contrato.dataInicio ? new Date(contrato.dataInicio).toLocaleDateString('pt-BR') : 'N/A'}</td>
-                                <td>{dataFim} ({diasRestantes} dias)</td>
-                                <td>R$ {contrato.salario.toFixed(2)}</td>
+                            <tr key={c.id}>
+                                <td>{c.atletaNome}</td> <td>{c.atletaPosicao}</td>
+                                <td>{c.dataInicio ? new Date(c.dataInicio).toLocaleDateString('pt-BR') : '-'}</td>
+                                <td>{dataFim} ({diasRestantes}d)</td>
+                                <td>R$ {c.salario.toFixed(2)}</td>
                                 <td><span className={`propostas-status ${getStatusClass(status)}`}>{status}</span></td>
                                 <td>
-                                    {status !== 'EXPIRADO' && <button className="propostas-btn propostas-btn-aprovar">Renovar</button>}
-                                    <button className="propostas-btn propostas-btn-rejeitar">Encerrar</button>
+                                    <button className="propostas-btn propostas-btn-aprovar" onClick={() => abrirModalRenovar(c)}>Renovar</button>
+                                    <button className="propostas-btn propostas-btn-rejeitar" onClick={() => abrirModalEncerrar(c)}>Encerrar</button>
                                 </td>
                             </tr>
                         );
                     })
-                )}
+                }
             </tbody>
         </table>
     );
 
-    // --- Renderização Principal da Página ---
     return (
         <div className="propostas-page">
-            
             <h1>Gestão de Contratos</h1>
-            <p className="page-subtitle">Gerencie contratos e propostas de atletas</p>
-
-            {/* A caixa amarela foi removida */}
-
-            {/* Stats Cards (agora dinâmicos) */}
             <div className="stats-container">
-                <div className="stat-card">
-                    <span className="stat-label">Contratos Ativos</span>
-                    <span className="stat-value">{carregandoContratos ? '...' : contratos.length}</span>
-                    <span className="stat-desc">Vigentes atualmente</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-label">Vencendo em Breve</span>
-                    <span className="stat-value">{carregandoContratos ? '...' : contratosVencendo}</span>
-                    <span className="stat-desc">Próximos 12 meses</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-label">Propostas Abertas</span>
-                    <span className="stat-value">{carregandoPropostas ? '...' : propostasPendentes}</span>
-                    <span className="stat-desc">Aguardando decisão</span>
-                </div>
+                <div className="stat-card"> <span className="stat-label">Contratos Ativos</span> <span className="stat-value">{contratos.length}</span> </div>
+                <div className="stat-card"> <span className="stat-label">Propostas Pendentes</span> <span className="stat-value">{propostas.filter(p => p.status === 'PENDENTE').length}</span> </div>
             </div>
 
-            {/* Tab Slider (corrigido para o bug 4) */}
             <div className="tab-slider">
                 <div className="tab-buttons">
-                    <button 
-                        className={`tab-btn ${activeTab === 'vigentes' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('vigentes')}
-                    >
-                        Contratos Vigentes
-                    </button>
-                    <button 
-                        className={`tab-btn ${activeTab === 'propostas' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('propostas')}
-                    >
-                        Propostas de Contratação
-                    </button>
+                    <button className={`tab-btn ${activeTab === 'vigentes' ? 'active' : ''}`} onClick={() => setActiveTab('vigentes')}>Contratos Vigentes</button>
+                    <button className={`tab-btn ${activeTab === 'propostas' ? 'active' : ''}`} onClick={() => setActiveTab('propostas')}>Propostas</button>
                 </div>
-
-                {/* Botão de Nova Proposta (só aparece na tab 'propostas') */}
                 {activeTab === 'propostas' && (
-                    <button 
-                        style={styles.buttonNovaProposta}
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        + Nova Proposta
-                    </button>
+                    <button style={styles.buttonNovaProposta} onClick={() => setIsNovaPropostaOpen(true)}>+ Nova Proposta</button>
                 )}
             </div>
 
-            {/* Conteúdo Condicional */}
             <div className="tab-content">
                 {activeTab === 'propostas' ? <TabelaPropostas /> : <TabelaContratosVigentes />}
             </div>
 
-            {/* O Modal (passa o clubeIdLogado) */}
-            {isModalOpen && (
-                <NovaPropostaModal 
-                    onClose={() => setIsModalOpen(false)}
-                    onSuccess={handleProposalSuccess}
-                    clubePropositorId={clubeIdLogado}
+            {/* Modais */}
+            {isNovaPropostaOpen && (
+                <NovaPropostaModal onClose={() => setIsNovaPropostaOpen(false)} onSuccess={() => carregarPropostas()} clubePropositorId={clubeIdLogado} />
+            )}
+            
+            {isRenovarOpen && contratoSelecionado && (
+                <RenovarContratoModal 
+                    contrato={contratoSelecionado} 
+                    onClose={() => setIsRenovarOpen(false)} 
+                    onSuccess={handleSuccessContrato} 
+                />
+            )}
+
+            {isEncerrarOpen && contratoSelecionado && (
+                <ConfirmarDispensaModal 
+                    contrato={contratoSelecionado} 
+                    onClose={() => setIsEncerrarOpen(false)} 
+                    onSuccess={handleSuccessContrato} 
                 />
             )}
         </div>

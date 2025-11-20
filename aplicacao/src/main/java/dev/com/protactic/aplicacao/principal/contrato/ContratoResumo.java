@@ -13,5 +13,6 @@ public interface ContratoResumo {
     String getAtletaPosicao();
     int getAtletaIdade();
     LocalDate getDataInicio();
+    Integer getJogadorId();
 
 }

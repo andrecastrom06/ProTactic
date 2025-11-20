@@ -22,6 +22,38 @@ export const buscarContratosVigentes = async (clubeId) => {
     }
 };
 
-// TODO: Adicionar aqui as funções para Renovar e Dispensar
-// export const renovarContrato = async (contratoId, formulario) => { ... }
-// export const dispensarJogador = async (jogadorId) => { ... }
+export const renovarContrato = async (contratoId, dadosRenovacao) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/contrato/renovar/${contratoId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dadosRenovacao)
+        });
+
+        if (!response.ok) {
+            const erroTexto = await response.text();
+            throw new Error(erroTexto || "Erro ao renovar contrato");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Erro na renovação:", error);
+        throw error;
+    }
+};
+
+export const dispensarJogador = async (jogadorId) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/contrato/dispensar/${jogadorId}`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            const erroTexto = await response.text();
+            throw new Error(erroTexto || "Erro ao dispensar jogador");
+        }
+        return true;
+    } catch (error) {
+        console.error("Erro na dispensa:", error);
+        throw error;
+    }
+};
