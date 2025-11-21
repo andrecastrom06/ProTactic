@@ -21,55 +21,6 @@
     margin-bottom: 24px;
 }
 
-/* --- 1. KPIs Cards --- */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.kpi-card {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.kpi-info span {
-    font-size: 14px;
-    color: #666;
-    display: block;
-    margin-bottom: 8px;
-}
-
-.kpi-info h3 {
-    font-size: 28px;
-    font-weight: 600;
-    color: #333;
-    margin: 0;
-}
-
-.kpi-info small {
-    font-size: 12px;
-    color: #888;
-}
-
-.kpi-icon {
-    color: #009688; /* Verde do tema */
-    font-size: 20px;
-    background: #e0f2f1;
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* --- Containers de Seção --- */
 .section-container {
     background: white;
@@ -93,11 +44,22 @@
     color: #333;
 }
 
-.section-actions {
+.section-header small {
+    display: block;
+    color: #666;
+    font-weight: 400;
+}
+
+.section-header.tatico-border { border-left: 5px solid teal; padding-left: 15px; }
+.section-header.fisico-border { border-left: 5px solid #4caf50; padding-left: 15px; }
+
+.header-title-group {
     display: flex;
+    align-items: center;
     gap: 10px;
 }
 
+/* --- Botões --- */
 .btn-action {
     display: flex;
     align-items: center;
@@ -110,244 +72,10 @@
     border: 1px solid transparent;
 }
 
-.btn-action.primary {
-    background-color: #009688;
-    color: white;
-}
+.btn-action.primary { background-color: #009688; color: white; }
+.btn-action.outline { background-color: white; border: 1px solid #e0e0e0; color: #333; }
 
-.btn-action.outline {
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    color: #333;
-}
-
-/* --- 2. Calendário Semanal --- */
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
-    overflow-x: auto;
-}
-
-.calendar-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 16px;
-    min-width: 120px;
-    background-color: #fcfcfc;
-}
-
-.calendar-card.folga {
-    background-color: #fff;
-    opacity: 0.7;
-}
-
-.day-name {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 12px;
-}
-
-.type-badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.type-badge.green { background-color: #009688; }
-.type-badge.teal { background-color: #00695c; }
-.type-badge.orange { background-color: #f59e0b; }
-
-.day-details span {
-    display: block;
-    font-size: 12px;
-    color: #333;
-    font-weight: 500;
-}
-
-.intensity-text {
-    margin-top: 8px;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.no-train {
-    font-size: 12px;
-    color: #999;
-    font-style: italic;
-}
-
-/* --- 3. Carga por Atleta --- */
-.athlete-load-row {
-    display: grid;
-    grid-template-columns: 250px 1fr 100px;
-    align-items: center;
-    gap: 20px;
-    padding: 16px 0;
-    border-bottom: 1px solid #f0f0f0;
-    position: relative;
-}
-
-.athlete-load-row:last-child {
-    border-bottom: none;
-}
-
-.athlete-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.athlete-name {
-    font-weight: 600;
-    font-size: 14px;
-    color: #333;
-}
-
-.athlete-pos {
-    font-size: 12px;
-    color: #888;
-}
-
-.status-badge {
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 700;
-    color: white;
-}
-
-.status-success { background-color: #009688; }
-.status-warning { background-color: #eab308; }
-.status-danger { background-color: #ef4444; }
-
-.load-bar-container {
-    width: 100%;
-}
-
-.load-bar-bg {
-    width: 100%;
-    height: 8px;
-    background-color: #000; /* Fundo preto como na imagem */
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.load-bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.5s ease;
-}
-
-.load-value {
-    text-align: right;
-    font-weight: 700;
-    font-size: 14px;
-    color: #333;
-}
-
-.unavailable-tag {
-    color: #ef4444;
-    font-size: 12px;
-    border: 1px solid #ef4444;
-    padding: 2px 6px;
-    border-radius: 12px;
-}
-
-.athlete-msg {
-    grid-column: 1 / -1;
-    font-size: 12px;
-    color: #ef4444;
-    margin-top: -8px;
-    padding-bottom: 8px;
-}
-
-/* --- 4. Histórico --- */
-.history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    background: #fcfcfc;
-    border-radius: 6px;
-    margin-bottom: 8px;
-}
-
-.history-date strong {
-    display: block;
-    font-size: 13px;
-    color: #666;
-}
-
-.history-date span {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-}
-
-.history-meta {
-    display: flex;
-    gap: 12px;
-}
-
-.badge-gray {
-    background: #eee;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #555;
-}
-
-.badge-users {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: #666;
-}
-
-.status-pill {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 700;
-    color: white;
-}
-
-.status-pill.green { background-color: #009688; }
-.status-pill.teal { background-color: #00695c; }
-
-@media (max-width: 768px) {
-    .calendar-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .athlete-load-row {
-        grid-template-columns: 1fr; 
-        gap: 8px;
-    }
-    
-    .load-value {
-        text-align: left;
-    }
-}
-/* Estilos Gerais */
-.section-header.tatico-border { border-left: 5px solid teal; padding-left: 15px; }
-.section-header.fisico-border { border-left: 5px solid #4caf50; padding-left: 15px; }
-
-.header-title-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* Cards em Lista */
+/* --- Lista de Cards --- */
 .cards-list {
     display: flex;
     flex-direction: column;
@@ -355,6 +83,14 @@
     margin-top: 15px;
 }
 
+.empty-msg {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* --- Card de Treino --- */
 .training-card {
     background: white;
     border-radius: 8px;
@@ -371,7 +107,9 @@
 
 .card-left h3 { margin: 4px 0; font-size: 1.1rem; color: #333; }
 .card-meta { display: flex; gap: 15px; font-size: 0.85rem; color: #666; margin-top: 5px; }
+.card-meta .meta-tag { display: flex; align-items: center; gap: 5px; }
 
+/* Tags dentro do Card */
 .match-badge {
     background: #e0f2f1;
     color: teal;
@@ -380,45 +118,21 @@
     font-size: 0.8rem;
     font-weight: bold;
     text-transform: uppercase;
+    margin-right: 8px;
 }
 
-.convocados-tag { display: flex; align-items: center; gap: 5px; color: #f57c00; }
-.convocados-tag.all { color: #666; }
-
-/* Botão de Atualizar Status */
-.btn-update-status {
-    background: none;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
+.scope-badge {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: all 0.2s;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
 }
-.btn-update-status:hover { background: #f5f5f5; transform: rotate(180deg); }
+.scope-badge.individual { color: #f57c00; }
+.scope-badge.team { color: #1565c0; }
 
-.card-right {
-    display: flex;
-    align-items: center;
-}
-
-/* Modal Específico */
-.checkbox-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    max-height: 150px;
-    overflow-y: auto;
-    background: #f9f9f9;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #eee;
-}
-
+/* Card Físico Específico */
 .player-row {
     display: flex;
     align-items: center;
@@ -447,65 +161,126 @@
     margin-top: 8px;
     overflow: hidden;
 }
-.intensity-mini-bar div {
-    height: 100%;
-    background: #4caf50;
-}
+.intensity-mini-bar div { height: 100%; }
 
-/* Status Colors */
-.status-success { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
-.status-warning { background: #fef9c3; color: #854d0e; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
-.status-gray { background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
+/* Status Pills */
+.card-right { display: flex; align-items: center; }
+.status-pill { padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; }
+.status-success { background: #dcfce7; color: #166534; }
+.status-warning { background: #fef9c3; color: #854d0e; }
+.status-gray { background: #f1f5f9; color: #475569; }
 
-.fisico-header { border-bottom: 3px solid #4caf50; }
-.tatico-header { border-bottom: 3px solid teal; }
-
-/* --- KPIS DETALHADOS (Status) --- */
-.status-kpi-container {
+/* Botão Update Status */
+.btn-update-status {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
     display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.2s;
+}
+.btn-update-status:hover { background: #f5f5f5; transform: rotate(180deg); }
+.spinning { animation: spin 1s linear infinite; color: #009688; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* =========================================
+   MODAL (Estilo Completo)
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
-.status-kpi-item {
+.modal-content {
+    background-color: white;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    flex: 1;
-    position: relative;
+    animation: slideUp 0.3s ease-out;
 }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-.status-kpi-item:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 10%;
-    height: 80%;
-    width: 1px;
-    background: #cbd5e1;
-}
-
-.status-kpi-value { font-size: 1.2rem; font-weight: bold; color: #334155; }
-.status-kpi-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
-
-/* Cores dos KPIs */
-.kpi-plan { color: #64748b; }
-.kpi-prog { color: #d97706; }
-.kpi-done { color: #059669; }
-
-/* --- TOGGLE ESCOPO (Equipe vs Individual) --- */
-.scope-toggle {
+/* Header Modal */
+.modal-header {
+    padding: 20px 24px;
     display: flex;
-    background: #e2e8f0;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+.modal-header.fisico-header { background: linear-gradient(135deg, #43a047, #2e7d32); }
+.modal-header.tatico-header { background: linear-gradient(135deg, #00897b, #004d40); }
+
+.header-icon-title { display: flex; align-items: center; gap: 12px; }
+.header-icon-title h3 { margin: 0; font-size: 18px; font-weight: 700; }
+
+.btn-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+}
+.btn-close:hover { background: rgba(255, 255, 255, 0.4); }
+
+/* Formulário */
+.modal-form { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-section label { display: block; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; }
+
+/* Inputs */
+.select-wrapper, .input-wrapper { position: relative; display: flex; align-items: center; }
+.input-icon { position: absolute; left: 12px; color: #888; pointer-events: none; font-size: 16px; z-index: 1; }
+
+.modal-form input, .modal-form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: all 0.2s;
+}
+/* Padding extra se tiver ícone no select */
+.select-wrapper select { padding-left: 40px; }
+.modal-form input:focus, .modal-form select:focus {
+    background-color: white;
+    border-color: #009688;
+    outline: none;
+}
+
+/* Toggle Escopo (Tático) */
+.scope-toggle {
+    background-color: #f0f2f5;
     padding: 4px;
     border-radius: 8px;
-    margin-bottom: 15px;
+    display: flex;
+    margin-bottom: 8px;
 }
-
 .scope-btn {
     flex: 1;
     border: none;
@@ -515,36 +290,46 @@
     font-weight: 600;
     color: #64748b;
     cursor: pointer;
-    transition: all 0.3s;
-}
-
-.scope-btn.active {
-    background: white;
-    color: #0f172a;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* --- CARGA NO CARD TÁTICO --- */
-.tactical-load-bar {
-    margin-top: 8px;
-    background: #f1f5f9;
-    border-radius: 4px;
-    height: 6px;
-    overflow: hidden;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
-.tactical-load-fill {
-    height: 100%;
-    background-color: #3b82f6;
-}
-.load-label { font-size: 0.7rem; color: #64748b; margin-top: 2px; display: block; }
-/* Animação para o botão de refresh */
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
+.scope-btn.active { background: white; color: #004d40; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-.spinning {
-    animation: spin 1s linear infinite;
-    color: #009688;
+/* Slider */
+.intensity-section { background-color: #fcfcfc; border: 1px dashed #e0e0e0; padding: 16px; border-radius: 8px; }
+.intensity-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.intensity-value { font-weight: 800; color: #333; }
+
+.range-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: #ddd;
+    border-radius: 3px;
+    outline: none;
+    padding: 0 !important;
+    border: none !important;
 }
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid white;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+.range-slider.fisico::-webkit-slider-thumb { background: #43a047; }
+.range-slider.tatico::-webkit-slider-thumb { background: #00897b; }
+
+/* Footer Modal */
+.modal-footer { display: flex; gap: 12px; margin-top: 16px; }
+.btn-cancel { flex: 1; padding: 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.btn-save { flex: 2; padding: 12px; border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-save.fisico { background: #2e7d32; }
+.btn-save.tático { background: #00695c; }
+
+.animated-fade { animation: fadeIn 0.3s ease-in; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

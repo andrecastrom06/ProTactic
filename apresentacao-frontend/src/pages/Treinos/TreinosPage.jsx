@@ -16,8 +16,7 @@ import {
     criarSessaoTatica, 
     salvarTreinoFisico, 
     buscarTreinosFisicosPorJogador,
-    atualizarStatusTreinoFisico,
-    buscarSessoesPorPartida // Importando a função correta
+    atualizarStatusTreinoFisico
 } from '../../services/treinoService';
 
 export const TreinosPage = () => {
@@ -36,16 +35,11 @@ export const TreinosPage = () => {
     const [tipoTreinoSelecionado, setTipoTreinoSelecionado] = useState(''); 
     const [loadingStatus, setLoadingStatus] = useState(null);
 
-    // Estado para listar sessões já criadas da partida selecionada
-    const [sessoesSalvas, setSessoesSalvas] = useState([]);
-    const [partidaSelecionada, setPartidaSelecionada] = useState('');
-
     const [novoTreino, setNovoTreino] = useState({
         nome: '', intensidade: 50, partidaId: '', 
         escopoTatico: 'EQUIPE', jogadorTaticoId: '',
         jogadorFisicoId: '', dataInicio: '', dataFim: '', musculo: ''
     });
-    const [convocados, setConvocados] = useState([]);
 
     const formatarData = (dataString) => {
         if (!dataString) return 'Data Indef.';
@@ -93,14 +87,6 @@ export const TreinosPage = () => {
             let acumuladorFisicos = [];
             await Promise.all(meusJogadores.map(async (j) => {
                 const treinosDoAtleta = await buscarTreinosFisicosPorJogador(j.id);
-                
-                const cargaTotal = treinosDoAtleta.reduce((acc, t) => {
-                    if (t.status === 'Concluído') return acc;
-                    const valor = t.intensidade === 'Alta' ? 30 : (t.intensidade === 'Media' ? 20 : 10);
-                    return acc + valor;
-                }, 0);
-                j.cargaAtual = Math.min(100, cargaTotal);
-
                 const formatados = treinosDoAtleta.map(t => ({
                     id: t.id, nomeAtleta: j.nome, foco: t.nome, musculo: t.musculo,
                     dataInicio: formatarData(t.dataInicio), dataFim: formatarData(t.dataFim),
@@ -124,17 +110,6 @@ export const TreinosPage = () => {
         carregarDados();
     }, [carregarDados]);
 
-    // Buscar sessões existentes ao selecionar partida no modal
-    useEffect(() => {
-        const carregarSessoesExistentes = async () => {
-            if (!novoTreino.partidaId || !clubeIdLogado) return;
-            const sess = await buscarSessoesPorPartida(novoTreino.partidaId, clubeIdLogado);
-            setSessoesSalvas(sess);
-        };
-        carregarSessoesExistentes();
-    }, [novoTreino.partidaId, clubeIdLogado]);
-
-
     const handlePartidaChange = async (e) => {
         const idPartida = e.target.value; 
         setNovoTreino(prev => ({ ...prev, partidaId: idPartida }));
@@ -142,19 +117,9 @@ export const TreinosPage = () => {
 
         if (idPartida && novoTreino.escopoTatico === 'INDIVIDUAL') {
             try {
-                // Correção: Passa o clubeId para buscar a escalação correta
                 const resposta = await buscarEscalacaoDaPartida(idPartida, clubeIdLogado);
-                
                 if (resposta) {
-                    // A resposta pode ser uma lista de strings (nomes) ou objeto de escalação
-                    // Aqui assumimos que o seu service 'buscarEscalacaoDaPartida' retorna o que o back manda
-                    // Se for 'EscalacaoControlador.obterEscalacao', ele retorna lista de nomes.
-                    // Se for 'FormacaoControlador', retorna objeto.
-                    // Vamos assumir que retorna lista de nomes (strings) pelo código anterior
-                    
                     const nomesEscalados = Array.isArray(resposta) ? resposta : [];
-                    
-                    // Filtra jogadores pelo nome (fallback se não tiver ID na resposta)
                     const escalados = jogadores.filter(j => nomesEscalados.includes(j.nome));
                     setJogadoresEscalados(escalados);
                 }
@@ -201,7 +166,6 @@ export const TreinosPage = () => {
 
     const handleSalvarTreino = async (e) => {
         e.preventDefault();
-
         try {
             if (tipoTreinoSelecionado === 'Físico') {
                 if (!novoTreino.jogadorFisicoId) return alert("Selecione um atleta.");
@@ -226,30 +190,25 @@ export const TreinosPage = () => {
                 if (!novoTreino.partidaId) return alert("Selecione uma partida.");
                 
                 let listaConvocados = [];
-                
-                // Se for INDIVIDUAL, pega o selecionado. Se for EQUIPE, pega todos os jogadores do time.
                 if (novoTreino.escopoTatico === 'INDIVIDUAL') {
                     if(!novoTreino.jogadorTaticoId) return alert("Selecione o jogador escalado.");
                     listaConvocados = [parseInt(novoTreino.jogadorTaticoId)];
                 } else {
-                    // Equipe toda: envia IDs de todos os jogadores do clube
                     listaConvocados = jogadores.map(j => j.id);
                 }
                 
                 const payload = {
                     nome: novoTreino.nome,
-                    partidaId: parseInt(novoTreino.partidaId, 10), // Garante Inteiro
+                    partidaId: parseInt(novoTreino.partidaId, 10),
                     convocadosIds: listaConvocados,
-                    clubeId: parseInt(clubeIdLogado, 10) // Garante Inteiro
+                    clubeId: parseInt(clubeIdLogado, 10)
                 };
 
                 await criarSessaoTatica(payload);
                 alert("Sessão Tática agendada!");
             }
-
             fecharModal();
             carregarDados();
-
         } catch (err) {
             alert("Erro: " + err.message);
         }
