@@ -12,18 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoResumo;
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoServicoAplicacao;
-
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
+import dev.com.protactic.dominio.principal.Suspensao; 
 
 @RestController
 @RequestMapping("backend/registro-cartoes")
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class RegistroCartoesControlador {
 
-    private @Autowired RegistroCartaoServicoAplicacao registroCartaoServicoAplicacao;
-    private @Autowired RegistroCartoesService registroCartoesService;
-
+    @Autowired 
+    private RegistroCartaoServicoAplicacao registroCartaoServicoAplicacao;
+    
+    @Autowired 
+    private RegistroCartoesService registroCartoesService;
 
     @GetMapping(path = "pesquisa")
     public List<RegistroCartaoResumo> pesquisarResumos() {
@@ -40,7 +41,10 @@ public class RegistroCartoesControlador {
         return registroCartaoServicoAplicacao.pesquisarResumosPorTipo(tipo);
     }
 
-
+    @GetMapping(path = "/suspensoes/{clubeId}")
+    public List<Suspensao> listarSuspensosPorClube(@PathVariable("clubeId") Integer clubeId) {
+        return registroCartoesService.listarSuspensosPorClube(clubeId);
+    }
 
     public record CartaoFormulario(
         String atleta,
@@ -49,31 +53,25 @@ public class RegistroCartoesControlador {
 
     @PostMapping(path = "/registrar")
     public void registrarCartao(@RequestBody CartaoFormulario formulario) {
-        
         if (formulario == null) {
-            throw new IllegalArgumentException("O corpo da requisição (formulário) não pode ser nulo.");
+            throw new IllegalArgumentException("O corpo da requisição não pode ser nulo.");
         }
         
         try {
             registroCartoesService.registrarCartao(formulario.atleta(), formulario.tipo());
         } catch (Exception e) {
-
-            System.err.println("### ERRO AO REGISTRAR CARTÃO ###");
-            e.printStackTrace();             
+            e.printStackTrace();            
             throw new RuntimeException("Erro ao registrar cartão: " + e.getMessage(), e);
         }
     }
 
     @PostMapping(path = "/limpar/{atleta}")
     public void limparCartoes(@PathVariable("atleta") String atleta) {
-        
         try {
             registroCartoesService.limparCartoes(atleta);
         } catch (Exception e) {
-            System.err.println("### ERRO AO LIMPAR CARTÕES ###");
             e.printStackTrace();
-            
             throw new RuntimeException("Erro ao limpar cartões: " + e.getMessage(), e);
         }
     }
-} 
+}

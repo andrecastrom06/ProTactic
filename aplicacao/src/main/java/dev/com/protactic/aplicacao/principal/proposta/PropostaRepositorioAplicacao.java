@@ -2,7 +2,6 @@ package dev.com.protactic.aplicacao.principal.proposta;
 
 import java.util.List;
 
-
 public interface PropostaRepositorioAplicacao {
     
     List<PropostaResumo> pesquisarResumos();

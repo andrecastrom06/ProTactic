@@ -1,65 +1,69 @@
 // src/pages/GestaoJogo/components/AbaSuspensoes.jsx
 import React, { useState, useEffect } from 'react';
-import { cartaoService } from '../../../services/cartaoService';
+import { API_BASE_URL } from '../../../config/apiConfig'; // Importe sua config
 import './AbaAtribuirNotas.css';
 
-export const AbaSuspensoes = ({ atletas }) => { // Recebe a lista de atletas do time
+export const AbaSuspensoes = ({ clubeId }) => { // Recebe clubeId em vez de lista pronta
     const [suspensos, setSuspensos] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+
+    const fetchSuspensoes = async () => {
+        if (!clubeId) return;
+        try {
+            setLoading(true);
+            // Chama o novo endpoint criado
+            const response = await fetch(`${API_BASE_URL}/registro-cartoes/suspensoes/${clubeId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setSuspensos(data);
+            } else {
+                console.error("Erro ao buscar suspensões");
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const verificarSuspensoes = async () => {
-            if (!atletas || atletas.length === 0) return;
+        fetchSuspensoes();
+    }, [clubeId]);
 
-            try {
-                setLoading(true);
-                const listaSuspensosCalculada = [];
+    const handleEncerrarSuspensao = async (atletaNome) => {
+        if (!window.confirm(`Deseja encerrar a suspensão de ${atletaNome}? Isso limpará os cartões acumulados.`)) {
+            return;
+        }
 
-                // Como o backend não tem endpoint de suspensão, iteramos (ou buscamos todos os cartões)
-                // Idealmente, o backend deveria ter um endpoint /suspensoes
-                for (const atleta of atletas) {
-                    const cartoes = await cartaoService.listarPorAtleta(atleta.id); //
-                    
-                    // Lógica de Negócio: 3 Amarelos ou 1 Vermelho
-                    const amarelos = cartoes.filter(c => c.tipo && c.tipo.toUpperCase() === 'AMARELO').length;
-                    const vermelhos = cartoes.filter(c => c.tipo && c.tipo.toUpperCase() === 'VERMELHO').length;
+        try {
+            // Chama o endpoint de limpar cartões, que recalcula a suspensão para false
+            const response = await fetch(`${API_BASE_URL}/registro-cartoes/limpar/${atletaNome}`, {
+                method: 'POST'
+            });
 
-                    // Verifica regra simples de suspensão (adaptar conforme regra do campeonato)
-                    // Exemplo: A cada 3 amarelos suspende, ou 1 vermelho direto
-                    // Nota: O backend retorna uma lista acumulada. Precisamos saber se o jogador JÁ CUMPRIU a suspensão.
-                    // Como o backend atual é simples, vamos assumir que se tem 3 amarelos "ativos", está suspenso.
-                    
-                    // ATENÇÃO: Para um sistema real, o backend precisaria informar o "saldo" de cartões.
-                    // Aqui faremos uma verificação básica baseada no retorno bruto.
-                    if (amarelos >= 3 || vermelhos >= 1) {
-                        listaSuspensosCalculada.push({
-                            ...atleta,
-                            motivo: vermelhos > 0 ? "Cartão Vermelho" : "3 Cartões Amarelos",
-                            qtdAmarelos: amarelos,
-                            qtdVermelhos: vermelhos
-                        });
-                    }
-                }
-                setSuspensos(listaSuspensosCalculada);
-            } catch (error) {
-                console.error("Erro ao calcular suspensões:", error);
-            } finally {
-                setLoading(false);
+            if (response.ok) {
+                alert("Suspensão encerrada com sucesso!");
+                fetchSuspensoes(); // Recarrega a lista
+            } else {
+                alert("Erro ao encerrar suspensão.");
             }
-        };
-
-        verificarSuspensoes();
-    }, [atletas]);
-    
-    if (loading) return <p style={{textAlign:'center', padding: '20px'}}>Verificando suspensões...</p>;
+        } catch (error) {
+            console.error("Erro:", error);
+        }
+    };
 
     return (
         <div className="aba-notas-container">
             <div className="aba-notas-header-actions">
-                <h3 style={{margin: 0, color: '#A00000'}}>Jogadores Suspensos</h3>
+                <h3 style={{margin: 0, color: '#A00000'}}>Jogadores Suspensos do Clube</h3>
+                <button onClick={fetchSuspensoes} className="btn-atualizar" style={{marginLeft: '10px', cursor: 'pointer'}}>
+                    Atualizar
+                </button>
             </div>
 
-            {suspensos.length === 0 ? (
+            {loading ? (
+                <p style={{textAlign: 'center', padding: '20px'}}>Carregando...</p>
+            ) : suspensos.length === 0 ? (
                 <p style={{textAlign: 'center', color: '#666', padding: '20px'}}>
                     Nenhum jogador suspenso no momento.
                 </p>
@@ -69,29 +73,43 @@ export const AbaSuspensoes = ({ atletas }) => { // Recebe a lista de atletas do 
                         <thead>
                             <tr>
                                 <th>Atleta</th>
-                                <th>Motivo da Suspensão</th>
+                                <th>Motivo</th>
                                 <th>Status</th>
+                                <th style={{textAlign: 'center'}}>Ação</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {suspensos.map((atleta) => (
-                                <tr key={atleta.id}>
-                                    <td>
-                                        <strong>{atleta.nome}</strong>
-                                    </td>
-                                    <td style={{color: '#d9534f', fontWeight: 'bold'}}>
-                                        {atleta.motivo} ({atleta.qtdAmarelos} CA, {atleta.qtdVermelhos} CV)
-                                    </td>
-                                    <td>
-                                        <span style={{
-                                            backgroundColor: '#fde0e0', color: '#A00000', 
-                                            padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold'
-                                        }}>
-                                            SUSPENSO
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
+                            {suspensos.map((s) => {
+                                const motivo = s.vermelho > 0 
+                                    ? `Cartão Vermelho (${s.vermelho})` 
+                                    : `3 Cartões Amarelos (${s.amarelo})`;
+                                
+                                return (
+                                    <tr key={s.id || s.atleta}>
+                                        <td><strong>{s.atleta}</strong></td>
+                                        <td style={{color: '#d9534f', fontWeight: 'bold'}}>{motivo}</td>
+                                        <td>
+                                            <span style={{
+                                                backgroundColor: '#fde0e0', color: '#A00000', 
+                                                padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold'
+                                            }}>
+                                                SUSPENSO
+                                            </span>
+                                        </td>
+                                        <td style={{textAlign: 'center'}}>
+                                            <button 
+                                                onClick={() => handleEncerrarSuspensao(s.atleta)}
+                                                style={{
+                                                    backgroundColor: '#28a745', color: 'white', border: 'none',
+                                                    padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px'
+                                                }}
+                                            >
+                                                Encerrar Suspensão
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

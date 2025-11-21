@@ -1,7 +1,6 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.jogador;
 
 import dev.com.protactic.aplicacao.principal.jogador.JogadorResumo;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List; 
@@ -16,4 +15,6 @@ public interface JogadorRepositorySpringData extends JpaRepository<JogadorJPA, I
     List<JogadorResumo> findAllBy();
 
     List<JogadorResumo> findByClubeId(Integer clubeId);
+
+    List<JogadorJPA> findAllByClubeId(Integer clubeId);
 }

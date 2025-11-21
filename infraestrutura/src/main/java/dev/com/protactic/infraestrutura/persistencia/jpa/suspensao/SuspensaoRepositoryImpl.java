@@ -6,6 +6,8 @@ import dev.com.protactic.infraestrutura.persistencia.jpa.jogador.JogadorJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.jogador.JogadorRepositorySpringData;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -48,6 +50,28 @@ public class SuspensaoRepositoryImpl implements SuspensaoRepository {
                         jpa.getAmarelo(),
                         jpa.getVermelho()
                 ));
+    }
+
+    @Override
+    public List<Suspensao> buscarSuspensosPorClube(Integer clubeId) {
+        List<JogadorJPA> jogadores = jogadorJPA.findAllByClubeId(clubeId); 
+        
+        List<Suspensao> listaSuspensos = new ArrayList<>();
+
+        for (JogadorJPA jogador : jogadores) {
+            suspensaoJPA.findByIdJogador(jogador.getId()).ifPresent(s -> {
+                if (s.isSuspenso()) {
+                    listaSuspensos.add(new Suspensao(
+                        s.getId(),
+                        jogador.getNome(),
+                        s.isSuspenso(),
+                        s.getAmarelo(),
+                        s.getVermelho()
+                    ));
+                }
+            });
+        }
+        return listaSuspensos;
     }
 
     private Integer buscarIdJogadorPeloNome(String nomeAtleta) {

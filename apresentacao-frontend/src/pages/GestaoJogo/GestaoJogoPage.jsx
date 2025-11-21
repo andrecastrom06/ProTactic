@@ -19,7 +19,6 @@ import { atribuirNota, buscarNotasPorJogo } from '../../services/notaService';
 export const GestaoJogoPage = () => {
     const { clubeIdLogado } = useAuth();
     
-    // Adicionadas novas opções de aba
     const [abaAtiva, setAbaAtiva] = useState('ESCALACAO'); 
 
     // --- Estados de Dados ---
@@ -39,30 +38,29 @@ export const GestaoJogoPage = () => {
     const [loading, setLoading] = useState(true);
     const campoTaticoRef = useRef(null);
 
-    // Carregamento inicial de dados (Igual ao anterior)
+    // Carregamento inicial de dados
     useEffect(() => {
         const carregarDados = async () => {
             if (!clubeIdLogado) return;
             setLoading(true);
             try {
                 const players = await buscarTodosJogadores();
-                // Filtra apenas jogadores do clube logado
                 const meusJogadores = players.filter(j => j.clubeId === parseInt(clubeIdLogado));
                 
-                // Mapeia para adicionar campos auxiliares
                 const mappedJogadores = meusJogadores.map(j => ({ 
                     ...j, 
                     numero: j.id, 
                     posicao: j.posicao || '?',
-                    // Status importantes para a lógica de suspensão
+                    // Nota: 'suspenso' aqui só será true se o backend atualizar o status na tabela Jogador.
+                    // A AbaSuspensoes agora busca direto da tabela de Suspensões, que é mais preciso.
                     suspenso: j.status === 'Suspenso', 
-                    cartoesAmarelos: 0, // Estes viriam do backend idealmente
+                    cartoesAmarelos: 0, 
                     cartoesVermelhos: 0
                 }));
                 
                 setTodosAtletas(mappedJogadores);
                 
-                // Apenas saudáveis e com contrato entram na lista de disponíveis inicial
+                // Filtra disponíveis para a escalação (remove suspensos marcados no cadastro)
                 setAtletasDisponiveis(mappedJogadores.filter(j => j.saudavel && j.contratoAtivo && !j.suspenso));
 
                 const jogos = await buscarJogosDoClube(clubeIdLogado);
@@ -80,7 +78,7 @@ export const GestaoJogoPage = () => {
         carregarDados();
     }, [clubeIdLogado]);
 
-    // Carrega Detalhes da Partida (Escalação)
+    // Carrega Detalhes da Partida
     useEffect(() => {
         const carregarDetalhesPartida = async () => {
             if (!partidaSelecionada || todosAtletas.length === 0 || !clubeIdLogado) return;
@@ -131,7 +129,6 @@ export const GestaoJogoPage = () => {
         carregarDetalhesPartida();
     }, [partidaSelecionada, todosAtletas, clubeIdLogado]);
 
-    // Lógica de Drag & Drop (Mantida igual)
     const handleDragEnd = (event) => {
         const { active, over, delta } = event;
         if (!over) return; 
@@ -177,7 +174,6 @@ export const GestaoJogoPage = () => {
         }
     };
 
-    // Salvar Escalação
     const handleSalvarEscalacao = async () => {
         if (!partidaSelecionada) {
             alert("Selecione uma partida primeiro.");
@@ -199,12 +195,7 @@ export const GestaoJogoPage = () => {
         }
     };
 
-    // Dados para as novas abas
-    // Combinamos quem está no campo e na reserva para a lista de "Quem jogou"
     const atletasRelacionados = [...atletasNoCampo, ...reservas]; 
-    
-    // Lista completa para ver suspensões
-    const listaSuspensos = todosAtletas.filter(atleta => atleta.status === 'Suspenso' || atleta.suspenso);
 
     if (loading) return <div style={{padding:20}}>Carregando dados...</div>;
 
@@ -268,7 +259,7 @@ export const GestaoJogoPage = () => {
                         </>
                     )}
 
-                    {/* === NOVA ABA: CARTÕES E INFORMAÇÕES === */}
+                    {/* === ABA CARTÕES === */}
                     {abaAtiva === 'CARTOES' && (
                         <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
                            <AbaCartoesInfo 
@@ -278,12 +269,12 @@ export const GestaoJogoPage = () => {
                         </div>
                     )}
 
-                    {/* === NOVA ABA: SUSPENSÕES === */}
+                    {/* === ABA SUSPENSÕES (CORRIGIDA) === */}
                     {abaAtiva === 'SUSPENSOES' && (
                         <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
+                            {/* AQUI ESTAVA O ERRO: Agora passamos o clubeId para o componente buscar os dados */}
                             <AbaSuspensoes 
-                                suspensos={listaSuspensos}
-                                partidaAtualId={partidaSelecionada}
+                                clubeId={clubeIdLogado}
                             />
                         </div>
                     )}
