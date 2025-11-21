@@ -19,7 +19,7 @@ import dev.com.protactic.dominio.principal.cadastroAtleta.CadastroDeAtletaServic
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("backend/clube")
+@RequestMapping("backend/cadastro-atleta")
 public class CadastroDeAtletaControlador {
 
     private @Autowired ClubeServicoAplicacao clubeServicoAplicacao;

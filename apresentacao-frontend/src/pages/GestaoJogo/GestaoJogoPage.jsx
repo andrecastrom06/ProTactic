@@ -30,6 +30,7 @@ export const GestaoJogoPage = () => {
     const [partidas, setPartidas] = useState([]);
     const [partidaSelecionada, setPartidaSelecionada] = useState('');
     
+    // Este estado controla se a mensagem deve aparecer ou não
     const [escalacaoJaExiste, setEscalacaoJaExiste] = useState(false);
     const [notasDoBanco, setNotasDoBanco] = useState([]);
 
@@ -51,16 +52,12 @@ export const GestaoJogoPage = () => {
                     ...j, 
                     numero: j.id, 
                     posicao: j.posicao || '?',
-                    // Nota: 'suspenso' aqui só será true se o backend atualizar o status na tabela Jogador.
-                    // A AbaSuspensoes agora busca direto da tabela de Suspensões, que é mais preciso.
                     suspenso: j.status === 'Suspenso', 
                     cartoesAmarelos: 0, 
                     cartoesVermelhos: 0
                 }));
                 
                 setTodosAtletas(mappedJogadores);
-                
-                // Filtra disponíveis para a escalação (remove suspensos marcados no cadastro)
                 setAtletasDisponiveis(mappedJogadores.filter(j => j.saudavel && j.contratoAtivo && !j.suspenso));
 
                 const jogos = await buscarJogosDoClube(clubeIdLogado);
@@ -86,7 +83,7 @@ export const GestaoJogoPage = () => {
             try {
                 setAtletasNoCampo([]);
                 setReservas([]);
-                setEscalacaoJaExiste(false);
+                setEscalacaoJaExiste(false); // Resetamos antes de verificar
                 setNotasDoBanco([]); 
 
                 let poolDeAtletas = [...todosAtletas.filter(j => j.saudavel && j.contratoAtivo && !j.suspenso)];
@@ -196,6 +193,26 @@ export const GestaoJogoPage = () => {
     };
 
     const atletasRelacionados = [...atletasNoCampo, ...reservas]; 
+    
+    // Componente simples para a mensagem de aviso
+    const AvisoSemEscalacao = () => (
+        <div style={{
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            padding: '40px',
+            backgroundColor: '#f8d7da',
+            color: '#721c24',
+            borderRadius: '8px',
+            border: '1px solid #f5c6cb',
+            marginTop: '20px'
+        }}>
+            <h3>⚠️ Escalação Pendente</h3>
+            <p>A partida ainda não tem uma escalação definida.</p>
+            <p style={{fontSize: '0.9em'}}>Por favor, aceda à aba "Escalação Tática" e salve os titulares antes de atribuir notas ou gerir cartões.</p>
+        </div>
+    );
 
     if (loading) return <div style={{padding:20}}>Carregando dados...</div>;
 
@@ -224,6 +241,7 @@ export const GestaoJogoPage = () => {
                 
                 <div className="gestao-jogo-content">
                     {/* === ABA ESCALAÇÃO === */}
+                    {/* Esta aba fica sempre visível para permitir CRIAR a escalação */}
                     {abaAtiva === 'ESCALACAO' && (
                         <>
                             <div className="campo-column">
@@ -259,33 +277,39 @@ export const GestaoJogoPage = () => {
                         </>
                     )}
 
-                    {/* === ABA CARTÕES === */}
+                    {/* === ABA CARTÕES (COM VERIFICAÇÃO) === */}
                     {abaAtiva === 'CARTOES' && (
                         <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
-                           <AbaCartoesInfo 
-                               atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
-                               partidaId={partidaSelecionada}
-                           />
+                            {!escalacaoJaExiste ? (
+                                <AvisoSemEscalacao />
+                            ) : (
+                                <AbaCartoesInfo 
+                                    atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
+                                    partidaId={partidaSelecionada}
+                                />
+                            )}
                         </div>
                     )}
 
-                    {/* === ABA SUSPENSÕES (CORRIGIDA) === */}
+                    {/* === ABA SUSPENSÕES === */}
                     {abaAtiva === 'SUSPENSOES' && (
                         <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
-                            {/* AQUI ESTAVA O ERRO: Agora passamos o clubeId para o componente buscar os dados */}
-                            <AbaSuspensoes 
-                                clubeId={clubeIdLogado}
-                            />
+                            <AbaSuspensoes clubeId={clubeIdLogado} />
                         </div>
                     )}
 
-                    {/* === ABA NOTAS === */}
+                    {/* === ABA NOTAS (COM VERIFICAÇÃO) === */}
                     {abaAtiva === 'NOTAS' && (
-                        <AbaAtribuirNotas 
-                            atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
-                            notasIniciais={notasDoBanco} 
-                            onSalvar={() => {}} 
-                        />
+                        // Aqui fazemos a Verificação Condicional
+                        !escalacaoJaExiste ? (
+                            <AvisoSemEscalacao />
+                        ) : (
+                            <AbaAtribuirNotas 
+                                atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
+                                notasIniciais={notasDoBanco} 
+                                onSalvar={() => {}} 
+                            />
+                        )
                     )}
                 </div>
             </div>
