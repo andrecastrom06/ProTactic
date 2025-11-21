@@ -71,3 +71,24 @@ export const encerrarLesao = async (jogadorId) => {
         throw error;
     }
 };
+
+export const buscarHistoricoLesoes = async (jogadorId) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/lesao/pesquisa-por-jogador/${jogadorId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao buscar histórico de lesões');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Erro no serviço de lesões:", error);
+        throw error;
+    }
+};

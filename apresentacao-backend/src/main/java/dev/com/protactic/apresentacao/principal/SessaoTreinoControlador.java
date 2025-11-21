@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoResumo;
 import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoServicoAplicacao;
-import dev.com.protactic.dominio.principal.SessaoTreino; 
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoService;
 
 @RestController

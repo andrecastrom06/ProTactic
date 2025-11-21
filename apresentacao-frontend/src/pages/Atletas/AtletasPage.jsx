@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-// 1. Importar o novo modal e os serviços
 import { buscarTodosJogadores } from '../../services/jogadorService';
-import { encerrarLesao } from '../../services/lesaoService'; // Importa a nova função
+import { encerrarLesao } from '../../services/lesaoService';
 import { NovoAtletaModal } from '../../components/NovoAtletaModal/NovoAtletaModal';
-import { RegistrarLesaoModal } from '../../components/RegistrarLesaoModal/RegistrarLesaoModal'; // Importa o modal de lesão
+import { DetalhesAtletaModal } from '../../components/DetalhesAtletaModal/DetalhesAtletaModal';
+import { RegistrarLesaoModal } from '../../components/RegistrarLesaoModal/RegistrarLesaoModal';
 import { useAuth } from '../../store/AuthContext';
 import './AtletasPage.css'; 
 import { FaPlus, FaStar, FaEye, FaHeartbeat } from 'react-icons/fa';
 
-// ... (A função formatarData continua igual) ...
 const formatarData = (dataString) => {
     if (!dataString) return '-';
-    // O backend envia um array [ano, mes, dia], vamos converter
     if (Array.isArray(dataString)) {
         dataString = `${dataString[0]}-${String(dataString[1]).padStart(2, '0')}-${String(dataString[2]).padStart(2, '0')}`;
     }
@@ -19,7 +17,7 @@ const formatarData = (dataString) => {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-        timeZone: 'UTC' // Importante para datas sem hora
+        timeZone: 'UTC'
     });
 };
 
@@ -28,16 +26,14 @@ const AtletasPage = () => {
     const [atletas, setAtletas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // 2. Adicionar estados para o novo modal de lesão
     const [isCadastroModalOpen, setIsCadastroModalOpen] = useState(false);
     const [isLesaoModalOpen, setIsLesaoModalOpen] = useState(false);
     const [atletaSelecionado, setAtletaSelecionado] = useState(null);
-    
+    const [isDetalhesModalOpen, setIsDetalhesModalOpen] = useState(false);
+
     const { clubeIdLogado } = useAuth();
 
     const carregarAtletas = useCallback(async () => {
-        // ... (função carregarAtletas continua igual) ...
         try {
             setLoading(true);
             const response = await buscarTodosJogadores();
@@ -55,13 +51,11 @@ const AtletasPage = () => {
         carregarAtletas();
     }, [carregarAtletas]); 
 
-    // Função de sucesso para o modal de NOVO ATLETA
     const handleCadastroSuccess = () => {
         setIsCadastroModalOpen(false); 
         carregarAtletas(); 
     };
 
-    // 3. Adicionar funções para controlar o modal de LESÃO
     const handleAbrirModalLesao = (atleta) => {
         setAtletaSelecionado(atleta);
         setIsLesaoModalOpen(true);
@@ -70,8 +64,14 @@ const AtletasPage = () => {
     const handleLesaoSuccess = () => {
         setIsLesaoModalOpen(false);
         setAtletaSelecionado(null);
-        carregarAtletas(); // Recarrega a lista
+        carregarAtletas(); 
     };
+
+    const handleAbrirDetalhes = (atleta) => {
+        setAtletaSelecionado(atleta);
+        setIsDetalhesModalOpen(true);
+    };
+
 
     const handleEncerrarLesao = async (jogadorId) => {
         if (!window.confirm("Tem certeza que deseja encerrar esta lesão e marcar o atleta como 'Saudável'?")) {
@@ -85,12 +85,9 @@ const AtletasPage = () => {
             alert(`Erro ao encerrar lesão: ${err.message}`);
         }
     };
-    // --- Fim das novas funções ---
-
     if (loading) {
         return <div style={{ padding: '20px' }}>Carregando atletas...</div>;
     }
-    // ... (o if(error) continua igual) ...
     if (error) {
         return <div style={{ padding: '20px' }}>{error}</div>;
     }
@@ -103,7 +100,7 @@ const AtletasPage = () => {
                 <h1>Gestão de Atletas</h1>
                 <button 
                     className="novo-atleta-btn"
-                    onClick={() => setIsCadastroModalOpen(true)} // Corrigido
+                    onClick={() => setIsCadastroModalOpen(true)} 
                 >
                     <FaPlus size={14} />
                     Novo Atleta
@@ -112,7 +109,6 @@ const AtletasPage = () => {
 
             <div className="atletas-list-container">
                 
-                {/* Cabeçalho da Lista (igual) */}
                 <div className="atleta-item header">
                     <span className="nome">Nome</span>
                     <span className="posicao">Posição</span>
@@ -133,7 +129,6 @@ const AtletasPage = () => {
                         return (
                             <div key={atleta.id} className="atleta-item">
                                 
-                                {/* ... (colunas Nome, Posição, Idade, Status, Saúde, Contrato continuam iguais) ... */}
                                 <span className="nome">
                                     {atleta.nome}
                                     {atleta.capitao && (
@@ -159,13 +154,14 @@ const AtletasPage = () => {
                                     {formatarData(atleta.chegadaNoClube)}
                                 </span>
 
-                                {/* 4. Lógica de botões atualizada */}
                                 <span className="acoes">
-                                    <button className="action-btn action-btn-details">
+                                    <button 
+                                        className="action-btn action-btn-details"
+                                        onClick={() => handleAbrirDetalhes(atleta)}
+                                    >
                                         <FaEye size={14} /> Detalhes
                                     </button>
                                     
-                                    {/* Botão condicional: ou registra ou encerra lesão */}
                                     {saudavel ? (
                                         <button 
                                             className="action-btn action-btn-lesao"
@@ -188,14 +184,12 @@ const AtletasPage = () => {
                         );
                     })
                 ) : (
-                    // ... (igual) ...
                     <div style={{ padding: '20px', textAlign: 'center' }}>
                         Nenhum atleta cadastrado.
                     </div>
                 )}
             </div>
             
-            {/* Modal de Cadastro (já existia) */}
             {isCadastroModalOpen && (
                 <NovoAtletaModal 
                     onClose={() => setIsCadastroModalOpen(false)}
@@ -203,7 +197,6 @@ const AtletasPage = () => {
                 />
             )}
 
-            {/* 5. Renderização do novo Modal de Lesão */}
             {isLesaoModalOpen && atletaSelecionado && (
                 <RegistrarLesaoModal
                     atleta={atletaSelecionado}
@@ -212,6 +205,12 @@ const AtletasPage = () => {
                 />
             )}
 
+            {isDetalhesModalOpen && atletaSelecionado && (
+                <DetalhesAtletaModal 
+                    atleta={atletaSelecionado}
+                    onClose={() => setIsDetalhesModalOpen(false)}
+                />
+            )}
         </div>
     );
 };

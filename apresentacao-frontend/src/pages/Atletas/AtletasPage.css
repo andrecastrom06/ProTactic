@@ -1,11 +1,9 @@
-/* Container principal da página */
 .atletas-page-container {
     padding: 20px;
     background-color: #f9f9f9;
     height: 100%;
 }
 
-/* Cabeçalho da página com Título e Botão */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -18,7 +16,6 @@
     margin: 0;
 }
 
-/* Botão de "Novo Atleta" */
 .novo-atleta-btn {
     background-color: #007bff;
     color: white;
