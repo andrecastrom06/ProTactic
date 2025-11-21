@@ -3,6 +3,7 @@ package dev.com.protactic.dominio.principal.cadastroAtleta;
 import dev.com.protactic.dominio.principal.*; 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.time.LocalDate;
 
@@ -18,12 +19,15 @@ public class CadastroDeAtletaService {
         this.contratoRepo = contratoRepo;
     }
 
-    // --- INÍCIO DA CORREÇÃO 1 ---
+    // --- ATUALIZADO: Adicionados pernaDominante e minutagem ao Record ---
     public record DadosNovoAtleta(
         String nomeCompleto,
         String posicao,
         int idade,
-        LocalDate validadeDoContrato,
+        String pernaDominante, 
+        int minutagem,        
+        int duracaoMeses,      
+        double salario,        
         String situacaoContratual, 
         Integer clubeId
     ) {}
@@ -34,8 +38,9 @@ public class CadastroDeAtletaService {
         Contrato novoContrato = new Contrato();
         novoContrato.setClubeId(formulario.clubeId());
         novoContrato.setStatus(formulario.situacaoContratual());
-        novoContrato.setDuracaoMeses(36); 
-        novoContrato.setSalario(0); 
+        
+        novoContrato.setDuracaoMeses(formulario.duracaoMeses()); 
+        novoContrato.setSalario(formulario.salario()); 
         
         contratoRepo.salvar(novoContrato); 
 
@@ -43,7 +48,7 @@ public class CadastroDeAtletaService {
         novoJogador.setNome(formulario.nomeCompleto());
         novoJogador.setPosicao(formulario.posicao());
         novoJogador.setIdade(formulario.idade());
-        
+
         novoJogador.setContratoId(novoContrato.getId());
         novoJogador.setClubeId(formulario.clubeId());
         
@@ -58,9 +63,7 @@ public class CadastroDeAtletaService {
 
         return novoJogador;
     }
-    // --- FIM DA CORREÇÃO 1 ---
 
-    // --- INÍCIO DA CORREÇÃO 2 ---
     public boolean contratarPorId(Integer clubeId, Integer jogadorId, Date data) throws Exception {
         Objects.requireNonNull(clubeId, "O ID do Clube não pode ser nulo.");
         Objects.requireNonNull(jogadorId, "O ID do Jogador não pode ser nulo.");
@@ -78,7 +81,6 @@ public class CadastroDeAtletaService {
 
         return this.contratar(clubeDestino, jogador, data);
     }
-    // --- FIM DA CORREÇÃO 2 ---
 
     private boolean estaDentroDaJanela(Date data) {
         Calendar cal = Calendar.getInstance();
@@ -87,7 +89,6 @@ public class CadastroDeAtletaService {
         return (mes >= 6 && mes <= 8) || (mes == 12 || mes == 1 || mes == 2);
     }
 
-    
     public boolean contratar(Clube clubeDestino, Jogador jogador, Date data) {
         boolean janelaAberta = estaDentroDaJanela(data);
         Integer contratoAtualId = jogador.getContratoId();
@@ -113,5 +114,9 @@ public class CadastroDeAtletaService {
         clubeRepo.salvar(clubeDestino);
 
         return true;
+    }
+
+    public List<Jogador> listarJogadoresDoClube(Integer clubeId) {
+        return jogadorRepo.buscarPorClube(clubeId);
     }
 }

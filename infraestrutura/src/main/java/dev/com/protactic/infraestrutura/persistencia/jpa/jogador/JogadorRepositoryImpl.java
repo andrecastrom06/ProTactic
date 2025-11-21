@@ -81,5 +81,10 @@ public class JogadorRepositoryImpl implements JogadorRepository, JogadorReposito
                 .map(jpa -> mapeador.map(jpa, Jogador.class))
                 .collect(Collectors.toList());
     }
-
+    @Override
+    public List<Jogador> buscarPorClube(Integer clubeId) {
+        List<JogadorResumo> jpas = repositoryJPA.findByClubeId(clubeId);
+        return jpas.stream().map(jpa -> mapeador.map(jpa, Jogador.class))
+                .collect(Collectors.toList());
+    }
 }

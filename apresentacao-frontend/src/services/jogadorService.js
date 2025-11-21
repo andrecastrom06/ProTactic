@@ -38,3 +38,19 @@ export const cadastrarNovoAtleta = async (atletaData) => {
         throw error;
     }
 };
+export const buscarJogadoresPorClube = async (clubeId) => {
+    if (!clubeId) return [];
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/jogador/listar/${clubeId}`);
+        
+        if (!response.ok) {
+            throw new Error(`Erro ao buscar jogadores do clube: ${response.statusText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error("Falha na API (Buscar Jogadores):", error);
+        throw error;
+    }
+};

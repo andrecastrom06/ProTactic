@@ -16,32 +16,12 @@ public class JogadorMock implements JogadorRepository {
     
     private static final AtomicInteger sequenceId = new AtomicInteger(1);
 
-
     @Override
     public void salvar(Jogador jogador) {
         if (jogador.getId() == 0) {
             jogador.setId(sequenceId.getAndIncrement());
         }
         jogadores.put(jogador.getId(), jogador);
-    }
-
-    @Override
-    public Jogador buscarPorNome(String nome) {
-        return jogadores.values().stream()
-                .filter(jogador -> jogador.getNome().equalsIgnoreCase(nome))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public boolean existe(String nome) {
-        return jogadores.values().stream()
-                .anyMatch(jogador -> jogador.getNome().equalsIgnoreCase(nome));
-    }
-
-    @Override
-    public List<Jogador> listarTodos() {
-        return new ArrayList<>(jogadores.values());
     }
 
     @Override
@@ -53,10 +33,31 @@ public class JogadorMock implements JogadorRepository {
     }
 
     @Override
+    public List<Jogador> buscarPorClube(Integer clubeId) {
+        return jogadores.values().stream()
+                .filter(jogador -> clubeId.equals(jogador.getClubeId()))
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<Jogador> listarTodos() {
+        return new ArrayList<>(jogadores.values());
+    }
+
+    public Jogador buscarPorNome(String nome) {
+        return jogadores.values().stream()
+                .filter(jogador -> jogador.getNome().equalsIgnoreCase(nome))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean existe(String nome) {
+        return jogadores.values().stream()
+                .anyMatch(jogador -> jogador.getNome().equalsIgnoreCase(nome));
+    }
+
     public List<Jogador> findByNomeIgnoreCase(String nome) {
         return jogadores.values().stream()
                 .filter(jogador -> jogador.getNome().equalsIgnoreCase(nome))
                 .collect(Collectors.toList());
     }
-
 }

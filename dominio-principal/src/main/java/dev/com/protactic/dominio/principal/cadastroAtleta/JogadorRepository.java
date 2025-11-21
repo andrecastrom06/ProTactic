@@ -10,4 +10,5 @@ public interface JogadorRepository {
     List<Jogador> listarTodos();
     Jogador buscarPorId(Integer id);
     List<Jogador> findByNomeIgnoreCase(String nome);
+    List<Jogador> buscarPorClube(Integer clubeId);
 }
