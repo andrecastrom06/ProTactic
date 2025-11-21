@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 
+// Componentes existentes
 import { CampoTatico } from './components/CampoTatico';
 import { ListaAtletas } from './components/ListaAtletas';
 import { AbaAtribuirNotas } from './components/AbaAtribuirNotas';
 import { CriarPartidaModal } from '../../components/CriarPartidaModal'; 
-import './GestaoJogoPage.css';
+// NOVOS COMPONENTES
+import { AbaCartoesInfo } from './components/AbaCartoesInfo';
+import { AbaSuspensoes } from './components/AbaSuspensoes';
 
+import './GestaoJogoPage.css';
 import { useAuth } from '../../store/AuthContext';
 import { buscarTodosJogadores } from '../../services/jogadorService';
 import { buscarJogosDoClube, salvarEscalacao, buscarEscalacaoPorPartida } from '../../services/jogoService'; 
@@ -14,7 +18,9 @@ import { atribuirNota, buscarNotasPorJogo } from '../../services/notaService';
 
 export const GestaoJogoPage = () => {
     const { clubeIdLogado } = useAuth();
-    const [abaAtiva, setAbaAtiva] = useState('ESCALACAO');
+    
+    // Adicionadas novas opções de aba
+    const [abaAtiva, setAbaAtiva] = useState('ESCALACAO'); 
 
     // --- Estados de Dados ---
     const [todosAtletas, setTodosAtletas] = useState([]); 
@@ -33,19 +39,31 @@ export const GestaoJogoPage = () => {
     const [loading, setLoading] = useState(true);
     const campoTaticoRef = useRef(null);
 
-    // 1. Carrega Dados Iniciais
+    // Carregamento inicial de dados (Igual ao anterior)
     useEffect(() => {
         const carregarDados = async () => {
             if (!clubeIdLogado) return;
             setLoading(true);
             try {
                 const players = await buscarTodosJogadores();
-                const meusJogadores = players.filter(j => 
-                    j.clubeId === clubeIdLogado && j.saudavel && j.contratoAtivo
-                ).map(j => ({ ...j, numero: j.id, posicao: j.posicao || '?' }));
+                // Filtra apenas jogadores do clube logado
+                const meusJogadores = players.filter(j => j.clubeId === parseInt(clubeIdLogado));
                 
-                setTodosAtletas(meusJogadores);
-                setAtletasDisponiveis(meusJogadores);
+                // Mapeia para adicionar campos auxiliares
+                const mappedJogadores = meusJogadores.map(j => ({ 
+                    ...j, 
+                    numero: j.id, 
+                    posicao: j.posicao || '?',
+                    // Status importantes para a lógica de suspensão
+                    suspenso: j.status === 'Suspenso', 
+                    cartoesAmarelos: 0, // Estes viriam do backend idealmente
+                    cartoesVermelhos: 0
+                }));
+                
+                setTodosAtletas(mappedJogadores);
+                
+                // Apenas saudáveis e com contrato entram na lista de disponíveis inicial
+                setAtletasDisponiveis(mappedJogadores.filter(j => j.saudavel && j.contratoAtivo && !j.suspenso));
 
                 const jogos = await buscarJogosDoClube(clubeIdLogado);
                 setPartidas(jogos);
@@ -62,22 +80,19 @@ export const GestaoJogoPage = () => {
         carregarDados();
     }, [clubeIdLogado]);
 
-    // 2. Carrega a Escalação E AS NOTAS quando muda a Partida Selecionada
+    // Carrega Detalhes da Partida (Escalação)
     useEffect(() => {
         const carregarDetalhesPartida = async () => {
             if (!partidaSelecionada || todosAtletas.length === 0 || !clubeIdLogado) return;
 
             try {
-                // Reset visual
                 setAtletasNoCampo([]);
                 setReservas([]);
                 setEscalacaoJaExiste(false);
                 setNotasDoBanco([]); 
 
-                let poolDeAtletas = [...todosAtletas];
+                let poolDeAtletas = [...todosAtletas.filter(j => j.saudavel && j.contratoAtivo && !j.suspenso)];
 
-                // --- A. Busca Escalação (AGORA COM FILTRO DE CLUBE) ---
-                // Passamos o clubeIdLogado para garantir que buscamos a NOSSA escalação
                 const escalacao = await buscarEscalacaoPorPartida(partidaSelecionada, clubeIdLogado);
                 
                 if (escalacao) {
@@ -103,12 +118,9 @@ export const GestaoJogoPage = () => {
                     setAtletasNoCampo(novosTitulares);
                     setAtletasDisponiveis(poolDeAtletas); 
                 } else {
-                    setAtletasDisponiveis(todosAtletas);
+                    setAtletasDisponiveis(poolDeAtletas);
                 }
 
-                // --- B. Busca Notas ---
-                // O backend espera "JOGO-ID" como string para a chave composta
-                // Idealmente também deveria filtrar por clubeId no backend futuramente
                 const notas = await buscarNotasPorJogo("JOGO-" + partidaSelecionada);
                 setNotasDoBanco(notas);
 
@@ -119,7 +131,7 @@ export const GestaoJogoPage = () => {
         carregarDetalhesPartida();
     }, [partidaSelecionada, todosAtletas, clubeIdLogado]);
 
-    // 3. Drag & Drop
+    // Lógica de Drag & Drop (Mantida igual)
     const handleDragEnd = (event) => {
         const { active, over, delta } = event;
         if (!over) return; 
@@ -165,34 +177,19 @@ export const GestaoJogoPage = () => {
         }
     };
 
-    // 4. Salvar Escalação (CORRIGIDO)
+    // Salvar Escalação
     const handleSalvarEscalacao = async () => {
         if (!partidaSelecionada) {
             alert("Selecione uma partida primeiro.");
             return;
         }
-        
-        if (escalacaoJaExiste) {
-            const confirmar = window.confirm("Já existe uma escalação salva para este jogo. Ao salvar a nova escalação, a antiga será substituída. Deseja continuar?");
-            if (!confirmar) return;
-        }
-
-        if (atletasNoCampo.length !== 11) {
-            if(!window.confirm(`Tens ${atletasNoCampo.length} jogadores em campo. O jogo requer 11. Salvar mesmo assim?`)) {
-                return;
-            }
-        }
-
         const idsJogadores = atletasNoCampo.map(a => a.id);
-        
-        // MUDANÇA PRINCIPAL AQUI: Adicionado clubeId ao payload
         const payload = {
             partidaId: parseInt(partidaSelecionada, 10),
             esquema: esquemaTatico,
             jogadoresIds: idsJogadores,
             clubeId: parseInt(clubeIdLogado, 10) 
         };
-
         try {
             await salvarEscalacao(payload);
             alert("Escalação salva com sucesso!");
@@ -202,35 +199,12 @@ export const GestaoJogoPage = () => {
         }
     };
 
-    // 5. Salvar Notas
-    const handleSalvarNotas = async (avaliacoes) => {
-        if (!partidaSelecionada) return;
-        try {
-            const promises = Object.entries(avaliacoes).map(([jogadorIdStr, dados]) => {
-                if (dados.nota > 0 || dados.observacao) {
-                    // Aqui futuramente também será necessário passar o clubeId para as notas
-                    return atribuirNota({
-                        jogoId: "JOGO-" + partidaSelecionada,
-                        jogadorId: jogadorIdStr,
-                        nota: dados.nota || 0,
-                        observacao: dados.observacao || ""
-                    });
-                }
-                return Promise.resolve();
-            });
-
-            await Promise.all(promises);
-            alert("Avaliações salvas com sucesso!");
-        } catch (error) {
-            alert("Erro ao salvar avaliações: " + error.message);
-        }
-    };
-
-    const atletasParaAvaliacao = [...atletasNoCampo, ...reservas]; 
-    const listaFinalAvaliacao = atletasParaAvaliacao.length > 0 ? atletasParaAvaliacao : todosAtletas;
-
-    const partidaObj = partidas.find(p => p.id === Number(partidaSelecionada));
-    const tituloPartida = partidaObj ? `Jogo: ${partidaObj.id}` : "Selecione uma Partida";
+    // Dados para as novas abas
+    // Combinamos quem está no campo e na reserva para a lista de "Quem jogou"
+    const atletasRelacionados = [...atletasNoCampo, ...reservas]; 
+    
+    // Lista completa para ver suspensões
+    const listaSuspensos = todosAtletas.filter(atleta => atleta.status === 'Suspenso' || atleta.suspenso);
 
     if (loading) return <div style={{padding:20}}>Carregando dados...</div>;
 
@@ -239,11 +213,17 @@ export const GestaoJogoPage = () => {
             <div className="gestao-jogo-page">
                 <header className="gestao-jogo-header">
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                        <h2>{tituloPartida}</h2>
+                        <h2>Gestão da Partida #{partidaSelecionada}</h2>
                     </div>
                     <nav className="gestao-jogo-tabs">
                         <span className={`tab-item ${abaAtiva === 'ESCALACAO' ? 'active' : ''}`} onClick={() => setAbaAtiva('ESCALACAO')}>
                             Escalação Tática
+                        </span>
+                        <span className={`tab-item ${abaAtiva === 'CARTOES' ? 'active' : ''}`} onClick={() => setAbaAtiva('CARTOES')}>
+                            Cartões e Informações
+                        </span>
+                        <span className={`tab-item ${abaAtiva === 'SUSPENSOES' ? 'active' : ''}`} onClick={() => setAbaAtiva('SUSPENSOES')}>
+                            Suspensões
                         </span>
                         <span className={`tab-item ${abaAtiva === 'NOTAS' ? 'active' : ''}`} onClick={() => setAbaAtiva('NOTAS')}>
                             Atribuir Notas
@@ -252,6 +232,7 @@ export const GestaoJogoPage = () => {
                 </header>
                 
                 <div className="gestao-jogo-content">
+                    {/* === ABA ESCALAÇÃO === */}
                     {abaAtiva === 'ESCALACAO' && (
                         <>
                             <div className="campo-column">
@@ -287,11 +268,32 @@ export const GestaoJogoPage = () => {
                         </>
                     )}
 
+                    {/* === NOVA ABA: CARTÕES E INFORMAÇÕES === */}
+                    {abaAtiva === 'CARTOES' && (
+                        <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
+                           <AbaCartoesInfo 
+                               atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
+                               partidaId={partidaSelecionada}
+                           />
+                        </div>
+                    )}
+
+                    {/* === NOVA ABA: SUSPENSÕES === */}
+                    {abaAtiva === 'SUSPENSOES' && (
+                        <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
+                            <AbaSuspensoes 
+                                suspensos={listaSuspensos}
+                                partidaAtualId={partidaSelecionada}
+                            />
+                        </div>
+                    )}
+
+                    {/* === ABA NOTAS === */}
                     {abaAtiva === 'NOTAS' && (
                         <AbaAtribuirNotas 
-                            atletas={listaFinalAvaliacao}
+                            atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
                             notasIniciais={notasDoBanco} 
-                            onSalvar={handleSalvarNotas} 
+                            onSalvar={() => {}} 
                         />
                     )}
                 </div>

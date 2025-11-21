@@ -27,7 +27,7 @@ Funcionalidade: 3 - Registro de lesões e planejamento de recuperações
     Dado que o atleta "AT-001" possui uma lesão de grau 1 registrada e ativa
     Quando cadastrar um plano de recuperação com treinos adaptados por 14 dias
     Então o plano de recuperação é registrado para o atleta "AT-001"
-    E a permissão de treino do atleta fica "limitada" até o fim do plano
+    E a permissão de treino do atleta fica "Indisponível" até o fim do plano
 
   Cenário: Registro de múltiplas lesões simultâneas
     Dado que o atleta "AT-001" possui uma lesão de grau 3 registrada e ativa

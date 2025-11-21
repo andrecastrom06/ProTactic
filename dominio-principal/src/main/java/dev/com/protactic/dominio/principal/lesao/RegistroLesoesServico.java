@@ -82,7 +82,7 @@ public class RegistroLesoesServico {
         if (dias > 0) {
              repo.salvarPlanoDias(atletaId, dias);
         }
-        repo.atualizarPermissaoTreino(atletaId, "limitada");
+        repo.atualizarPermissaoTreino(atletaId, "Indisponível");
     }
 
     public void encerrarRecuperacao(String atletaId) {
