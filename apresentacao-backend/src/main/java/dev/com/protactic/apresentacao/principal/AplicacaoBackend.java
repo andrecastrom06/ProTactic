@@ -50,7 +50,6 @@ import dev.com.protactic.dominio.principal.treinoTatico.*;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "dev.com.protactic")
-
 @EnableJpaRepositories(basePackages = "dev.com.protactic.infraestrutura.persistencia.jpa")
 @EntityScan(basePackages = "dev.com.protactic.infraestrutura.persistencia.jpa")
 public class AplicacaoBackend {
@@ -175,9 +174,7 @@ public class AplicacaoBackend {
     @Bean
     public LoginService loginService(
             UsuarioRepository usuarioRepository, 
-            
             ClubeRepository clubeRepository) {  
-        
         return new LoginService(usuarioRepository, clubeRepository); 
     }
     
@@ -204,7 +201,6 @@ public class AplicacaoBackend {
     public RegistroCartoesService registroCartoesService(
             RegistroCartoesRepository cartaoRepository, 
             SuspensaoRepository suspensaoRepository) {
-        
         return new RegistroCartoesService(cartaoRepository, suspensaoRepository);
     }
 
@@ -236,9 +232,10 @@ public class AplicacaoBackend {
         return new PlanejamentoCargaSemanalRepositoryMock();
     }
     
+    
     @Bean
-    public PartidaService partidaService(PartidaRepository partidaRepo, ClubeRepository clubeRepo) {
-        return new PartidaService(partidaRepo, clubeRepo);
+    public PartidaService partidaService(PartidaRepository partidaRepo, ClubeRepository clubeRepo, JogadorRepository jogadorRepo) {
+        return new PartidaService(partidaRepo, clubeRepo, jogadorRepo);
     }
 
     @Bean

@@ -4,6 +4,7 @@ import dev.com.protactic.aplicacao.principal.partida.PartidaResumo;
 import dev.com.protactic.aplicacao.principal.partida.PartidaServicoAplicacao;
 import dev.com.protactic.dominio.principal.Partida;
 import dev.com.protactic.dominio.principal.partida.PartidaService;
+import dev.com.protactic.dominio.principal.partida.PartidaService.DadosDesempenhoAtleta;
 
 // 1. IMPORTAÇÃO CRUCIAL
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -52,6 +53,21 @@ public class PartidaControlador {
         } catch (Exception e) {
             e.printStackTrace(); 
             return ResponseEntity.badRequest().build();
+        }
+    }
+    @PostMapping(path = "/registrar-estatisticas")
+    public ResponseEntity<Void> registrarEstatisticas(@RequestBody List<DadosDesempenhoAtleta> formulario) {
+        try {
+            if (formulario == null || formulario.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            partidaService.registrarEstatisticas(formulario);
+            
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
