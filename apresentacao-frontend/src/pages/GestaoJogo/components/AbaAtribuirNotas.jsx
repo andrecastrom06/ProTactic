@@ -22,8 +22,6 @@ export const AbaAtribuirNotas = ({ atletas, onSalvar, notasIniciais }) => {
         if (notasIniciais && notasIniciais.length > 0) {
             const mapaNotas = {};
             notasIniciais.forEach(n => {
-                // O backend retorna { jogadorId: "...", nota: X, observacao: "..." }
-                // Vamos mapear para o formato que o estado espera
                 mapaNotas[parseInt(n.jogadorId)] = {
                     nota: n.nota || 0,
                     observacao: n.observacao || ''

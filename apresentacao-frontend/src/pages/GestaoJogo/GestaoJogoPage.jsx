@@ -191,10 +191,48 @@ export const GestaoJogoPage = () => {
             alert("Erro ao salvar: " + err.message);
         }
     };
+    const handleSalvarNotas = async (avaliacoes) => {
+        if (!partidaSelecionada) {
+            alert("Selecione uma partida primeiro.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const promessas = Object.keys(avaliacoes).map(async (atletaId) => {
+                const dados = avaliacoes[atletaId];
+                
+                // Envia se tiver nota ou observação
+                if (dados.nota > 0 || (dados.observacao && dados.observacao.trim() !== '')) {
+                    const payload = {
+                        jogoId: `JOGO-${partidaSelecionada}`, 
+                        jogadorId: String(atletaId),
+                        nota: parseFloat(dados.nota),
+                        observacao: dados.observacao
+                    };
+                    return atribuirNota(payload);
+                }
+                return null;
+            });
+
+            await Promise.all(promessas);
+            
+         
+            const notasAtualizadas = await buscarNotasPorJogo("JOGO-" + partidaSelecionada);
+            setNotasDoBanco(notasAtualizadas);
+
+            alert("Notas e observações salvas e atualizadas com sucesso!");
+
+        } catch (error) {
+            console.error("Erro ao salvar notas:", error);
+            alert("Erro ao salvar notas: " + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const atletasRelacionados = [...atletasNoCampo, ...reservas]; 
     
-    // Componente simples para a mensagem de aviso
     const AvisoSemEscalacao = () => (
         <div style={{
             display: 'flex', 
@@ -307,7 +345,7 @@ export const GestaoJogoPage = () => {
                             <AbaAtribuirNotas 
                                 atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
                                 notasIniciais={notasDoBanco} 
-                                onSalvar={() => {}} 
+                                onSalvar={handleSalvarNotas} 
                             />
                         )
                     )}
