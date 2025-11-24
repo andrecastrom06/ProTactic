@@ -6,9 +6,10 @@ import { CampoTatico } from './components/CampoTatico';
 import { ListaAtletas } from './components/ListaAtletas';
 import { AbaAtribuirNotas } from './components/AbaAtribuirNotas';
 import { CriarPartidaModal } from '../../components/CriarPartidaModal'; 
-// NOVOS COMPONENTES
 import { AbaCartoesInfo } from './components/AbaCartoesInfo';
 import { AbaSuspensoes } from './components/AbaSuspensoes';
+// 1. IMPORT DO NOVO COMPONENTE
+import { AbaRelatorioDesempenho } from './components/AbaRelatorioDesempenho';
 
 import './GestaoJogoPage.css';
 import { useAuth } from '../../store/AuthContext';
@@ -20,8 +21,6 @@ export const GestaoJogoPage = () => {
     const { clubeIdLogado } = useAuth();
     
     const [abaAtiva, setAbaAtiva] = useState('ESCALACAO'); 
-
-    // --- Estados de Dados ---
     const [todosAtletas, setTodosAtletas] = useState([]); 
     const [atletasDisponiveis, setAtletasDisponiveis] = useState([]);
     const [reservas, setReservas] = useState([]); 
@@ -30,7 +29,6 @@ export const GestaoJogoPage = () => {
     const [partidas, setPartidas] = useState([]);
     const [partidaSelecionada, setPartidaSelecionada] = useState('');
     
-    // Este estado controla se a mensagem deve aparecer ou não
     const [escalacaoJaExiste, setEscalacaoJaExiste] = useState(false);
     const [notasDoBanco, setNotasDoBanco] = useState([]);
 
@@ -75,7 +73,6 @@ export const GestaoJogoPage = () => {
         carregarDados();
     }, [clubeIdLogado]);
 
-    // Carrega Detalhes da Partida
     useEffect(() => {
         const carregarDetalhesPartida = async () => {
             if (!partidaSelecionada || todosAtletas.length === 0 || !clubeIdLogado) return;
@@ -231,7 +228,7 @@ export const GestaoJogoPage = () => {
         }
     };
 
-    const atletasRelacionados = [...atletasNoCampo, ...reservas]; 
+   const atletasRelacionados = [...atletasNoCampo, ...reservas]; 
     
     const AvisoSemEscalacao = () => (
         <div style={{
@@ -248,7 +245,7 @@ export const GestaoJogoPage = () => {
         }}>
             <h3>⚠️ Escalação Pendente</h3>
             <p>A partida ainda não tem uma escalação definida.</p>
-            <p style={{fontSize: '0.9em'}}>Por favor, aceda à aba "Escalação Tática" e salve os titulares antes de atribuir notas ou gerir cartões.</p>
+            <p style={{fontSize: '0.9em'}}>Por favor, aceda à aba "Escalação Tática" e salve os titulares antes de prosseguir.</p>
         </div>
     );
 
@@ -274,12 +271,15 @@ export const GestaoJogoPage = () => {
                         <span className={`tab-item ${abaAtiva === 'NOTAS' ? 'active' : ''}`} onClick={() => setAbaAtiva('NOTAS')}>
                             Atribuir Notas
                         </span>
+                        {/* 2. NOVA ABA NO MENU */}
+                        <span className={`tab-item ${abaAtiva === 'RELATORIO' ? 'active' : ''}`} onClick={() => setAbaAtiva('RELATORIO')}>
+                            Relatório de Desempenho
+                        </span>
                     </nav>
                 </header>
                 
                 <div className="gestao-jogo-content">
                     {/* === ABA ESCALAÇÃO === */}
-                    {/* Esta aba fica sempre visível para permitir CRIAR a escalação */}
                     {abaAtiva === 'ESCALACAO' && (
                         <>
                             <div className="campo-column">
@@ -315,12 +315,10 @@ export const GestaoJogoPage = () => {
                         </>
                     )}
 
-                    {/* === ABA CARTÕES (COM VERIFICAÇÃO) === */}
+                    {/* === ABA CARTÕES === */}
                     {abaAtiva === 'CARTOES' && (
                         <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
-                            {!escalacaoJaExiste ? (
-                                <AvisoSemEscalacao />
-                            ) : (
+                            {!escalacaoJaExiste ? <AvisoSemEscalacao /> : (
                                 <AbaCartoesInfo 
                                     atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
                                     partidaId={partidaSelecionada}
@@ -336,18 +334,26 @@ export const GestaoJogoPage = () => {
                         </div>
                     )}
 
-                    {/* === ABA NOTAS (COM VERIFICAÇÃO) === */}
+                    {/* === ABA NOTAS === */}
                     {abaAtiva === 'NOTAS' && (
-                        // Aqui fazemos a Verificação Condicional
-                        !escalacaoJaExiste ? (
-                            <AvisoSemEscalacao />
-                        ) : (
+                        !escalacaoJaExiste ? <AvisoSemEscalacao /> : (
                             <AbaAtribuirNotas 
                                 atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
                                 notasIniciais={notasDoBanco} 
                                 onSalvar={handleSalvarNotas} 
                             />
                         )
+                    )}
+
+                    {abaAtiva === 'RELATORIO' && (
+                        <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
+                            <AbaRelatorioDesempenho 
+                                partidaId={partidaSelecionada} 
+                                todosAtletas={todosAtletas} 
+                                partidas={partidas} 
+                                notasDoBanco={notasDoBanco}
+                            />
+                        </div>
                     )}
                 </div>
             </div>

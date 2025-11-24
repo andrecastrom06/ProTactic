@@ -1,6 +1,5 @@
 import { API_BASE_URL } from '../config/apiConfig';
 
-// --- PARTIDAS ---
 
 export const buscarJogosDoClube = async (clubeId) => {
     try {
@@ -54,7 +53,6 @@ export const salvarEscalacao = async (formulario) => {
     }
 };
 
-// Função principal usada na GestaoJogoPage
 export const buscarEscalacaoPorPartida = async (partidaId, clubeId) => {
     try {
         let url = `${API_BASE_URL}/formacao/buscar-por-partida/${partidaId}`;

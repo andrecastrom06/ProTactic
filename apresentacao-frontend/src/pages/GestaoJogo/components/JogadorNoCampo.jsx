@@ -12,15 +12,13 @@ export const JogadorNoCampo = ({ atleta }) => {
         },
     });
 
-    // 3. Define a posição do jogador
     const style = {
-        // --- MUDANÇA AQUI ---
-        // Agora usamos a posição em % que está salva no estado
         top: `${atleta.position.y}%`,
         left: `${atleta.position.x}%`,
         
-        // 'transform' é usado pelo dnd-kit para o feedback visual de arrastar
-        transform: CSS.Translate.toString(transform),
+        transform: transform 
+            ? `${CSS.Translate.toString(transform)} translate(-50%, -50%)` 
+            : `translate(-50%, -50%)`,
     };
 
     return (
