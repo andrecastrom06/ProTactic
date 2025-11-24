@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_03_registro_lesao;
 
 import java.util.List;
 import java.util.Optional; 

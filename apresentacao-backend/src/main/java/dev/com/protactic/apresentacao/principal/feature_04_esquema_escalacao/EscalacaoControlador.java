@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_04_esquema_escalacao;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

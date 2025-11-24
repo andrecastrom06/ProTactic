@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_06_inscricao_competicao;
 
 import dev.com.protactic.aplicacao.principal.competicao.CompeticaoResumo;
 import dev.com.protactic.aplicacao.principal.competicao.CompeticaoServicoAplicacao;

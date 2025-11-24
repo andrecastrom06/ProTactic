@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_01_cadastro_atleta;
 
 import java.util.List;
 import java.util.Date; 

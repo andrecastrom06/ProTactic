@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_11_premiacao_interna;
 
 import java.util.Date; // Corrigido de LocalDate para Date
 import java.util.List;

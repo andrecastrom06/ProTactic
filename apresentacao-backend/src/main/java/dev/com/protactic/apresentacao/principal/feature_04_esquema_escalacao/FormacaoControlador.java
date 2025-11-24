@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_04_esquema_escalacao;
 
 import dev.com.protactic.aplicacao.principal.formacao.FormacaoResumo;
 import dev.com.protactic.aplicacao.principal.formacao.FormacaoServicoAplicacao;

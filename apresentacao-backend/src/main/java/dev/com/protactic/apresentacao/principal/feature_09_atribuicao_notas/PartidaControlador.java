@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_09_atribuicao_notas;
 
 import dev.com.protactic.aplicacao.principal.partida.PartidaResumo;
 import dev.com.protactic.aplicacao.principal.partida.PartidaServicoAplicacao;

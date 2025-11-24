@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_02_carga_semanal;
 
 import dev.com.protactic.aplicacao.principal.fisico.FisicoResumo;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;

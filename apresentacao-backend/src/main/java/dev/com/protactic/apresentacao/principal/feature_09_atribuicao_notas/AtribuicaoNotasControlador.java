@@ -1,4 +1,4 @@
-package dev.com.protactic.apresentacao.principal;
+package dev.com.protactic.apresentacao.principal.feature_09_atribuicao_notas;
 
 import java.util.List;
 import java.math.BigDecimal; 
