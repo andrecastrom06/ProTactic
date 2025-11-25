@@ -14,12 +14,13 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("backend/treino-fisico") // PADRONIZADO COM HÍFEN
+@RequestMapping("backend/treino-fisico")
 @CrossOrigin(origins = "http://localhost:3000")
 public class TreinoFisicoControlador {
 
     @Autowired private FisicoServicoAplicacao fisicoServicoAplicacao;
-    @Autowired private PlanejamentoFisicoService planejamentoFisicoService;
+    
+    @Autowired private PlanejamentoFisicoService planejamentoFisicoService; 
 
     @GetMapping("/por-jogador/{jogadorId}")
     public List<FisicoResumo> buscarTreinosPorJogador(@PathVariable("jogadorId") Integer jogadorId) {
@@ -39,24 +40,14 @@ public class TreinoFisicoControlador {
     public ResponseEntity<?> salvarTreinoFisico(
             @PathVariable("jogadorId") Integer jogadorId,
             @RequestBody TreinoFisicoFormulario formulario) {
-        try {
-            PlanejamentoFisicoService.DadosTreinoFisico dados = 
-                new PlanejamentoFisicoService.DadosTreinoFisico(
-                    jogadorId,
-                    formulario.nome(),
-                    formulario.musculo(),
-                    formulario.intensidade(),
-                    formulario.descricao(),
-                    formulario.dataInicio(),
-                    formulario.dataFim()
-                );
-
-            Fisico treinoSalvo = planejamentoFisicoService.salvarTreinoFisico(dados);
-            return ResponseEntity.ok(treinoSalvo);
-            
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        
+        ComandoTreinoFisico comando = new SalvarTreinoFisicoComando(
+            planejamentoFisicoService,
+            jogadorId,
+            formulario
+        );
+        
+        return comando.executar();
     }
     
     @PutMapping("/editar/{treinoId}")
@@ -100,21 +91,13 @@ public class TreinoFisicoControlador {
     public ResponseEntity<?> criarProtocoloDeRetorno(
             @PathVariable("jogadorId") Integer jogadorId,
             @RequestBody TreinoFisicoFormulario formulario) {
-         try {
-            PlanejamentoFisicoService.DadosTreinoFisico dados = 
-                new PlanejamentoFisicoService.DadosTreinoFisico(
-                    jogadorId,
-                    formulario.nome(),
-                    formulario.musculo(),
-                    formulario.intensidade(),
-                    formulario.descricao(),
-                    formulario.dataInicio(),
-                    formulario.dataFim()
-                );
-            Fisico protocoloSalvo = planejamentoFisicoService.criarProtocoloDeRetorno(dados);
-            return ResponseEntity.ok(protocoloSalvo);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+         
+        ComandoTreinoFisico comando = new CriarProtocoloComando(
+            planejamentoFisicoService,
+            jogadorId,
+            formulario
+        );
+        
+        return comando.executar();
     }
 }
