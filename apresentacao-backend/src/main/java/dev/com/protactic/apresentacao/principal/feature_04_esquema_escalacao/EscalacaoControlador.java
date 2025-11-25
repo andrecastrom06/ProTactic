@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+
 
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoResumo;
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoServicoAplicacao;
-
 import dev.com.protactic.dominio.principal.definirEsquemaTatico.DefinirEsquemaTaticoService;
+
+
 
 @RestController
 @RequestMapping("backend/escalacao")
@@ -23,16 +24,21 @@ import dev.com.protactic.dominio.principal.definirEsquemaTatico.DefinirEsquemaTa
 public class EscalacaoControlador {
 
     private @Autowired EscalacaoServicoAplicacao escalacaoServicoAplicacao;
-    private @Autowired DefinirEsquemaTaticoService definirEsquemaTaticoService;
     
+    // Mantido para injeção no Comando (Receiver) e uso no GET
+    private @Autowired DefinirEsquemaTaticoService definirEsquemaTaticoService; 
+    
+    // Métodos GET (leitura) permanecem inalterados
     @GetMapping(path = "pesquisa-por-data/{jogoData}/{clubeId}")
     public List<EscalacaoResumo> pesquisarResumosPorData(@PathVariable("jogoData") String jogoData, @PathVariable("clubeId") Integer clubeId) {
         return escalacaoServicoAplicacao.pesquisarResumosPorData(jogoData, clubeId );
     }
     
-    @GetMapping(path = "obter-por-data/{jogoData}")
+    // O erro no path e o clubeId fixo foi corrigido aqui
+    @GetMapping(path = "obter-por-data/{jogoData}/{clubeId}")
     public List<String> obterEscalacao(@PathVariable("jogoData") String jogoData, @PathVariable("clubeId") Integer clubeId ) {
-        return definirEsquemaTaticoService.obterEscalacao(jogoData, 0);
+        // Assume que '0' no seu código original era um placeholder e agora usa o clubeId da URL
+        return definirEsquemaTaticoService.obterEscalacao(jogoData, clubeId); 
     }
 
 
@@ -42,27 +48,19 @@ public class EscalacaoControlador {
         Integer clubeId
     ) {}
 
+    /**
+     * Padrão Command (Invoker): Registra Escalacao.
+     */
     @PostMapping(path = "/registrar")
     public ResponseEntity<?> registrarEscalacao(@RequestBody EscalacaoFormulario formulario) {
         
-        if (formulario == null || formulario.jogoData() == null || formulario.nomeJogador() == null) {
-            return ResponseEntity.badRequest().body("O formulário (jogoData, nomeJogador) não pode ser nulo.");
-        }
-
-        try {
-            boolean sucesso = definirEsquemaTaticoService.registrarJogadorEmEscalacao(
-                formulario.jogoData(),
-                formulario.nomeJogador(),
-                formulario.clubeId()
-            );
-
-            if (sucesso) {
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Jogador inapto para a partida (lesionado, suspenso ou sem contrato).");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        // 🎯 Cria o Command, injetando o Service (Receiver) e o Formulário (Request)
+        ComandoEscalacao comando = new RegistrarEscalacaoComando(
+            definirEsquemaTaticoService,
+            formulario
+        );
+        
+        // Executa o Command, delegando toda a lógica de negócio e resposta HTTP
+        return comando.executar();
     }
 }
