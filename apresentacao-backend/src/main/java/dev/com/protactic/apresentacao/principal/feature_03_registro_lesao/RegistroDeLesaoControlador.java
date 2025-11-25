@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Optional; 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity; 
-import org.springframework.http.HttpStatus; 
+import org.springframework.http.ResponseEntity;  
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +23,9 @@ import dev.com.protactic.dominio.principal.lesao.RegistroLesoesServico;
 @CrossOrigin(origins = "http://localhost:3000")
 public class RegistroDeLesaoControlador {
 
-    private @Autowired LesaoServicoAplicacao lesaoServicoAplicacao;
-    private @Autowired RegistroLesoesServico registroLesoesServico;
+    private @Autowired LesaoServicoAplicacao lesaoServicoAplicacao; 
+    
+    private @Autowired RegistroLesoesServico registroLesoesServico; 
 
     @GetMapping(path = "pesquisa")
     public List<LesaoResumo> pesquisarResumos() {
@@ -45,59 +45,48 @@ public class RegistroDeLesaoControlador {
     public record RegistrarLesaoFormulario(
         int grau
     ) {}
-
-    @PostMapping(path = "/registrar/{jogadorId}")
-    public ResponseEntity<String> registrarLesao(
-            @PathVariable("jogadorId") Integer jogadorId, 
-            @RequestBody RegistrarLesaoFormulario formulario) {
-        
-        if (formulario == null) {
-            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
-        }
-        
-        try {
-            registroLesoesServico.registrarLesaoPorId(jogadorId, formulario.grau());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
     
     public record PlanoRecuperacaoFormulario(
         String tempo, 
         String plano
     ) {}
 
+    @PostMapping(path = "/registrar/{jogadorId}")
+    public ResponseEntity<?> registrarLesao(
+            @PathVariable("jogadorId") Integer jogadorId, 
+            @RequestBody RegistrarLesaoFormulario formulario) {
+        
+        ComandoRegistroLesao comando = new RegistrarLesaoComando(
+            registroLesoesServico, 
+            jogadorId, 
+            formulario
+        );
+        
+        return comando.executar();
+    }
+
     @PostMapping(path = "/cadastrar-plano/{jogadorId}")
-    public ResponseEntity<String> cadastrarPlanoRecuperacao(
+    public ResponseEntity<?> cadastrarPlanoRecuperacao(
             @PathVariable("jogadorId") Integer jogadorId, 
             @RequestBody PlanoRecuperacaoFormulario formulario) {
 
-        if (formulario == null) {
-             return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
-        }
+        ComandoRegistroLesao comando = new CadastrarPlanoComando(
+            registroLesoesServico, 
+            jogadorId, 
+            formulario
+        );
         
-        try {
-            registroLesoesServico.cadastrarPlanoRecuperacaoPorId(
-                jogadorId, 
-                formulario.tempo(), 
-                formulario.plano()
-            );
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return comando.executar();
     }
     
     @PostMapping(path = "/encerrar/{jogadorId}")
-    public ResponseEntity<String> encerrarLesao(@PathVariable("jogadorId") Integer jogadorId) { 
+    public ResponseEntity<?> encerrarLesao(@PathVariable("jogadorId") Integer jogadorId) { 
         
-        try {
-            registroLesoesServico.encerrarRecuperacaoPorId(jogadorId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        ComandoRegistroLesao comando = new EncerrarLesaoComando(
+            registroLesoesServico, 
+            jogadorId
+        );
+        
+        return comando.executar();
     }
 }
