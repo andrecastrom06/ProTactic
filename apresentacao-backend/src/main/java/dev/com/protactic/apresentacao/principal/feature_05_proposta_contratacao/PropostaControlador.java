@@ -1,7 +1,7 @@
 package dev.com.protactic.apresentacao.principal.feature_05_proposta_contratacao;
 
 import java.util.List;
-import java.util.Date; 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +20,18 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.CrossOrigin; 
 
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("backend/proposta")
 public class PropostaControlador {
 
+    
     private @Autowired PropostaServicoAplicacao propostaServicoAplicacao;
+    
+    
     private @Autowired PropostaService propostaService;
+    
     
     @GetMapping(path = "pesquisa")
     public List<PropostaResumo> pesquisarResumos() {
@@ -47,78 +52,67 @@ public class PropostaControlador {
     public List<PropostaResumo> pesquisarResumosPorReceptor(@PathVariable("clubeId") Integer clubeId) {
         return propostaServicoAplicacao.pesquisarResumosPorReceptor(clubeId);
     }
+    // --- Fim dos Métodos de Leitura ---
 
+
+    // Formulários (Mantidos no Controlador)
     public record PropostaFormulario(
         Integer jogadorId,
         Integer clubeId,
         double valor 
     ) {}
-
-    @PostMapping(path = "/criar")
-    public void criarProposta(@RequestBody PropostaFormulario formulario) {
-        
-        if (formulario == null) {
-            throw new IllegalArgumentException("O corpo da requisição (formulário) não pode ser nulo.");
-        }
-
-        try {
-            PropostaService.DadosNovaProposta dados = new PropostaService.DadosNovaProposta(
-                formulario.jogadorId(),
-                formulario.clubeId(),
-                formulario.valor(),
-                new Date()
-            );
-            
-            propostaService.criarPropostaPorIds(dados);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao tentar criar a proposta: " + e.getMessage(), e);
-        }
-    }
     
     public record PropostaValorFormulario(
         double novoValor
     ) {}
 
+    /**
+     * Padrão Command (Invoker): Cria Proposta.
+     */
+    @PostMapping(path = "/criar")
+    public ResponseEntity<?> criarProposta(@RequestBody PropostaFormulario formulario) {
+        
+        ComandoProposta comando = new CriarPropostaComando(propostaService, formulario);
+        return comando.executar();
+    }
+    
+    
     @PatchMapping(path = "/editar-valor/{propostaId}")
-    public ResponseEntity<Void> editarValorProposta(
+    public ResponseEntity<?> editarValorProposta(
             @PathVariable("propostaId") Integer propostaId,
             @RequestBody PropostaValorFormulario formulario) {
-        try {
-            propostaService.editarValorProposta(propostaId, formulario.novoValor());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao editar proposta: " + e.getMessage(), e);
-        }
+        
+        ComandoProposta comando = new EditarValorPropostaComando(propostaService, propostaId, formulario);
+        return comando.executar();
     }
 
+    /**
+     * Padrão Command (Invoker): Aceita Proposta.
+     * Tipo de retorno agora é `ResponseEntity<?>` (Resolve o erro de compilação).
+     */
     @PostMapping(path = "/aceitar/{propostaId}")
-    public ResponseEntity<Void> aceitarProposta(@PathVariable("propostaId") Integer propostaId) {
-        try {
-            propostaService.aceitarProposta(propostaId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao aceitar proposta: " + e.getMessage(), e);
-        }
+    public ResponseEntity<?> aceitarProposta(@PathVariable("propostaId") Integer propostaId) {
+        
+        ComandoProposta comando = new AceitarPropostaComando(propostaService, propostaId);
+        return comando.executar();
     }
 
+    
     @PostMapping(path = "/recusar/{propostaId}")
-    public ResponseEntity<Void> recusarProposta(@PathVariable("propostaId") Integer propostaId) {
-        try {
-            propostaService.recusarProposta(propostaId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao recusar proposta: " + e.getMessage(), e);
-        }
+    public ResponseEntity<?> recusarProposta(@PathVariable("propostaId") Integer propostaId) {
+        
+        ComandoProposta comando = new RecusarPropostaComando(propostaService, propostaId);
+        return comando.executar();
     }
  
+    /**
+     * Padrão Command (Invoker): Exclui Proposta.
+     * Tipo de retorno agora é `ResponseEntity<?>` (Resolve o erro de compilação).
+     */
     @DeleteMapping(path = "/excluir/{propostaId}")
-    public ResponseEntity<Void> excluirProposta(@PathVariable("propostaId") Integer propostaId) {
-        try {
-            propostaService.excluirProposta(propostaId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao excluir proposta: " + e.getMessage(), e);
-        }
+    public ResponseEntity<?> excluirProposta(@PathVariable("propostaId") Integer propostaId) {
+        
+        ComandoProposta comando = new ExcluirPropostaComando(propostaService, propostaId);
+        return comando.executar();
     }
 }
