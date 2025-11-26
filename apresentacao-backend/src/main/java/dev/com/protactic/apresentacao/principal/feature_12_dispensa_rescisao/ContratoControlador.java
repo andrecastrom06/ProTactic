@@ -41,12 +41,17 @@ public class ContratoControlador {
     }
 
     
-  
+    /**
+     * Endpoint para dispensar um jogador, usando o padrão Command.
+     */
     @PostMapping(path = "/dispensar/{jogadorId}")
     public void dispensarJogador(@PathVariable("jogadorId") Integer jogadorId) {
         
+        // Criação e execução do Comando Concreto
+        DispensarJogadorComando comando = new DispensarJogadorComando(dispensaService, jogadorId);
+        
         try {
-            dispensaService.dispensarJogadorPorId(jogadorId);
+            comando.executar(); // Invoca o comando
         } catch (Exception e) {
             throw new RuntimeException("Erro ao tentar dispensar o jogador: " + e.getMessage(), e);
         }
@@ -58,18 +63,25 @@ public class ContratoControlador {
         String status
     ) {}
 
+    /**
+     * Endpoint para renovar um contrato, usando o padrão Command.
+     */
     @PutMapping(path = "/renovar/{contratoId}")
     public ResponseEntity<Contrato> renovarContrato(
             @PathVariable("contratoId") Integer contratoId,
             @RequestBody RenovacaoFormulario formulario) {
         
+        // Criação e execução do Comando Concreto
+        RenovarContratoComando comando = new RenovarContratoComando(
+            contratoService, 
+            contratoId,
+            formulario.duracaoMeses(),
+            formulario.salario(),
+            formulario.status()
+        );
+            
         try {
-            Contrato contratoAtualizado = contratoService.renovarContrato(
-                contratoId,
-                formulario.duracaoMeses(),
-                formulario.salario(),
-                formulario.status()
-            );
+            Contrato contratoAtualizado = comando.executar(); // Invoca o comando
             return ResponseEntity.ok(contratoAtualizado); 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao renovar contrato: " + e.getMessage(), e);
