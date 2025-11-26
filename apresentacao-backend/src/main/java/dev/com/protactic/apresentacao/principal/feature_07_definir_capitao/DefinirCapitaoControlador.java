@@ -16,8 +16,8 @@ import dev.com.protactic.aplicacao.principal.clube.ClubeResumo;
 import dev.com.protactic.aplicacao.principal.clube.ClubeServicoAplicacao;
 import dev.com.protactic.dominio.principal.Capitao;
 
-
 import dev.com.protactic.dominio.principal.capitao.CapitaoService;
+
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -25,8 +25,11 @@ import dev.com.protactic.dominio.principal.capitao.CapitaoService;
 public class DefinirCapitaoControlador { 
 
     private @Autowired JogadorServicoAplicacao jogadorServicoAplicacao;
-    private @Autowired CapitaoService capitaoService;
     private @Autowired ClubeServicoAplicacao clubeServicoAplicacao;
+    
+    private @Autowired CapitaoService capitaoService; 
+    
+    private @Autowired CapitaoServiceProxy capitaoServiceProxy; 
     
 
     @GetMapping(path = "pesquisa-jogadores")
@@ -41,7 +44,7 @@ public class DefinirCapitaoControlador {
     
     @GetMapping(path = "buscar-por-clube/{clubeId}")
     public Capitao buscarCapitaoDoClube(@PathVariable("clubeId") Integer clubeId) {
-        return capitaoService.buscarCapitaoPorClube(clubeId);
+        return capitaoService.buscarCapitaoPorClube(clubeId); 
     }
 
     @GetMapping(path = "listar-todos")
@@ -51,11 +54,6 @@ public class DefinirCapitaoControlador {
 
     @PostMapping(path = "definir/{jogadorId}") 
     public void definirCapitao(@PathVariable("jogadorId") Integer jogadorId) {
-        
-        try {
-            capitaoService.definirCapitaoPorId(jogadorId);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao definir capitão: " + e.getMessage(), e);
-        }
+        capitaoServiceProxy.definirCapitao(jogadorId);
     }
 }

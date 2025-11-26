@@ -12,15 +12,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
+
 @RestController
 @RequestMapping("backend/inscricao")
 @CrossOrigin(origins = "http://localhost:3000")
 public class InscricaoAtletaControlador {
 
     private @Autowired InscricaoAtletaServicoAplicacao servicoAplicacao;
-    
     private @Autowired RegistroInscricaoService servicoDominio;
 
+    private final EstrategiaRespostaInscricao sucessoEstrategia = new InscricaoSucessoEstrategia();
+    private final EstrategiaRespostaInscricao falhaEstrategia = new InscricaoFalhaEstrategia();
+    
     public record InscricaoFormulario(
         String atleta,
         String competicao
@@ -29,18 +32,23 @@ public class InscricaoAtletaControlador {
     @PostMapping("/salvar")
     public ResponseEntity<?> salvarInscricao(@RequestBody InscricaoFormulario formulario) {
 
+        if (formulario == null) {
+            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
+        }
+        
         try {
             InscricaoAtleta resultado = servicoDominio.registrarInscricaoPorNome(
                 formulario.atleta(),
                 formulario.competicao()
             );
             
-            if (!resultado.isInscrito()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultado);
+            if (sucessoEstrategia.isAplicavel(resultado)) {
+                return sucessoEstrategia.processar(resultado);
+            } else if (falhaEstrategia.isAplicavel(resultado)) {
+                return falhaEstrategia.processar(resultado); 
             }
             
-            
-            return ResponseEntity.ok(resultado);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); 
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
