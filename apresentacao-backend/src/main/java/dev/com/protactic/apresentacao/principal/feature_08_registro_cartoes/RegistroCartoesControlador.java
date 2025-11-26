@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
 
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoResumo;
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoServicoAplicacao;
 import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
 import dev.com.protactic.dominio.principal.Suspensao; 
+
 
 @RestController
 @RequestMapping("backend/registro-cartoes")
@@ -52,26 +54,16 @@ public class RegistroCartoesControlador {
     ) {}
 
     @PostMapping(path = "/registrar")
-    public void registrarCartao(@RequestBody CartaoFormulario formulario) {
-        if (formulario == null) {
-            throw new IllegalArgumentException("O corpo da requisição não pode ser nulo.");
-        }
+    public ResponseEntity<?> registrarCartao(@RequestBody CartaoFormulario formulario) {
         
-        try {
-            registroCartoesService.registrarCartao(formulario.atleta(), formulario.tipo());
-        } catch (Exception e) {
-            e.printStackTrace();            
-            throw new RuntimeException("Erro ao registrar cartão: " + e.getMessage(), e);
-        }
+        ComandoRegistroCartao comando = new RegistrarCartaoComando(registroCartoesService, formulario);
+        return comando.executar();
     }
 
     @PostMapping(path = "/limpar/{atleta}")
-    public void limparCartoes(@PathVariable("atleta") String atleta) {
-        try {
-            registroCartoesService.limparCartoes(atleta);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Erro ao limpar cartões: " + e.getMessage(), e);
-        }
+    public ResponseEntity<?> limparCartoes(@PathVariable("atleta") String atleta) {
+        
+        ComandoRegistroCartao comando = new LimparCartoesComando(registroCartoesService, atleta);
+        return comando.executar();
     }
 }
