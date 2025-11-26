@@ -3,19 +3,20 @@ package dev.com.protactic.apresentacao.principal.feature_10_treino_tatico;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoResumo;
 import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoServicoAplicacao;
 import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoService;
 
+
 @RestController
-@RequestMapping("backend/sessao-treino") // PADRONIZADO COM HÍFEN
+@RequestMapping("backend/sessao-treino")
 @CrossOrigin(origins = "http://localhost:3000")
 public class SessaoTreinoControlador {
 
     @Autowired private SessaoTreinoServicoAplicacao sessaoTreinoServicoAplicacao;
+    
     @Autowired private SessaoTreinoService sessaoTreinoService;
     
     @GetMapping(path = "/pesquisa")
@@ -40,30 +41,12 @@ public class SessaoTreinoControlador {
         Integer clubeId 
     ) {}
 
+    
     @PostMapping(path = "/criar")
     public ResponseEntity<?> criarSessao(@RequestBody SessaoTreinoFormulario formulario) {
         
-        if (formulario == null) {
-            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
-        }
-        if (formulario.clubeId() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro: ID do Clube é obrigatório.");
-        }
-        if (formulario.partidaId() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro: Partida não selecionada.");
-        }
+        ComandoSessaoTreino comando = new CriarSessaoComando(sessaoTreinoService, formulario);
         
-        try {
-            sessaoTreinoService.criarSessaoPorIds(
-                formulario.nome(),
-                formulario.partidaId(),
-                formulario.convocadosIds(),
-                formulario.clubeId() 
-            );
-            return ResponseEntity.ok().build();
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        return comando.executar();
     }
 }
