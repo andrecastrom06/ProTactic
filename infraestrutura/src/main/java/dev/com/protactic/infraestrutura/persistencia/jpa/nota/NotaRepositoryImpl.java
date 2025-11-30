@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import java.util.List; 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class NotaRepositoryImpl implements NotaRepository, NotaRepositorioAplicacao {
@@ -72,6 +74,12 @@ public class NotaRepositoryImpl implements NotaRepository, NotaRepositorioAplica
     @Override
     public List<NotaResumo> pesquisarResumosPorJogador(String jogadorId) {
         return repositoryJPA.findByJogadorId(jogadorId);
+    }
+
+    @Override
+    public Optional<Integer> encontrarJogadorComMelhorNotaNoMes(Date data) {
+        // Chama o método customizado do Spring Data JPA.
+        return repositoryJPA.findJogadorComMelhorNotaNoMes(data);
     }
     
 

@@ -22,12 +22,14 @@ export const buscarTodasPremiacoes = async () => {
  * Chama: POST /backend/premiacao/salvar
  * Payload: { jogadorId, nome, dataPremiacao }
  */
-export const salvarPremiacao = async (formulario) => {
+
+export const salvarPremiacao = async (nome, dataPremiacao) => { // Linha a modificar
     try {
+        const payload = { nome, dataPremiacao }; // Linha a adicionar/modificar
         const response = await fetch(`${API_BASE_URL}/premiacao/salvar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formulario)
+            body: JSON.stringify(payload) // Linha a modificar
         });
 
         if (!response.ok) {

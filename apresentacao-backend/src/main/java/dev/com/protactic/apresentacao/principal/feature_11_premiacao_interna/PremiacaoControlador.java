@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.http.ResponseEntity;
 
+import dev.com.protactic.aplicacao.principal.nota.NotaServicoAplicacao;
 import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoResumo;
 import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoServicoAplicacao;
 import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoService;
@@ -18,31 +19,24 @@ import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoService;
 public class PremiacaoControlador {
 
     private @Autowired PremiacaoServicoAplicacao servicoAplicacao;
-    
-    // Mantido como Receiver (Será injetado no Comando)
     private @Autowired PremiacaoService servicoDominio;
+    private @Autowired NotaServicoAplicacao notaServicoAplicacao;
 
     public record PremiacaoFormulario(
-        Integer jogadorId,
-        String nome,
-        @JsonFormat(pattern = "yyyy-MM-dd") Date dataPremiacao
+        String nome, 
+        @JsonFormat(pattern = "yyyy-MM-dd") Date dataPremiacao 
     ) {}
 
-    /**
-     * Padrão Command (Invoker): Cria e executa o comando de salvar premiação.
-     */
     @PostMapping("/salvar")
     public ResponseEntity<?> salvarPremiacao(@RequestBody PremiacaoFormulario formulario) {
         
-        // 🎯 Cria o objeto de Comando que encapsula a lógica e o DTO
-        ComandoPremiacao comando = new SalvarPremiacaoComando(servicoDominio, formulario);
+        // 🎯 Cria o objeto de Comando, passando o novo serviço para a lógica de seleção.
+        ComandoPremiacao comando = new SalvarPremiacaoComando(servicoDominio, formulario, notaServicoAplicacao);
         
-        // Executa o Comando, que resolve toda a validação, criação de DTO e status HTTP.
         return comando.executar();
     }
 
 
-    // --- Métodos de Leitura (GET) Inalterados ---
     @GetMapping("/todos")
     public List<PremiacaoResumo> pesquisarTodos() {
         return servicoAplicacao.pesquisarResumos();

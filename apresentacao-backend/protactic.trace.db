@@ -1,0 +1,3 @@
+2025-11-30 12:14:06.676271-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "JOGO-1"; SQL statement:
+select nj1_0.jogador_id from nota nj1_0 join partida pj1_0 on cast(nj1_0.jogo_id as integer)=pj1_0.id where month(pj1_0.data_jogo)=month(?) and year(pj1_0.data_jogo)=year(?) group by nj1_0.jogador_id order by avg(nj1_0.nota) desc fetch first 1 rows only [22018-232]

@@ -1,50 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../store/AuthContext';
-import { buscarTodosJogadores } from '../services/jogadorService';
+import React, { useState } from 'react'; // Removido 'useEffect'
+// Removidos os imports: useAuth e buscarTodosJogadores
 import { salvarPremiacao } from '../services/premiacaoService';
 import './NovoAtletaModal/NovoAtletaModal.css'; // Reutiliza estilos existentes
 
 export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
-    const { clubeIdLogado } = useAuth();
-    
-    const [jogadores, setJogadores] = useState([]);
-    const [jogadorId, setJogadorId] = useState('');
+    // Removidos os estados: jogadores, jogadorId e clubeIdLogado (que não é mais necessário aqui)
     const [nomePremio, setNomePremio] = useState('');
     const [dataPremio, setDataPremio] = useState('');
     
     const [loading, setLoading] = useState(false);
 
-    // Carrega jogadores do clube para o dropdown
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const lista = await buscarTodosJogadores();
-                setJogadores(lista.filter(j => j.clubeId === clubeIdLogado));
-            } catch (e) { console.error(e); }
-        };
-        load();
-    }, [clubeIdLogado]);
+    // Removido o useEffect para carregar jogadores
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!jogadorId || !nomePremio || !dataPremio) {
-            alert("Preencha todos os campos.");
+        // Validação simplificada (apenas nome e data são necessários)
+        if (!nomePremio || !dataPremio) {
+            alert("Preencha o Nome do Prémio e a Data de Referência.");
             return;
         }
 
         setLoading(true);
-        const payload = {
-            jogadorId: parseInt(jogadorId, 10),
-            nome: nomePremio,
-            dataPremiacao: dataPremio // Formato yyyy-MM-dd do input html
-        };
+        // Removido o objeto payload com jogadorId
 
         try {
-            await salvarPremiacao(payload);
-            alert("Premiação registrada com sucesso!");
+            // Chamada ao serviço com o novo formato (apenas nome e data)
+            await salvarPremiacao(nomePremio, dataPremio); 
+            
+            alert("Premiação registrada com sucesso! O jogador do mês foi atribuído automaticamente.");
             onSuccess();
             onClose();
+            // Limpar estados após sucesso
+            setNomePremio('');
+            setDataPremio('');
+            
         } catch (err) {
+            // O erro agora pode conter a mensagem do backend, ex: "Não foi possível encontrar um jogador..."
             alert("Erro ao salvar: " + err.message);
         } finally {
             setLoading(false);
@@ -55,40 +46,35 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>Nova Premiação</h2>
+                    <h2>Registrar Jogador do Mês (Premiação Interna)</h2>
                     <button onClick={onClose} className="modal-close-btn">&times;</button>
                 </div>
                 
                 <form className="modal-form" onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Jogador Vencedor *</label>
-                        <select value={jogadorId} onChange={e => setJogadorId(e.target.value)} required>
-                            <option value="">Selecione...</option>
-                            {jogadores.map(j => (
-                                <option key={j.id} value={j.id}>{j.nome}</option>
-                            ))}
-                        </select>
-                    </div>
-
+                    {/* Removido o campo 'Jogador Vencedor' */}
+                    
                     <div className="form-group">
                         <label>Nome do Prémio *</label>
                         <input 
                             type="text" 
                             value={nomePremio} 
                             onChange={e => setNomePremio(e.target.value)} 
-                            placeholder="Ex: Jogador do Mês"
+                            placeholder="Ex: Jogador de Janeiro"
                             required
                         />
                     </div>
 
                     <div className="form-group">
-                        <label>Data da Premiação *</label>
+                        <label>Data de Referência (Mês/Ano) *</label>
                         <input 
                             type="date" 
                             value={dataPremio} 
                             onChange={e => setDataPremio(e.target.value)} 
                             required
                         />
+                        <small style={{ marginTop: '5px', display: 'block' }}>
+                            A premiação será atribuída ao jogador com a melhor nota de partida registrada no mês e ano desta data.
+                        </small>
                     </div>
 
                     <div className="modal-actions">
