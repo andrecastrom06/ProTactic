@@ -21,6 +21,7 @@ O projeto foi desenvolvido utilizando as seguintes tecnologias:
 
 - **Spring Boot:** Framework para a construção da aplicação e da API REST.
 - **Cucumber:** Ferramenta para a execução de testes automatizados baseados em comportamento (BDD).
+- **React:** Framework para a construção do front-end da aplicação
 
 ## 📂 Links Gerais
 
@@ -46,3 +47,19 @@ Para usufruir da automação de testes do nosso projeto, siga essas etapas:
 2. mvn test
 
 Esses comandos garantem que o projeto seja recompilado a partir do zero e que todos os testes sejam executados em um ambiente atualizado.
+
+Para usufruir do nosso backend rode:
+
+1. 
+2. 
+3. 
+
+Esses comandos garantem um ambiente de teste exclusivo para o backend
+
+Para usufruir da nossa aplicação por inteiro rode:
+
+1. 
+2. 
+3. 
+
+Esses comandos fazem a conexão backend + frontend, para melhor entendimento das dinâmicas do projeto
