@@ -1,11 +1,11 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.escalacao;
 
-import dev.com.protactic.dominio.principal.Capitao;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.capitao.CapitaoRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.entidade.Capitao;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.repositorio.CapitaoRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.clube.ClubeJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.clube.ClubeRepositorySpringData;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 
 import org.springframework.stereotype.Component;
 import java.util.Objects;

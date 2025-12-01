@@ -2,9 +2,9 @@ package dev.com.protactic.apresentacao.principal.feature_09_atribuicao_notas;
 
 import dev.com.protactic.aplicacao.principal.partida.PartidaResumo;
 import dev.com.protactic.aplicacao.principal.partida.PartidaServicoAplicacao;
-import dev.com.protactic.dominio.principal.Partida;
-import dev.com.protactic.dominio.principal.partida.PartidaService;
-import dev.com.protactic.dominio.principal.partida.PartidaService.DadosDesempenhoAtleta;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.Partida;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.servico.PartidaService;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.servico.PartidaService.DadosDesempenhoAtleta;
 
 // 1. IMPORTAÇÃO CRUCIAL
 import com.fasterxml.jackson.annotation.JsonFormat;

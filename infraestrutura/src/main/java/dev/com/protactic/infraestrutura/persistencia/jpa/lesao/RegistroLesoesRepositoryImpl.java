@@ -1,12 +1,12 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.lesao;
 
-import dev.com.protactic.dominio.principal.Contrato;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.Lesao;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.lesao.LesaoRepository;
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.entidade.Lesao;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.LesaoRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Contrato;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
 
 import org.springframework.stereotype.Component;
 import java.util.Objects;

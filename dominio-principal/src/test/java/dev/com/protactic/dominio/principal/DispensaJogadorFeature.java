@@ -7,11 +7,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import dev.com.protactic.mocks.ContratoMock;
 import dev.com.protactic.mocks.JogadorMock;
 import dev.com.protactic.mocks.ClubeMock;
-
-import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.dispensa.DispensaService;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Clube;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.ClubeRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Contrato;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
 
 public class DispensaJogadorFeature {
 

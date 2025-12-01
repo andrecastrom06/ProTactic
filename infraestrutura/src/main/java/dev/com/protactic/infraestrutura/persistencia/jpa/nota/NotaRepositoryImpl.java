@@ -1,7 +1,7 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.nota;
 
-import dev.com.protactic.dominio.principal.Nota;
-import dev.com.protactic.dominio.principal.nota.NotaRepository;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.Nota;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.repositorio.NotaRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.aplicacao.principal.nota.NotaRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.nota.NotaResumo;

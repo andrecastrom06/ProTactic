@@ -14,9 +14,8 @@ import java.util.List;
 
 import dev.com.protactic.aplicacao.principal.usuario.UsuarioResumo;
 import dev.com.protactic.aplicacao.principal.usuario.UsuarioServicoAplicacao;
-
-import dev.com.protactic.dominio.principal.Usuario;
-import dev.com.protactic.dominio.principal.login.LoginService;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Usuario;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.servico.LoginService;
 
 @RestController
 @RequestMapping("backend/login")

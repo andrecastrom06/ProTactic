@@ -1,12 +1,12 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.sessaotreino;
 
-import dev.com.protactic.dominio.principal.SessaoTreino;
-import dev.com.protactic.dominio.principal.Partida;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.Partida;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.entidade.SessaoTreino;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.repositorio.SessaoTreinoRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.infraestrutura.persistencia.jpa.partida.PartidaRepositorySpringData;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.sessaotreino.SessaoTreinoResumo;
 import org.springframework.stereotype.Component;

@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.com.protactic.aplicacao.principal.lesao.LesaoResumo;
 import dev.com.protactic.aplicacao.principal.lesao.LesaoServicoAplicacao;
-
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesServico;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.servico.RegistroLesoesServico;
 
 @RestController
 @RequestMapping("backend/lesao") 

@@ -1,7 +1,7 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.usuario;
 
-import dev.com.protactic.dominio.principal.Usuario;
-import dev.com.protactic.dominio.principal.login.UsuarioRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Usuario;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.UsuarioRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import org.springframework.stereotype.Component;
 import java.util.Optional;

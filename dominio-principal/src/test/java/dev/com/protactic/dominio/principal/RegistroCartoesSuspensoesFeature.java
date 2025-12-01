@@ -2,9 +2,10 @@ package dev.com.protactic.dominio.principal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesRepository;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.SuspensaoRepository; // <-- 1. NOVO IMPORT
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.entidade.RegistroCartao;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.repositorio.RegistroCartoesRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.repositorio.SuspensaoRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.servico.RegistroCartoesService;
 import dev.com.protactic.mocks.RegistroCartoesMock;
 import dev.com.protactic.mocks.SuspensaoMock; // <-- 2. NOVO IMPORT
 

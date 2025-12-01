@@ -8,8 +8,9 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-import dev.com.protactic.dominio.principal.nota.NotaRepository;
-import dev.com.protactic.dominio.principal.nota.NotaService;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.Nota;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.repositorio.NotaRepository;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.servico.NotaService;
 import dev.com.protactic.mocks.NotaMock;
 
 public class AtribuicaoNotasFeature {

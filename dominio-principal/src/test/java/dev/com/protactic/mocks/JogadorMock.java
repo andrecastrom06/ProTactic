@@ -1,7 +1,7 @@
 package dev.com.protactic.mocks;
 
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
 
 import java.util.ArrayList;
 import java.util.List;

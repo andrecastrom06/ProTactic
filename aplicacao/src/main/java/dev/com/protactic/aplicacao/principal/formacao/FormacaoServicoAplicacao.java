@@ -1,10 +1,10 @@
 package dev.com.protactic.aplicacao.principal.formacao;
 
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.Suspensao;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.entidade.Suspensao;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.servico.RegistroCartoesService;
 
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;

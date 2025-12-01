@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.com.protactic.aplicacao.principal.nota.NotaResumo;
 import dev.com.protactic.aplicacao.principal.nota.NotaServicoAplicacao;
-import dev.com.protactic.dominio.principal.nota.NotaService;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.servico.NotaService;
 
 
 @RestController

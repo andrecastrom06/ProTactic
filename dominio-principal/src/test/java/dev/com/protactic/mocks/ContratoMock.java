@@ -2,8 +2,8 @@ package dev.com.protactic.mocks;
 
 
 
-import dev.com.protactic.dominio.principal.Contrato;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Contrato;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
 
 import java.util.ArrayList;
 import java.util.List;

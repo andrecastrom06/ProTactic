@@ -1,7 +1,7 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.inscricaoatleta;
 
-import dev.com.protactic.dominio.principal.InscricaoAtleta;
-import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoRepository;
+import dev.com.protactic.dominio.principal.feature_06_inscricao_competicao.entidade.InscricaoAtleta;
+import dev.com.protactic.dominio.principal.feature_06_inscricao_competicao.repositorio.RegistroInscricaoRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.InscricaoAtletaRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.InscricaoAtletaResumo;

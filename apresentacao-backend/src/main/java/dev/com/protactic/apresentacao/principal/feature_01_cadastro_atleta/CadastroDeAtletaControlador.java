@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 
 import dev.com.protactic.aplicacao.principal.clube.ClubeResumo;
 import dev.com.protactic.aplicacao.principal.clube.ClubeServicoAplicacao;
-import dev.com.protactic.dominio.principal.cadastroAtleta.CadastroDeAtletaService; // 🎯 IMPORT ADICIONADO
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.servico.CadastroDeAtletaService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

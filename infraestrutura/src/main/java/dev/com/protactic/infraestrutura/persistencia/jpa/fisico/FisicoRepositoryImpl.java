@@ -1,9 +1,9 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.fisico;
 
-import dev.com.protactic.dominio.principal.Fisico;
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.entidade.Fisico;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.repositorio.FisicoRepository;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoResumo;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;

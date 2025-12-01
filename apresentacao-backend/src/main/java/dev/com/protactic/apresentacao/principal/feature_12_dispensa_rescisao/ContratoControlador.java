@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.com.protactic.aplicacao.principal.contrato.ContratoResumo;
 import dev.com.protactic.aplicacao.principal.contrato.ContratoServicoAplicacao;
-
-import dev.com.protactic.dominio.principal.Contrato; 
-import dev.com.protactic.dominio.principal.dispensa.DispensaService;
-import dev.com.protactic.dominio.principal.contrato.ContratoService; 
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Contrato;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.servico.ContratoService;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService; 
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

@@ -1,7 +1,7 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.premiacao;
 
-import dev.com.protactic.dominio.principal.Premiacao;
-import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoRepository;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.repositorio.PremiacaoRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoResumo;

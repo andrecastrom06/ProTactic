@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoService;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_06_inscricao_competicao.entidade.InscricaoAtleta;
+import dev.com.protactic.dominio.principal.feature_06_inscricao_competicao.servico.RegistroInscricaoService;
 import dev.com.protactic.mocks.RegistroInscricaoMock;
 import dev.com.protactic.mocks.JogadorMock;
 import dev.com.protactic.mocks.RegistroLesoesMock;

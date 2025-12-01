@@ -1,14 +1,15 @@
 package dev.com.protactic.dominio.principal;
 
-// ... (todos os imports)
-import dev.com.protactic.dominio.principal.definirEsquemaTatico.DefinirEsquemaTaticoService;
-import dev.com.protactic.dominio.principal.definirEsquemaTatico.EscalacaoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesRepository;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.SuspensaoRepository;
-
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_04_esquema_escalacao.repositorio.EscalacaoRepository;
+import dev.com.protactic.dominio.principal.feature_04_esquema_escalacao.servico.DefinirEsquemaTaticoService;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.entidade.RegistroCartao;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.entidade.Suspensao;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.repositorio.RegistroCartoesRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.repositorio.SuspensaoRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.servico.RegistroCartoesService;
 import dev.com.protactic.mocks.EscalacaoMock;
 import dev.com.protactic.mocks.JogadorMock;
 import dev.com.protactic.mocks.RegistroLesoesMock;

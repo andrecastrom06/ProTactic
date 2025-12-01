@@ -1,7 +1,8 @@
 package dev.com.protactic.mocks;
 
-import dev.com.protactic.dominio.principal.Lesao;
-import dev.com.protactic.dominio.principal.lesao.LesaoRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.entidade.Lesao;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.LesaoRepository;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -1,8 +1,8 @@
 package dev.com.protactic.mocks;
 
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.Premiacao;
-import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.repositorio.PremiacaoRepository;
 
 import java.util.*;
 

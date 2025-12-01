@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus; // 🎯 NOVO
 
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoResumo;
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoServicoAplicacao;
-import dev.com.protactic.dominio.principal.definirEsquemaTatico.DefinirEsquemaTaticoService;
+import dev.com.protactic.dominio.principal.feature_04_esquema_escalacao.servico.DefinirEsquemaTaticoService;
 
 
 

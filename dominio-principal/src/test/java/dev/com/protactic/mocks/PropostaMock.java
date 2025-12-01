@@ -2,8 +2,8 @@ package dev.com.protactic.mocks;
 
 import java.util.*;
 
-import dev.com.protactic.dominio.principal.Proposta;
-import dev.com.protactic.dominio.principal.proposta.PropostaRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Proposta;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.PropostaRepository;
 
 public class PropostaMock implements PropostaRepository {
     private Proposta ultimaProposta;

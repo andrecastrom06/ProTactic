@@ -14,8 +14,8 @@ import org.springframework.http.HttpStatus; // 🎯 NOVO IMPORT
 
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoResumo;
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoServicoAplicacao;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesService;
-import dev.com.protactic.dominio.principal.Suspensao; 
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.entidade.Suspensao;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.servico.RegistroCartoesService; 
 
 
 @RestController

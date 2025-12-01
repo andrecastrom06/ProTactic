@@ -1,8 +1,7 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.contrato;
 
-import dev.com.protactic.dominio.principal.Contrato;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
-
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Contrato;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
 import dev.com.protactic.aplicacao.principal.contrato.ContratoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.contrato.ContratoResumo;
 

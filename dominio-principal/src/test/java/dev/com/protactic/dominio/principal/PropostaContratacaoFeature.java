@@ -10,16 +10,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import dev.com.protactic.dominio.principal.proposta.PropostaService;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-
-// --- (INÍCIO DAS CORREÇÕES DE IMPORT) ---
-import dev.com.protactic.dominio.principal.cadastroAtleta.CadastroDeAtletaService;
-import dev.com.protactic.dominio.principal.dispensa.DispensaService;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Clube;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.ClubeRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
 // --- (FIM DAS CORREÇÕES DE IMPORT) ---
-
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.servico.CadastroDeAtletaService;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Contrato;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Proposta;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.servico.PropostaService;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
 import dev.com.protactic.mocks.PropostaMock;
 import dev.com.protactic.mocks.ClubeMock;
 import dev.com.protactic.mocks.ContratoMock;

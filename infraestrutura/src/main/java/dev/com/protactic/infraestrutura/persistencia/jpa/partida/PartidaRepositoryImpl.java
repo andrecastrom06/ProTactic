@@ -2,8 +2,8 @@ package dev.com.protactic.infraestrutura.persistencia.jpa.partida;
 
 import dev.com.protactic.aplicacao.principal.partida.PartidaRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.partida.PartidaResumo;
-import dev.com.protactic.dominio.principal.Partida;
-import dev.com.protactic.dominio.principal.partida.PartidaRepository;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.Partida;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.repositorio.PartidaRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 
 import org.springframework.stereotype.Component;

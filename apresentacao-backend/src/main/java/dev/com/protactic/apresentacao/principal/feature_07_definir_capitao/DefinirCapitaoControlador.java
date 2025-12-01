@@ -14,9 +14,8 @@ import dev.com.protactic.aplicacao.principal.jogador.JogadorServicoAplicacao;
 
 import dev.com.protactic.aplicacao.principal.clube.ClubeResumo;
 import dev.com.protactic.aplicacao.principal.clube.ClubeServicoAplicacao;
-import dev.com.protactic.dominio.principal.Capitao;
-
-import dev.com.protactic.dominio.principal.capitao.CapitaoService;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.entidade.Capitao;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.servico.CapitaoService;
 
 
 @CrossOrigin(origins = "http://localhost:3000")

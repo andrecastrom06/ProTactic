@@ -2,8 +2,8 @@ package dev.com.protactic.apresentacao.principal.feature_02_carga_semanal;
 
 import dev.com.protactic.aplicacao.principal.fisico.FisicoResumo;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;
-import dev.com.protactic.dominio.principal.Fisico;
-import dev.com.protactic.dominio.principal.planejamentoFisico.PlanejamentoFisicoService; 
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.entidade.Fisico;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.servico.PlanejamentoFisicoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

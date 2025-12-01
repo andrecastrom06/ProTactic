@@ -6,13 +6,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Date; 
+import java.util.Date;
 
-import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoRepository;
-import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoService;
-import dev.com.protactic.dominio.principal.partida.PartidaRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Clube;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.Partida;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.repositorio.PartidaRepository;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.entidade.SessaoTreino;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.repositorio.SessaoTreinoRepository;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.servico.SessaoTreinoService;
 import dev.com.protactic.mocks.SessaoTreinoMock;
 import dev.com.protactic.mocks.PartidaMock;
 import dev.com.protactic.mocks.JogadorMock;

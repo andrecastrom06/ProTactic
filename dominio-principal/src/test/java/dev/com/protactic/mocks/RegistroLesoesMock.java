@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.RegistroLesoesRepository;
 
 public class RegistroLesoesMock implements RegistroLesoesRepository {
 

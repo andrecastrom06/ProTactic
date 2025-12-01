@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import dev.com.protactic.dominio.principal.SessaoTreino;
-import dev.com.protactic.dominio.principal.treinoTatico.SessaoTreinoRepository;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.entidade.SessaoTreino;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.repositorio.SessaoTreinoRepository;
 
 public class SessaoTreinoMock implements SessaoTreinoRepository {
     private final List<SessaoTreino> banco = new ArrayList<>();

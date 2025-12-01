@@ -1,7 +1,7 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.jogador;
 
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.aplicacao.principal.jogador.JogadorRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.jogador.JogadorResumo;

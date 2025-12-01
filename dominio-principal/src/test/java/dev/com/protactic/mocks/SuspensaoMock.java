@@ -1,7 +1,7 @@
 package dev.com.protactic.mocks;
 
-import dev.com.protactic.dominio.principal.Suspensao;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.SuspensaoRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.entidade.Suspensao;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.repositorio.SuspensaoRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;

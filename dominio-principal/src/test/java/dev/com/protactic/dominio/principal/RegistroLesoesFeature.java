@@ -3,10 +3,10 @@ package dev.com.protactic.dominio.principal;
 import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
-import dev.com.protactic.dominio.principal.lesao.LesaoRepository;
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesRepository;
-import dev.com.protactic.dominio.principal.lesao.RegistroLesoesServico;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.LesaoRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.servico.RegistroLesoesServico;
 import dev.com.protactic.mocks.JogadorMock;
 import dev.com.protactic.mocks.LesaoMock;
 import dev.com.protactic.mocks.RegistroLesoesMock;

@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.com.protactic.aplicacao.principal.proposta.PropostaResumo;
 import dev.com.protactic.aplicacao.principal.proposta.PropostaServicoAplicacao;
-
-import dev.com.protactic.dominio.principal.proposta.PropostaService;
-import dev.com.protactic.dominio.principal.proposta.PropostaService.DadosNovaProposta; // 🎯 NOVO IMPORT
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.servico.PropostaService;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.servico.PropostaService.DadosNovaProposta;
 
 import org.springframework.http.ResponseEntity; 
 import org.springframework.http.HttpStatus; // 🎯 NOVO IMPORT

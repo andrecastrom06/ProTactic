@@ -2,9 +2,8 @@ package dev.com.protactic.apresentacao.principal.feature_06_inscricao_competicao
 
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.InscricaoAtletaResumo;
 import dev.com.protactic.aplicacao.principal.inscricaoatleta.InscricaoAtletaServicoAplicacao;
-import dev.com.protactic.dominio.principal.InscricaoAtleta;
-
-import dev.com.protactic.dominio.principal.registroInscricaoAtleta.RegistroInscricaoService;
+import dev.com.protactic.dominio.principal.feature_06_inscricao_competicao.entidade.InscricaoAtleta;
+import dev.com.protactic.dominio.principal.feature_06_inscricao_competicao.servico.RegistroInscricaoService;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

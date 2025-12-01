@@ -1,11 +1,11 @@
 package dev.com.protactic.mocks;
 
 
-import dev.com.protactic.dominio.principal.capitao.CapitaoRepository;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.entidade.Capitao;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.repositorio.CapitaoRepository;
 
 import java.util.HashMap;
 import java.util.Map;
-import dev.com.protactic.dominio.principal.Capitao;
 
 
 

@@ -1,7 +1,7 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.registrocartao;
 
-import dev.com.protactic.dominio.principal.RegistroCartao;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.RegistroCartoesRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.entidade.RegistroCartao;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.repositorio.RegistroCartoesRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.jogador.JogadorJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.jogador.JogadorRepositorySpringData;
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoRepositorioAplicacao;

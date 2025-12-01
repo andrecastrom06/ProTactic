@@ -1,7 +1,8 @@
 package dev.com.protactic.mocks;
 
 import java.util.*;
-import dev.com.protactic.dominio.principal.definirEsquemaTatico.EscalacaoRepository;
+
+import dev.com.protactic.dominio.principal.feature_04_esquema_escalacao.repositorio.EscalacaoRepository;
 
 public class EscalacaoMock implements EscalacaoRepository {
 

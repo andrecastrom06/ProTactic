@@ -1,15 +1,15 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa;
 
-import dev.com.protactic.dominio.principal.Jogador;
-import dev.com.protactic.dominio.principal.Premiacao;
-import dev.com.protactic.dominio.principal.Partida;
-import dev.com.protactic.dominio.principal.Clube;
-import dev.com.protactic.dominio.principal.SessaoTreino;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Clube;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.entidade.Lesao;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.Partida;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.entidade.SessaoTreino;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
 import dev.com.protactic.infraestrutura.persistencia.jpa.lesao.LesaoJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.partida.PartidaJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.premiacao.PremiacaoJPA;
 import dev.com.protactic.infraestrutura.persistencia.jpa.sessaotreino.SessaoTreinoJPA;
-import dev.com.protactic.dominio.principal.Lesao; // 1. Importa o domínio Lesao
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Converter;

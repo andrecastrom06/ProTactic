@@ -7,9 +7,10 @@ import java.util.Date;
 import io.cucumber.java.Before; 
 
 import dev.com.protactic.mocks.PremiacaoMock;
-import dev.com.protactic.mocks.JogadorMock; 
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository; 
-import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoService;
+import dev.com.protactic.mocks.JogadorMock;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.servico.PremiacaoService;
 
 public class PremiacaoInternaFeature {
 

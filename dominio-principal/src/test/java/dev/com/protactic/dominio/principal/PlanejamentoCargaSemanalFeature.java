@@ -1,9 +1,12 @@
 package dev.com.protactic.dominio.principal;
 
-import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalRepositoryMock;
-import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalService;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository; 
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.entidade.TreinoSemanal;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.repositorio.PlanejamentoCargaSemanalRepositoryMock;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.servico.PlanejamentoCargaSemanalService;
 import dev.com.protactic.mocks.JogadorMock; 
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.calculo.CalculoCargaLinear;
 
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
@@ -83,10 +86,9 @@ public class PlanejamentoCargaSemanalFeature {
         Jogador j = jogadores.get(ultimoJogadorEmContexto);
         assertNotNull(j, "Nenhum jogador em contexto para registrar treino.");
         
-    
         jogadorRepo.salvar(j); 
         
-        service.registrarTreino(j);
+        service.registrarTreino(j, 90.0, 7.0, new CalculoCargaLinear());
     }
 
     @Quando("o preparador físico tentar registrar seu treinamento")

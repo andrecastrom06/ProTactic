@@ -1,8 +1,9 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.escalacao;
 
-import dev.com.protactic.dominio.principal.definirEsquemaTatico.EscalacaoRepository;
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoResumo;
+import dev.com.protactic.dominio.principal.feature_04_esquema_escalacao.repositorio.EscalacaoRepository;
+
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;

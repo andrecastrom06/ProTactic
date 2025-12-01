@@ -1,7 +1,8 @@
 package dev.com.protactic.mocks;
 
-import dev.com.protactic.dominio.principal.Partida;
-import dev.com.protactic.dominio.principal.partida.PartidaRepository;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.Partida;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.repositorio.PartidaRepository;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

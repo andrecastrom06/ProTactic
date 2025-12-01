@@ -1,7 +1,7 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.proposta;
 
-import dev.com.protactic.dominio.principal.Proposta;
-import dev.com.protactic.dominio.principal.proposta.PropostaRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Proposta;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.PropostaRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.aplicacao.principal.proposta.PropostaRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.proposta.PropostaResumo;

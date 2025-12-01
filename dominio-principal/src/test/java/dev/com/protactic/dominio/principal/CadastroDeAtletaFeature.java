@@ -1,6 +1,13 @@
 package dev.com.protactic.dominio.principal;
 
-import dev.com.protactic.dominio.principal.cadastroAtleta.*;
+
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Clube;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.ClubeRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.servico.CadastroDeAtletaService;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Contrato;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
 import dev.com.protactic.mocks.ClubeMock;
 import dev.com.protactic.mocks.JogadorMock;
 import dev.com.protactic.mocks.ContratoMock;

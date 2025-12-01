@@ -1,8 +1,8 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.clube;
 
 
-import dev.com.protactic.dominio.principal.Clube;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Clube;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.ClubeRepository;
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 import dev.com.protactic.aplicacao.principal.clube.ClubeRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.clube.ClubeResumo;

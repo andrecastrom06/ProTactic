@@ -26,27 +26,43 @@ import dev.com.protactic.aplicacao.principal.usuario.UsuarioRepositorioAplicacao
 import dev.com.protactic.aplicacao.principal.usuario.UsuarioServicoAplicacao;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.fisico.FisicoServicoAplicacao;
-import dev.com.protactic.dominio.principal.login.LoginService; 
-import dev.com.protactic.dominio.principal.login.UsuarioRepository;
-import dev.com.protactic.dominio.principal.contrato.ContratoService; 
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.ClubeRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.UsuarioRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.servico.CadastroDeAtletaService;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.servico.LoginService;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.repositorio.FisicoRepository;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.repositorio.PlanejamentoCargaSemanalRepositoryMock;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.servico.PlanejamentoCargaSemanalService;
+import dev.com.protactic.dominio.principal.feature_02_carga_semanal.servico.PlanejamentoFisicoService;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.LesaoRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.RegistroLesoesRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.servico.RegistroLesoesServico;
+import dev.com.protactic.dominio.principal.feature_04_esquema_escalacao.repositorio.EscalacaoRepository;
+import dev.com.protactic.dominio.principal.feature_04_esquema_escalacao.servico.DefinirEsquemaTaticoService;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.PropostaRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.servico.ContratoService;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.servico.PropostaService;
+import dev.com.protactic.dominio.principal.feature_06_inscricao_competicao.repositorio.RegistroInscricaoRepository;
+import dev.com.protactic.dominio.principal.feature_06_inscricao_competicao.servico.RegistroInscricaoService;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.repositorio.CapitaoRepository;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.servico.CapitaoService;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.repositorio.RegistroCartoesRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.repositorio.SuspensaoRepository;
+import dev.com.protactic.dominio.principal.feature_08_registro_cartoes.servico.RegistroCartoesService;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.repositorio.NotaRepository;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.repositorio.PartidaRepository;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.servico.NotaService;
+import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.servico.PartidaService;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.repositorio.SessaoTreinoRepository;
+import dev.com.protactic.dominio.principal.feature_10_treino_tatico.servico.SessaoTreinoService;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.repositorio.PremiacaoRepository;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.servico.PremiacaoService;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.ContratacaoServico;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
 
-import dev.com.protactic.dominio.principal.capitao.*;
-import dev.com.protactic.dominio.principal.cadastroAtleta.*;
-import dev.com.protactic.dominio.principal.definirEsquemaTatico.*;
-import dev.com.protactic.dominio.principal.dispensa.*;
-import dev.com.protactic.dominio.principal.lesao.*;
-import dev.com.protactic.dominio.principal.nota.*;
-import dev.com.protactic.dominio.principal.partida.PartidaRepository;
-import dev.com.protactic.dominio.principal.partida.PartidaService;
-import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalRepositoryMock;
-import dev.com.protactic.dominio.principal.planejamentoCargaSemanal.PlanejamentoCargaSemanalService;
-import dev.com.protactic.dominio.principal.planejamentoFisico.FisicoRepository;
-import dev.com.protactic.dominio.principal.planejamentoFisico.PlanejamentoFisicoService;
-import dev.com.protactic.dominio.principal.premiacaoInterna.*;
-import dev.com.protactic.dominio.principal.proposta.*;
-import dev.com.protactic.dominio.principal.registroCartoesSuspensoes.*;
-import dev.com.protactic.dominio.principal.registroInscricaoAtleta.*;
-import dev.com.protactic.dominio.principal.treinoTatico.*;
+
 
 @SpringBootApplication
 @ComponentScan(basePackages = "dev.com.protactic")

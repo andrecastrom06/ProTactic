@@ -4,15 +4,19 @@ import io.cucumber.java.Before;
 import io.cucumber.java.pt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import dev.com.protactic.dominio.principal.capitao.CapitaoService;
-import dev.com.protactic.dominio.principal.capitao.CapitaoRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Clube;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.ClubeRepository;
+import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Contrato;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.entidade.Capitao;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.repositorio.CapitaoRepository;
+import dev.com.protactic.dominio.principal.feature_07_definir_capitao.servico.CapitaoService;
 import dev.com.protactic.mocks.CapitaoMock;
 import dev.com.protactic.mocks.ClubeMock;
 import dev.com.protactic.mocks.ContratoMock;
 import dev.com.protactic.mocks.JogadorMock;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ClubeRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.ContratoRepository;
-import dev.com.protactic.dominio.principal.cadastroAtleta.JogadorRepository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

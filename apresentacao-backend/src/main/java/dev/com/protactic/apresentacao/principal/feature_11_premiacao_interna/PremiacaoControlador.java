@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import dev.com.protactic.aplicacao.principal.nota.NotaServicoAplicacao;
 import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoResumo;
 import dev.com.protactic.aplicacao.principal.premiacao.PremiacaoServicoAplicacao;
-import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoService;
-import dev.com.protactic.dominio.principal.Premiacao; 
-import dev.com.protactic.dominio.principal.premiacaoInterna.PremiacaoService.DadosPremiacao; // 🎯 NOVO IMPORT
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.servico.PremiacaoService;
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.servico.PremiacaoService.DadosPremiacao;
 
 
 @RestController
