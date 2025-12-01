@@ -29,7 +29,6 @@ public class DefinirCapitaoControlador {
     
     private @Autowired CapitaoService capitaoService; 
     
-    private @Autowired CapitaoServiceProxy capitaoServiceProxy; 
     
 
     @GetMapping(path = "pesquisa-jogadores")
@@ -54,6 +53,11 @@ public class DefinirCapitaoControlador {
 
     @PostMapping(path = "definir/{jogadorId}") 
     public void definirCapitao(@PathVariable("jogadorId") Integer jogadorId) {
-        capitaoServiceProxy.definirCapitao(jogadorId);
+        
+        try {
+            capitaoService.definirCapitaoPorId(jogadorId);
+        } catch (Exception e) {
+            throw new RuntimeException("Não foi possível definir o capitão. Verifique se o jogador existe e se pertence a um clube.", e);
+        }
     }
 }

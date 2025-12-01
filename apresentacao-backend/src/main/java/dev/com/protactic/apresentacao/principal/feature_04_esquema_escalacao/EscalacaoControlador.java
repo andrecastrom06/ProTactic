@@ -1,6 +1,7 @@
 package dev.com.protactic.apresentacao.principal.feature_04_esquema_escalacao;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.http.HttpStatus; // 🎯 NOVO
 
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoResumo;
 import dev.com.protactic.aplicacao.principal.escalacao.EscalacaoServicoAplicacao;
@@ -25,7 +26,7 @@ public class EscalacaoControlador {
 
     private @Autowired EscalacaoServicoAplicacao escalacaoServicoAplicacao;
     
-    // Mantido para injeção no Comando (Receiver) e uso no GET
+    // Mantido para uso direto
     private @Autowired DefinirEsquemaTaticoService definirEsquemaTaticoService; 
     
     // Métodos GET (leitura) permanecem inalterados
@@ -34,10 +35,8 @@ public class EscalacaoControlador {
         return escalacaoServicoAplicacao.pesquisarResumosPorData(jogoData, clubeId );
     }
     
-    // O erro no path e o clubeId fixo foi corrigido aqui
     @GetMapping(path = "obter-por-data/{jogoData}/{clubeId}")
     public List<String> obterEscalacao(@PathVariable("jogoData") String jogoData, @PathVariable("clubeId") Integer clubeId ) {
-        // Assume que '0' no seu código original era um placeholder e agora usa o clubeId da URL
         return definirEsquemaTaticoService.obterEscalacao(jogoData, clubeId); 
     }
 
@@ -49,18 +48,30 @@ public class EscalacaoControlador {
     ) {}
 
     /**
-     * Padrão Command (Invoker): Registra Escalacao.
+     * Lógica do Command movida para o Controlador.
      */
     @PostMapping(path = "/registrar")
     public ResponseEntity<?> registrarEscalacao(@RequestBody EscalacaoFormulario formulario) {
         
-        // 🎯 Cria o Command, injetando o Service (Receiver) e o Formulário (Request)
-        ComandoEscalacao comando = new RegistrarEscalacaoComando(
-            definirEsquemaTaticoService,
-            formulario
-        );
+        // 🎯 LÓGICA DO RegistrarEscalacaoComando MOVIDA PARA CÁ (Incluindo validação e try-catch)
+        if (formulario == null || formulario.jogoData() == null || formulario.nomeJogador() == null) {
+            return ResponseEntity.badRequest().body("O formulário (jogoData, nomeJogador) não pode ser nulo.");
+        }
         
-        // Executa o Command, delegando toda a lógica de negócio e resposta HTTP
-        return comando.executar();
+        try {
+            boolean sucesso = definirEsquemaTaticoService.registrarJogadorEmEscalacao(
+                formulario.jogoData(),
+                formulario.nomeJogador(),
+                formulario.clubeId()
+            );
+
+            if (sucesso) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Jogador inapto para a partida (lesionado, suspenso ou sem contrato).");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

@@ -21,8 +21,6 @@ public class InscricaoAtletaControlador {
     private @Autowired InscricaoAtletaServicoAplicacao servicoAplicacao;
     private @Autowired RegistroInscricaoService servicoDominio;
 
-    private final EstrategiaRespostaInscricao sucessoEstrategia = new InscricaoSucessoEstrategia();
-    private final EstrategiaRespostaInscricao falhaEstrategia = new InscricaoFalhaEstrategia();
     
     public record InscricaoFormulario(
         String atleta,
@@ -42,13 +40,11 @@ public class InscricaoAtletaControlador {
                 formulario.competicao()
             );
             
-            if (sucessoEstrategia.isAplicavel(resultado)) {
-                return sucessoEstrategia.processar(resultado);
-            } else if (falhaEstrategia.isAplicavel(resultado)) {
-                return falhaEstrategia.processar(resultado); 
+            if (resultado.isInscrito()) {
+                return ResponseEntity.ok(resultado);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultado); 
             }
-            
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); 
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

@@ -2,6 +2,7 @@ package dev.com.protactic.apresentacao.principal.feature_04_esquema_escalacao;
 
 import dev.com.protactic.aplicacao.principal.formacao.FormacaoResumo;
 import dev.com.protactic.aplicacao.principal.formacao.FormacaoServicoAplicacao;
+import dev.com.protactic.aplicacao.principal.formacao.FormacaoServicoAplicacao.FormacaoDados; // 🎯 IMPORT ADICIONADO
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,17 +10,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional; 
-import org.springframework.beans.factory.annotation.Autowired; // Adicionado para injeção
+
 
 @RestController
 @RequestMapping("/backend/formacao")
 @CrossOrigin(origins = "http://localhost:3000")
 public class FormacaoControlador {
 
-    // A injeção via campo ou construtor é preferível
     private final FormacaoServicoAplicacao formacaoServicoAplicacao;
 
-    @Autowired // Mantido o construtor, assumindo que Spring faz a injeção
+    
     public FormacaoControlador(FormacaoServicoAplicacao formacaoServicoAplicacao) {
         this.formacaoServicoAplicacao = formacaoServicoAplicacao;
     }
@@ -36,16 +36,33 @@ public class FormacaoControlador {
     public ResponseEntity<?> salvarFormacao(@RequestBody FormacaoFormulario form) {
         try {
             
-            // 🎯 USO DO BUILDER: Criação do DTO de forma encadeada e validada
-            var dadosServico = FormacaoDadosBuilder.fromFormulario(form)
-                                                   .validarClubeId() // Executa validação específica
-                                                   .build();         // Constrói o DTO final
+            // 🎯 LÓGICA DO BUILDER MOVIDA PARA CÁ (Criação e Validação)
+            
+            // 1. Validação do clubeId (vinda de validarClubeId())
+            if (form.clubeId() == null) {
+                throw new IllegalArgumentException("Erro de segurança: ID do clube não informado.");
+            }
+            
+            // 2. Validação dos campos obrigatórios (vinda de build())
+            if (form.esquema() == null || form.jogadoresIds() == null) {
+                throw new IllegalStateException("Esquema tático e jogadores são obrigatórios.");
+            }
+            
+            // 3. Criação direta do DTO FormacaoDados
+            FormacaoDados dadosServico = new FormacaoDados(
+                form.partidaId(),
+                form.esquema(),
+                form.jogadoresIds(),
+                form.clubeId()
+            );
+
+            // ----------------------------------------------------
 
             FormacaoResumo resumo = formacaoServicoAplicacao.salvarFormacao(dadosServico);
             return ResponseEntity.ok(resumo);
             
         } catch (IllegalArgumentException | IllegalStateException e) {
-            // Captura erros lançados pelo Builder (validarClubeId, build)
+            // Captura erros lançados pelas validações movidas
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

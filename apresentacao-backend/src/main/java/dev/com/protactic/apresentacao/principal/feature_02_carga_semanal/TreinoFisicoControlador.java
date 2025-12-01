@@ -41,13 +41,27 @@ public class TreinoFisicoControlador {
             @PathVariable("jogadorId") Integer jogadorId,
             @RequestBody TreinoFisicoFormulario formulario) {
         
-        ComandoTreinoFisico comando = new SalvarTreinoFisicoComando(
-            planejamentoFisicoService,
-            jogadorId,
-            formulario
-        );
-        
-        return comando.executar();
+        // 🎯 LÓGICA DO SalvarTreinoFisicoComando MOVIDA PARA CÁ
+        try {
+            PlanejamentoFisicoService.DadosTreinoFisico dados =
+                new PlanejamentoFisicoService.DadosTreinoFisico(
+                    jogadorId,
+                    formulario.nome(),
+                    formulario.musculo(),
+                    formulario.intensidade(),
+                    formulario.descricao(),
+                    formulario.dataInicio(),
+                    formulario.dataFim()
+                );
+
+            Fisico treinoSalvo = planejamentoFisicoService.salvarTreinoFisico(dados);
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(treinoSalvo);
+
+        } catch (Exception e) {
+            // O tratamento de exceção do comando foi movido para cá.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
     
     @PutMapping("/editar/{treinoId}")
@@ -92,12 +106,26 @@ public class TreinoFisicoControlador {
             @PathVariable("jogadorId") Integer jogadorId,
             @RequestBody TreinoFisicoFormulario formulario) {
          
-        ComandoTreinoFisico comando = new CriarProtocoloComando(
-            planejamentoFisicoService,
-            jogadorId,
-            formulario
-        );
-        
-        return comando.executar();
+        // 🎯 LÓGICA DO CriarProtocoloComando MOVIDA PARA CÁ
+        try {
+            PlanejamentoFisicoService.DadosTreinoFisico dados =
+                new PlanejamentoFisicoService.DadosTreinoFisico(
+                    jogadorId,
+                    formulario.nome(),
+                    formulario.musculo(),
+                    formulario.intensidade(),
+                    formulario.descricao(),
+                    formulario.dataInicio(),
+                    formulario.dataFim()
+                );
+            
+            Fisico protocoloSalvo = planejamentoFisicoService.criarProtocoloDeRetorno(dados);
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(protocoloSalvo);
+
+        } catch (Exception e) {
+            // O tratamento de exceção do comando foi movido para cá.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

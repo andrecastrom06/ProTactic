@@ -42,17 +42,17 @@ public class ContratoControlador {
 
     
     /**
-     * Endpoint para dispensar um jogador, usando o padrão Command.
+     * Endpoint para dispensar um jogador, com a lógica do Command movida para cá.
      */
     @PostMapping(path = "/dispensar/{jogadorId}")
     public void dispensarJogador(@PathVariable("jogadorId") Integer jogadorId) {
         
-        // Criação e execução do Comando Concreto
-        DispensarJogadorComando comando = new DispensarJogadorComando(dispensaService, jogadorId);
-        
+        // 🎯 LÓGICA DO DispensarJogadorComando MOVIDA PARA CÁ
         try {
-            comando.executar(); // Invoca o comando
+            // Chamada direta ao Receiver (DispensaService)
+            dispensaService.dispensarJogadorPorId(jogadorId); 
         } catch (Exception e) {
+            // Tratamento de exceção do Command
             throw new RuntimeException("Erro ao tentar dispensar o jogador: " + e.getMessage(), e);
         }
     }
@@ -64,26 +64,25 @@ public class ContratoControlador {
     ) {}
 
     /**
-     * Endpoint para renovar um contrato, usando o padrão Command.
+     * Endpoint para renovar um contrato, com a lógica do Command movida para cá.
      */
     @PutMapping(path = "/renovar/{contratoId}")
     public ResponseEntity<Contrato> renovarContrato(
             @PathVariable("contratoId") Integer contratoId,
             @RequestBody RenovacaoFormulario formulario) {
         
-        // Criação e execução do Comando Concreto
-        RenovarContratoComando comando = new RenovarContratoComando(
-            contratoService, 
-            contratoId,
-            formulario.duracaoMeses(),
-            formulario.salario(),
-            formulario.status()
-        );
-            
+        // 🎯 LÓGICA DO RenovarContratoComando MOVIDA PARA CÁ
         try {
-            Contrato contratoAtualizado = comando.executar(); // Invoca o comando
+            Contrato contratoAtualizado = contratoService.renovarContrato(
+                contratoId,
+                formulario.duracaoMeses(),
+                formulario.salario(),
+                formulario.status()
+            );
+            
             return ResponseEntity.ok(contratoAtualizado); 
         } catch (Exception e) {
+            // Tratamento de exceção do Command
             throw new RuntimeException("Erro ao renovar contrato: " + e.getMessage(), e);
         }
     }

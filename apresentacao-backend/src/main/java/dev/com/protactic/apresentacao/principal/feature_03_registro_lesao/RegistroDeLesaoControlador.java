@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;  
+import org.springframework.http.HttpStatus; // 🎯 NOVO
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,13 +57,16 @@ public class RegistroDeLesaoControlador {
             @PathVariable("jogadorId") Integer jogadorId, 
             @RequestBody RegistrarLesaoFormulario formulario) {
         
-        ComandoRegistroLesao comando = new RegistrarLesaoComando(
-            registroLesoesServico, 
-            jogadorId, 
-            formulario
-        );
+        if (formulario == null) {
+            return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
+        }
         
-        return comando.executar();
+        try {
+            registroLesoesServico.registrarLesaoPorId(jogadorId, formulario.grau());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping(path = "/cadastrar-plano/{jogadorId}")
@@ -70,23 +74,30 @@ public class RegistroDeLesaoControlador {
             @PathVariable("jogadorId") Integer jogadorId, 
             @RequestBody PlanoRecuperacaoFormulario formulario) {
 
-        ComandoRegistroLesao comando = new CadastrarPlanoComando(
-            registroLesoesServico, 
-            jogadorId, 
-            formulario
-        );
-        
-        return comando.executar();
+        if (formulario == null) {
+             return ResponseEntity.badRequest().body("Formulário não pode ser nulo.");
+        }
+
+        try {
+            registroLesoesServico.cadastrarPlanoRecuperacaoPorId(
+                jogadorId, 
+                formulario.tempo(), 
+                formulario.plano()
+            );
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
     
     @PostMapping(path = "/encerrar/{jogadorId}")
     public ResponseEntity<?> encerrarLesao(@PathVariable("jogadorId") Integer jogadorId) { 
         
-        ComandoRegistroLesao comando = new EncerrarLesaoComando(
-            registroLesoesServico, 
-            jogadorId
-        );
-        
-        return comando.executar();
+        try {
+            registroLesoesServico.encerrarRecuperacaoPorId(jogadorId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

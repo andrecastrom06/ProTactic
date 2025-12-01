@@ -15,17 +15,24 @@ import org.springframework.http.HttpStatus;
 
 import dev.com.protactic.aplicacao.principal.clube.ClubeResumo;
 import dev.com.protactic.aplicacao.principal.clube.ClubeServicoAplicacao;
-
-import dev.com.protactic.apresentacao.principal.feature_01_cadastro_atleta.CadastroContratacaoFacade.ContratacaoNaoPermitidaException;
+import dev.com.protactic.dominio.principal.cadastroAtleta.CadastroDeAtletaService; // 🎯 IMPORT ADICIONADO
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("backend/cadastro-atleta")
 public class CadastroDeAtletaControlador {
+    
+    @Autowired
+    private CadastroDeAtletaService cadastroDeAtletaService; 
 
     private @Autowired ClubeServicoAplicacao clubeServicoAplicacao;
     
-    private @Autowired CadastroContratacaoFacade cadastroContratacaoFacade; 
+
+    public static class ContratacaoNaoPermitidaException extends RuntimeException {
+        public ContratacaoNaoPermitidaException(String message) {
+            super(message);
+        }
+    }
 
     @GetMapping(path = "pesquisa")
     public List<ClubeResumo> pesquisarResumos() {
@@ -43,15 +50,11 @@ public class CadastroDeAtletaControlador {
         Date data
     ) {}
 
-    /**
-     * Endpoint de Contratação que utiliza o Padrão Façade para simplificar a lógica.
-     */
     @PostMapping(path = "{clubeId}/contratar")
     public ResponseEntity<?> contratarAtleta( 
             @PathVariable("clubeId") Integer clubeId, 
             @RequestBody ContratacaoFormulario formulario) { 
         
-        // Validação de entrada (mantida no Controlador)
         if (formulario == null || formulario.jogadorId() == null || formulario.data() == null) {
             return ResponseEntity
                 .badRequest()
@@ -59,21 +62,21 @@ public class CadastroDeAtletaControlador {
         }
 
         try {
-            // 🎯 USO DO FACADE: O Controlador chama a Façade.
-            // A Façade orquestra o serviço de Domínio e faz o tratamento da regra de negócio.
-            cadastroContratacaoFacade.processarContratacao(
-                clubeId, 
-                formulario.jogadorId(), 
+            boolean resultado = cadastroDeAtletaService.contratarPorId(
+                clubeId,
+                formulario.jogadorId(),
                 formulario.data()
-            );
+            ); 
+
+            if (!resultado) {
+                throw new ContratacaoNaoPermitidaException("Contratação não permitida. Verifique a janela de transferências ou a disponibilidade do atleta.");
+            }
 
             return ResponseEntity.ok().build(); 
 
         } catch (ContratacaoNaoPermitidaException e) {
-            // A Façade lançou esta exceção por falha na regra de negócio (Contratação não permitida).
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage()); // 403 Forbidden
         } catch (Exception e) {
-            // Outras exceções (ex: ID não encontrado)
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

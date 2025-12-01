@@ -2,6 +2,7 @@ package dev.com.protactic.apresentacao.principal.feature_09_atribuicao_notas;
 
 import java.util.List;
 import java.math.BigDecimal;
+import java.math.RoundingMode; // 🎯 IMPORT NECESSÁRIO
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,9 @@ import dev.com.protactic.dominio.principal.nota.NotaService;
 @CrossOrigin(origins = "http://localhost:3000")
 public class AtribuicaoNotasControlador {
 
-    // Injeção de dependências de Serviço (Domínio e Aplicação)
     private @Autowired NotaServicoAplicacao notaServicoAplicacao;
     private @Autowired NotaService notaService;
 
-    // 💡 Implementação do Padrão Singleton na Camada de Apresentação
-    // Acessa a instância única do Conversor de Notas
-    private final ConversorNotaSingleton conversorNotas = ConversorNotaSingleton.getInstance();
 
 
     @GetMapping(path = "pesquisa-por-jogo/{jogoId}")
@@ -50,10 +47,18 @@ public class AtribuicaoNotasControlador {
         String observacao
     ) {}
 
-    /**
-     * Atribui uma nota a um jogador em um jogo após validação e formatação.
-     * Retorna ResponseEntity<Void> para melhor controle de status HTTP.
-     */
+    private BigDecimal validarEFormatarNota(BigDecimal notaAConverter) {
+        if (notaAConverter == null) {
+            throw new IllegalArgumentException("A nota não pode ser nula.");
+        }
+
+        if (notaAConverter.compareTo(BigDecimal.ZERO) < 0 || notaAConverter.compareTo(new BigDecimal("10.00")) > 0) {
+            throw new IllegalArgumentException("A nota deve estar no intervalo de 0.00 a 10.00.");
+        }
+
+        return notaAConverter.setScale(2, RoundingMode.HALF_UP);
+    }
+
     @PostMapping(path = "/atribuir")
     public ResponseEntity<Void> atribuirNotaEObservacao(@RequestBody NotaFormulario formulario) {
 
@@ -62,22 +67,18 @@ public class AtribuicaoNotasControlador {
         }
 
         try {
-            // 🎯 Uso do Singleton: Validação e formatação da nota de entrada
-            // Se a nota for inválida (ex: < 0 ou > 10), o Singleton lança uma exceção.
-            BigDecimal notaFormatada = conversorNotas.validarEFormatar(formulario.nota());
+            BigDecimal notaFormatada = validarEFormatarNota(formulario.nota());
 
             notaService.atribuirNotaEObservacao(
                 formulario.jogoId(),
                 formulario.jogadorId(),
-                notaFormatada, // Usa a nota validada e formatada
+                notaFormatada, 
                 formulario.observacao()
             );
 
-            return ResponseEntity.ok().build(); // 200 OK (ou 201 Created)
+            return ResponseEntity.ok().build(); 
 
         } catch (IllegalArgumentException e) {
-            // Captura erros de validação da Apresentação (ex: nota fora do intervalo)
-            // Retorna um status de erro adequado (400 Bad Request)
             System.err.println("Erro de validação de dados: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

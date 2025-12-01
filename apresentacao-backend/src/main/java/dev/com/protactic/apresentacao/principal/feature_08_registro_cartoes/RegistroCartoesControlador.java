@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus; // 🎯 NOVO IMPORT
 
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoResumo;
 import dev.com.protactic.aplicacao.principal.registrocartao.RegistroCartaoServicoAplicacao;
@@ -56,14 +57,32 @@ public class RegistroCartoesControlador {
     @PostMapping(path = "/registrar")
     public ResponseEntity<?> registrarCartao(@RequestBody CartaoFormulario formulario) {
         
-        ComandoRegistroCartao comando = new RegistrarCartaoComando(registroCartoesService, formulario);
-        return comando.executar();
+        if (formulario == null) {
+            return ResponseEntity.badRequest().body("O corpo da requisição não pode ser nulo.");
+        }
+        
+        try {
+            registroCartoesService.registrarCartao(formulario.atleta(), formulario.tipo());
+            
+            return ResponseEntity.ok().build(); 
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao registrar cartão: " + e.getMessage());
+        }
     }
 
     @PostMapping(path = "/limpar/{atleta}")
     public ResponseEntity<?> limparCartoes(@PathVariable("atleta") String atleta) {
         
-        ComandoRegistroCartao comando = new LimparCartoesComando(registroCartoesService, atleta);
-        return comando.executar();
+        try {
+            registroCartoesService.limparCartoes(atleta);
+            
+            return ResponseEntity.ok().build(); 
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao limpar cartões: " + e.getMessage());
+        }
     }
 }
