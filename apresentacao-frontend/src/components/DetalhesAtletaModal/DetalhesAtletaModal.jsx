@@ -89,14 +89,6 @@ export const DetalhesAtletaModal = ({ atleta, onClose }) => {
           >
             Histórico de Lesões
           </button>
-          <button
-            className={`tab-btn ${
-              activeTab === "estatisticas" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("estatisticas")}
-          >
-            Estatísticas
-          </button>
         </div>
 
         <div className="detalhes-body">
@@ -174,12 +166,6 @@ export const DetalhesAtletaModal = ({ atleta, onClose }) => {
                   </div>
                 ))
               )}
-            </div>
-          )}
-
-          {activeTab === "estatisticas" && (
-            <div className="placeholder-content">
-              <p>Estatísticas de desempenho em breve.</p>
             </div>
           )}
         </div>
