@@ -324,12 +324,12 @@
 .range-slider.fisico::-webkit-slider-thumb { background: #43a047; }
 .range-slider.tatico::-webkit-slider-thumb { background: #00897b; }
 
-/* Footer Modal */
 .modal-footer { display: flex; gap: 12px; margin-top: 16px; }
 .btn-cancel { flex: 1; padding: 12px; background: white; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; font-weight: 600; }
 .btn-save { flex: 2; padding: 12px; border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
 .btn-save.fisico { background: #2e7d32; }
-.btn-save.tático { background: #00695c; }
+.btn-save.tatico { background: #00695c; }
 
 .animated-fade { animation: fadeIn 0.3s ease-in; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

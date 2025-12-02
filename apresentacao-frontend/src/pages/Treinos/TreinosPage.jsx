@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
     LuCalendarDays, LuUsers, LuDumbbell,
     LuX, LuCheck, LuZap, LuUser, LuRefreshCw
@@ -16,7 +16,8 @@ import {
     criarSessaoTatica, 
     salvarTreinoFisico, 
     buscarTreinosFisicosPorJogador,
-    atualizarStatusTreinoFisico
+    atualizarStatusTreinoFisico,
+    buscarSessoesPorPartida
 } from '../../services/treinoService';
 
 export const TreinosPage = () => {
@@ -35,11 +36,29 @@ export const TreinosPage = () => {
     const [tipoTreinoSelecionado, setTipoTreinoSelecionado] = useState(''); 
     const [loadingStatus, setLoadingStatus] = useState(null);
 
+    const [sessoesSalvas, setSessoesSalvas] = useState([]);
+
     const [novoTreino, setNovoTreino] = useState({
         nome: '', intensidade: 50, partidaId: '', 
         escopoTatico: 'EQUIPE', jogadorTaticoId: '',
         jogadorFisicoId: '', dataInicio: '', dataFim: '', musculo: ''
     });
+
+    const getClassType = (tipo) => {
+        if (!tipo) return '';
+        return tipo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    };
+
+    const formatarStatus = (statusBruto) => {
+        if (!statusBruto) return 'Planejado';
+        
+        const texto = statusBruto.toUpperCase();
+        
+        if (texto === 'CONCLUIDO' || texto === 'CONCLUÍDO') return 'Concluído';
+        if (texto === 'EM ANDAMENTO' || texto === 'ANDAMENTO') return 'Em Andamento';
+        
+        return 'Planejado';
+    };
 
     const formatarData = (dataString) => {
         if (!dataString) return 'Data Indef.';
@@ -87,12 +106,13 @@ export const TreinosPage = () => {
             let acumuladorFisicos = [];
             await Promise.all(meusJogadores.map(async (j) => {
                 const treinosDoAtleta = await buscarTreinosFisicosPorJogador(j.id);
+                
                 const formatados = treinosDoAtleta.map(t => ({
                     id: t.id, nomeAtleta: j.nome, foco: t.nome, musculo: t.musculo,
                     dataInicio: formatarData(t.dataInicio), dataFim: formatarData(t.dataFim),
                     intensidadeValor: t.intensidade === 'Alta' ? 85 : (t.intensidade === 'Media' ? 50 : 20),
                     intensidadeLabel: t.intensidade,
-                    status: t.status || 'Planejado'
+                    status: formatarStatus(t.status) 
                 }));
                 acumuladorFisicos = [...acumuladorFisicos, ...formatados];
             }));
@@ -109,6 +129,18 @@ export const TreinosPage = () => {
         setLoading(true);
         carregarDados();
     }, [carregarDados]);
+
+    useEffect(() => {
+        const carregarSessoesExistentes = async () => {
+            if (!novoTreino.partidaId || !clubeIdLogado) return;
+            try {
+                const sess = await buscarSessoesPorPartida(novoTreino.partidaId, clubeIdLogado);
+                setSessoesSalvas(sess);
+            } catch(e) { console.log("Sem sessões prévias"); }
+        };
+        carregarSessoesExistentes();
+    }, [novoTreino.partidaId, clubeIdLogado]);
+
 
     const handlePartidaChange = async (e) => {
         const idPartida = e.target.value; 
@@ -131,13 +163,16 @@ export const TreinosPage = () => {
 
     const handleAtualizarStatusFisico = async (id, statusAtual) => {
         setLoadingStatus(id); 
+        
         let novoStatus = 'Planejado';
+        
         if (statusAtual === 'Planejado') novoStatus = 'Em Andamento';
         else if (statusAtual === 'Em Andamento') novoStatus = 'Concluído';
         else if (statusAtual === 'Concluído') novoStatus = 'Planejado'; 
         
         try {
             await atualizarStatusTreinoFisico(id, novoStatus);
+            
             setListaFisicos(prev => prev.map(t => t.id === id ? { ...t, status: novoStatus } : t));
         } catch (err) {
             alert("Erro ao atualizar status: " + err.message);
@@ -166,6 +201,7 @@ export const TreinosPage = () => {
 
     const handleSalvarTreino = async (e) => {
         e.preventDefault();
+
         try {
             if (tipoTreinoSelecionado === 'Físico') {
                 if (!novoTreino.jogadorFisicoId) return alert("Selecione um atleta.");
@@ -201,22 +237,26 @@ export const TreinosPage = () => {
                     nome: novoTreino.nome,
                     partidaId: parseInt(novoTreino.partidaId, 10),
                     convocadosIds: listaConvocados,
-                    clubeId: parseInt(clubeIdLogado, 10)
+                    clubeId: parseInt(clubeIdLogado, 10) 
                 };
 
                 await criarSessaoTatica(payload);
                 alert("Sessão Tática agendada!");
             }
+
             fecharModal();
-            carregarDados();
+            carregarDados(); // Recarrega os dados do banco para garantir consistência
+
         } catch (err) {
             alert("Erro: " + err.message);
         }
     };
 
     const getStatusColor = (status) => {
-        if(status === 'Concluído') return 'status-success';
-        if(status === 'Em Andamento') return 'status-warning';
+        if (!status) return 'status-gray';
+        const s = status.toLowerCase();
+        if(s === 'concluído' || s === 'concluido') return 'status-success';
+        if(s === 'em andamento') return 'status-warning';
         return 'status-gray';
     };
 
@@ -229,7 +269,6 @@ export const TreinosPage = () => {
                 </div>
             </header>
 
-            {/* SEÇÃO 1: TÁTICO */}
             <section className="section-container">
                 <div className="section-header tatico-border">
                     <div className="header-title-group">
@@ -266,7 +305,6 @@ export const TreinosPage = () => {
                 </div>
             </section>
 
-            {/* SEÇÃO 2: FÍSICO */}
             <section className="section-container">
                 <div className="section-header fisico-border">
                     <div className="header-title-group">
@@ -315,12 +353,10 @@ export const TreinosPage = () => {
                     ))}
                 </div>
             </section>
-
-            {/* MODAL */}
             {modalAberto && (
                 <div className="modal-overlay" onClick={(e) => { if(e.target.className === 'modal-overlay') fecharModal() }}>
                     <div className="modal-content">
-                        <div className={`modal-header ${tipoTreinoSelecionado === 'Físico' ? 'fisico-header' : 'tatico-header'}`}>
+                        <div className={`modal-header ${getClassType(tipoTreinoSelecionado) === 'fisico' ? 'fisico-header' : 'tatico-header'}`}>
                             <div className="header-icon-title">
                                 {tipoTreinoSelecionado === 'Físico' ? <LuDumbbell size={24}/> : <GiWhistle size={24}/>}
                                 <div>
@@ -435,14 +471,24 @@ export const TreinosPage = () => {
                                             <label><LuZap size={14}/> Intensidade</label>
                                             <span className="intensity-value">{novoTreino.intensidade}%</span>
                                         </div>
-                                        <input type="range" name="intensidade" min="0" max="100" className="range-slider fisico" value={novoTreino.intensidade} onChange={handleInputChange} />
+                                        <input 
+                                            type="range" 
+                                            name="intensidade" 
+                                            min="0" max="100" 
+                                            className={`range-slider ${getClassType(tipoTreinoSelecionado)}`} 
+                                            value={novoTreino.intensidade} 
+                                            onChange={handleInputChange} 
+                                        />
                                     </div>
                                 </>
                             )}
 
                             <div className="modal-footer">
                                 <button type="button" onClick={fecharModal} className="btn-cancel">Cancelar</button>
-                                <button type="submit" className={`btn-save ${tipoTreinoSelecionado.toLowerCase()}`}>
+                                <button 
+                                    type="submit" 
+                                    className={`btn-save ${getClassType(tipoTreinoSelecionado)}`}
+                                >
                                     <LuCheck /> Salvar
                                 </button>
                             </div>
