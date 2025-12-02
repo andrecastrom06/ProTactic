@@ -41,10 +41,14 @@ export const renovarContrato = async (contratoId, dadosRenovacao) => {
     }
 };
 
-export const dispensarJogador = async (jogadorId) => {
+export const dispensarJogador = async (jogadorId, usuarioId) => {
     try {
         const response = await fetch(`${API_BASE_URL}/contrato/dispensar/${jogadorId}`, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'usuarioId': usuarioId // <--- O HEADER OBRIGATÓRIO PARA O PROXY
+            }
         });
 
         if (!response.ok) {

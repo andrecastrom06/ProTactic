@@ -4,7 +4,10 @@ import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.J
 import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.repositorio.PremiacaoRepository;
+// Importação do pacote onde ficarão os Decorators
+import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.decorator.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -27,6 +30,8 @@ public class PremiacaoService {
         Date dataPremiacao 
     ) {}
 
+    // --- MÉTODOS EXISTENTES (Mantidos) ---
+
     public Premiacao salvarPremiacaoPorDados(DadosPremiacao dados) throws Exception {
         Objects.requireNonNull(dados.jogadorId(), "O ID do Jogador não pode ser nulo.");
         
@@ -42,7 +47,6 @@ public class PremiacaoService {
             dados.dataPremiacao()
         );
 
-        
         return this.salvarPremiacao(novaPremiacao);
     }
     
@@ -50,6 +54,7 @@ public class PremiacaoService {
         repository.salvarPremiacao(premiacao);
         return premiacao;
     }
+
     public Premiacao criarPremiacaoMensal(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores) {
         Premiacao premiacao = repository.criarPremiacao(nomePremiacao, dataPremiacao);
         Jogador vencedor = definirVencedor(jogadores);
@@ -102,5 +107,35 @@ public class PremiacaoService {
                 .min()
                 .orElse(Double.MAX_VALUE);
         return vencedor.getDesvioPadrao() == menorDesvio;
+    }
+
+    public void calcularEregistrarPremiacaoFinanceira(Integer jogadorId, double valorBase, boolean timeVenceu, boolean ehCapitao) throws Exception {
+        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
+        if (jogador == null) {
+            throw new Exception("Jogador não encontrado para cálculo de premiação.");
+        }
+
+        CalculadoraPremiacao calculadora = new PremiacaoBase(valorBase);
+
+        if (timeVenceu) {
+            calculadora = new BonusVitoriaDecorator(calculadora);
+        }
+
+        if (ehCapitao) {
+            calculadora = new BonusCapitaoDecorator(calculadora);
+        }
+
+        BigDecimal valorFinal = calculadora.calcular();
+
+        Premiacao premiacao = new Premiacao(
+            0,
+            jogador,
+            "Premiação Financeira (Base + Bônus)",
+            new Date()
+        );
+        
+        repository.salvarPremiacao(premiacao);
+        
+        System.out.println("Premiação financeira registrada para " + jogador.getNome() + ": R$ " + valorFinal);
     }
 }

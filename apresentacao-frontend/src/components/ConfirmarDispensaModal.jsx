@@ -1,19 +1,32 @@
 import React, { useState } from 'react';
 import { dispensarJogador } from '../services/contratoService';
-import './NovoAtletaModal/NovoAtletaModal.css'; // Reutilizamos o CSS
+import { useAuth } from '../store/AuthContext'; // 1. IMPORTAR O HOOK DE AUTH
+import './NovoAtletaModal/NovoAtletaModal.css'; 
 
 export const ConfirmarDispensaModal = ({ contrato, onClose, onSuccess }) => {
     const [loading, setLoading] = useState(false);
+    
+    // 2. RECUPERAR O USUÁRIO LOGADO
+    const { usuario } = useAuth();
 
     const handleConfirm = async () => {
+        // Validação de segurança no frontend
+        if (!usuario || !usuario.id) {
+            alert("Erro: Usuário não identificado na sessão.");
+            return;
+        }
+
         setLoading(true);
         try {
-            // Usa o jogadorId que adicionamos no Backend anteriormente
-            await dispensarJogador(contrato.jogadorId);
+            // 3. PASSAR O ID DO USUÁRIO COMO SEGUNDO PARÂMETRO
+            // O serviço contratoService.js já foi ajustado para enviar isso no Header 'usuarioId'
+            await dispensarJogador(contrato.jogadorId, usuario.id);
+            
             alert("Contrato encerrado e jogador dispensado.");
             onSuccess();
             onClose();
         } catch (err) {
+            // Se o usuário não for ANALISTA, o erro 403 do backend aparecerá aqui
             alert("Erro ao encerrar: " + err.message);
         } finally {
             setLoading(false);

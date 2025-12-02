@@ -16,7 +16,6 @@ public class UsuarioRepositoryImpl implements UsuarioRepository, UsuarioReposito
     private final UsuarioRepositorySpringData repositoryJPA;
     private final JpaMapeador mapeador;
 
-    
     public UsuarioRepositoryImpl(UsuarioRepositorySpringData repositoryJPA, JpaMapeador mapeador) {
         this.repositoryJPA = repositoryJPA;
         this.mapeador = mapeador;
@@ -27,6 +26,14 @@ public class UsuarioRepositoryImpl implements UsuarioRepository, UsuarioReposito
         Optional<UsuarioJPA> jpaOpt = repositoryJPA.findByLoginAndSenha(login, senha);
         
         return jpaOpt.map(jpa -> mapeador.map(jpa, Usuario.class));
+    }
+
+    @Override
+    public Usuario buscarPorId(Integer id) {
+        Optional<UsuarioJPA> jpaOpt = repositoryJPA.findById(id);
+        
+        return jpaOpt.map(jpa -> mapeador.map(jpa, Usuario.class))
+                     .orElse(null);
     }
 
     @Override

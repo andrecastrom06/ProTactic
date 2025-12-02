@@ -45,7 +45,7 @@ export const NovoAtletaModal = ({ onClose, onSuccess }) => {
                 idade: parseInt(idade, 10),
                 duracaoMeses: parseInt(duracaoMeses, 10),
                 salario: parseFloat(salario),
-                situacaoContratual: "Com contrato ativo", // Definido automaticamente
+                situacaoContratual: "ATIVO", // Definido automaticamente
                 clubeId: clubeIdLogado
             };
 

@@ -61,7 +61,10 @@ import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.reposito
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.servico.PremiacaoService;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.ContratacaoServico;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
-
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaServiceProxy;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaServiceProxy;
 
 
 @SpringBootApplication
@@ -155,13 +158,6 @@ public class AplicacaoBackend {
         return new ContratacaoServico(clubeRepo, jogadorRepo, contratoRepo); 
     }
 
-    @Bean
-    public DispensaService dispensaService(
-            ContratoRepository contratoRepo,
-            JogadorRepository jogadorRepo, 
-            ClubeRepository clubeRepo) {
-        return new DispensaService(contratoRepo, jogadorRepo, clubeRepo);
-    }
 
     @Bean
     public ContratoService contratoService(ContratoRepository contratoRepo) {
@@ -174,7 +170,7 @@ public class AplicacaoBackend {
             ContratoRepository contratoRepo,
             JogadorRepository jogadorRepo,
             ClubeRepository clubeRepo,    
-            DispensaService dispensaService,
+            IDispensaService dispensaService, 
             CadastroDeAtletaService cadastroDeAtletaService) {
         
         return new PropostaService(
@@ -284,5 +280,17 @@ public class AplicacaoBackend {
 
     public static void main(String[] args) {
         run(AplicacaoBackend.class, args);
+    }
+    @Bean
+    public IDispensaService dispensaService(
+            ContratoRepository contratoRepo,
+            JogadorRepository jogadorRepo, 
+            ClubeRepository clubeRepo) {
+        
+        // 1. Cria o objeto Real
+        DispensaService servicoReal = new DispensaService(contratoRepo, jogadorRepo, clubeRepo);
+        
+        // 2. Embrulha no Proxy e retorna para o Spring injetar
+        return new DispensaServiceProxy(servicoReal);
     }
 }

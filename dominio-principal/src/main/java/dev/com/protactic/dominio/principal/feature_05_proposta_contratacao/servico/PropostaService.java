@@ -12,7 +12,11 @@ import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entid
 import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.entidade.Proposta;
 import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.ContratoRepository;
 import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repositorio.PropostaRepository;
-import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService; 
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.template.GeradorProposta;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.template.GeradorPropostaBase;
+import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.template.GeradorPropostaEstrela;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
+import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService; 
 
 public class PropostaService {
     
@@ -20,14 +24,14 @@ public class PropostaService {
     private final ContratoRepository contratoRepo;
     private final JogadorRepository jogadorRepo; 
     private final ClubeRepository clubeRepo;     
-    private final DispensaService dispensaService; 
+    private final IDispensaService dispensaService; 
     private final CadastroDeAtletaService cadastroDeAtletaService; 
 
     public PropostaService(PropostaRepository propostaRepo,
                            ContratoRepository contratoRepo,
                            JogadorRepository jogadorRepo,
                            ClubeRepository clubeRepo,
-                           DispensaService dispensaService,
+                           IDispensaService dispensaService,
                            CadastroDeAtletaService cadastroDeAtletaService) {
         this.propostaRepo = propostaRepo;
         this.contratoRepo = contratoRepo;
@@ -36,7 +40,6 @@ public class PropostaService {
         this.dispensaService = dispensaService;
         this.cadastroDeAtletaService = cadastroDeAtletaService;
     }
-
     
     public record DadosNovaProposta(
         Integer jogadorId,
@@ -64,6 +67,7 @@ public class PropostaService {
     public Proposta criarProposta(Jogador jogador, Clube clubePropositor, double valor, Date data) throws Exception {
         Integer clubeAtualId = null;
         Integer contratoId = jogador.getContratoId();
+        
         if (contratoId != null) {
             Contrato contrato = contratoRepo.buscarPorId(contratoId);
             if (contrato != null && "ATIVO".equalsIgnoreCase(contrato.getStatus())) {
@@ -76,9 +80,15 @@ public class PropostaService {
                 }
             }
         }
-        Proposta proposta = new Proposta(
-            clubePropositor.getId(), clubeAtualId, jogador.getId(), valor, data
-        );
+        GeradorProposta gerador;
+        if (jogador.getIdade() < 20) {
+            gerador = new GeradorPropostaBase();
+        } else {
+            gerador = new GeradorPropostaEstrela();
+        }
+
+        Proposta proposta = gerador.gerarProposta(jogador, clubePropositor, clubeAtualId, valor, data);
+
         return propostaRepo.saveProposta(proposta);
     }
 
@@ -107,7 +117,18 @@ public class PropostaService {
             throw new Exception("Falha ao contratar o jogador pelo novo clube (verificar janela de transferência).");
         }
 
-        proposta.setStatus("ACEITE");
+        Jogador jogadorContratado = jogadorRepo.buscarPorId(jogador.getId());
+        
+        if (jogadorContratado.getContratoId() != null) {
+            Contrato novoContrato = contratoRepo.buscarPorId(jogadorContratado.getContratoId());
+            
+            if (novoContrato != null) {
+                novoContrato.setSalario(proposta.getValor());
+                contratoRepo.salvar(novoContrato);
+            }
+        }
+
+        proposta.setStatus("ACEITA");
         propostaRepo.saveProposta(proposta);
     }
 
