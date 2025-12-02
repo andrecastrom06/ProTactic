@@ -104,7 +104,24 @@ export const GestaoJogoPage = () => {
                             poolDeAtletas.splice(index, 1); 
                         }
                     });
-                    setAtletasNoCampo(novosTitulares);
+                    // Tenta restaurar posições previamente salvas no localStorage
+                    try {
+                        const posKey = `escalacao_posicoes_${partidaSelecionada}_${clubeIdLogado}`;
+                        const json = localStorage.getItem(posKey);
+                        if (json) {
+                            const saved = JSON.parse(json || '{}');
+                            const titularesComPos = novosTitulares.map(t => ({
+                                ...t,
+                                position: saved[t.id] || t.position
+                            }));
+                            setAtletasNoCampo(titularesComPos);
+                        } else {
+                            setAtletasNoCampo(novosTitulares);
+                        }
+                    } catch (err) {
+                        console.error('Erro ao restaurar posições da escalação:', err);
+                        setAtletasNoCampo(novosTitulares);
+                    }
                     setAtletasDisponiveis(poolDeAtletas); 
                 } else {
                     setAtletasDisponiveis(poolDeAtletas);
@@ -179,8 +196,19 @@ export const GestaoJogoPage = () => {
         };
         try {
             await salvarEscalacao(payload);
+            // Salva posições no localStorage para persistir layout tático localmente
+            try {
+                const posKey = `escalacao_posicoes_${partidaSelecionada}_${clubeIdLogado}`;
+                const positionsMap = {};
+                atletasNoCampo.forEach(a => {
+                    positionsMap[a.id] = a.position || { x: 50, y: 50 };
+                });
+                localStorage.setItem(posKey, JSON.stringify(positionsMap));
+            } catch (err) {
+                console.error('Erro ao salvar posições localmente:', err);
+            }
             alert("Escalação salva com sucesso!");
-            setEscalacaoJaExiste(true); 
+            setEscalacaoJaExiste(true);
         } catch (err) {
             alert("Erro ao salvar: " + err.message);
         }
@@ -308,7 +336,6 @@ export const GestaoJogoPage = () => {
                         </>
                     )}
 
-                    {/* === ABA CARTÕES === */}
                     {abaAtiva === 'CARTOES' && (
                         <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
                             {!escalacaoJaExiste ? <AvisoSemEscalacao /> : (

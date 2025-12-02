@@ -6,7 +6,6 @@ import { AppRoutes } from './routes';
 function App() {
   return (
     <div className="App">
-      {/* 2. Renderiza apenas o gestor de rotas */}
       <AppRoutes />
     </div>
   );
