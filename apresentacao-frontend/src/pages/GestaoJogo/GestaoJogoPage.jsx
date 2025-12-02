@@ -1,15 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 
-// Componentes existentes
 import { CampoTatico } from './components/CampoTatico';
 import { ListaAtletas } from './components/ListaAtletas';
 import { AbaAtribuirNotas } from './components/AbaAtribuirNotas';
 import { CriarPartidaModal } from '../../components/CriarPartidaModal'; 
 import { AbaCartoesInfo } from './components/AbaCartoesInfo';
 import { AbaSuspensoes } from './components/AbaSuspensoes';
-// 1. IMPORT DO NOVO COMPONENTE
-import { AbaRelatorioDesempenho } from './components/AbaRelatorioDesempenho';
 
 import './GestaoJogoPage.css';
 import { useAuth } from '../../store/AuthContext';
@@ -271,10 +268,6 @@ export const GestaoJogoPage = () => {
                         <span className={`tab-item ${abaAtiva === 'NOTAS' ? 'active' : ''}`} onClick={() => setAbaAtiva('NOTAS')}>
                             Atribuir Notas
                         </span>
-                        {/* 2. NOVA ABA NO MENU */}
-                        <span className={`tab-item ${abaAtiva === 'RELATORIO' ? 'active' : ''}`} onClick={() => setAbaAtiva('RELATORIO')}>
-                            Relatório de Desempenho
-                        </span>
                     </nav>
                 </header>
                 
@@ -343,17 +336,6 @@ export const GestaoJogoPage = () => {
                                 onSalvar={handleSalvarNotas} 
                             />
                         )
-                    )}
-
-                    {abaAtiva === 'RELATORIO' && (
-                        <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
-                            <AbaRelatorioDesempenho 
-                                partidaId={partidaSelecionada} 
-                                todosAtletas={todosAtletas} 
-                                partidas={partidas} 
-                                notasDoBanco={notasDoBanco}
-                            />
-                        </div>
                     )}
                 </div>
             </div>
