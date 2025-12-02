@@ -5,12 +5,16 @@ import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositori
 import dev.com.protactic.dominio.principal.feature_02_carga_semanal.calculo.CalculoCargaLinear;
 import dev.com.protactic.dominio.principal.feature_02_carga_semanal.entidade.Fisico;
 import dev.com.protactic.dominio.principal.feature_02_carga_semanal.repositorio.FisicoRepository;
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.entidade.Lesao; // NOVO IMPORT
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.observer.LesaoObserver; // NOVO IMPORT
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class PlanejamentoFisicoService {
+// A classe agora implementa a interface LesaoObserver
+public class PlanejamentoFisicoService implements LesaoObserver {
 
     private final FisicoRepository fisicoRepository;
     private final JogadorRepository jogadorRepository;
@@ -116,5 +120,30 @@ public class PlanejamentoFisicoService {
             throw new Exception("Treino Físico com ID " + treinoId + " não encontrado.");
          }
          return treinoOpt.get();
+    }
+    
+    /**
+     * Implementação do método do Observer (observarLesao).
+     * Reage à notificação de uma nova Lesão, suspendendo os treinos físicos.
+     * @param lesao A entidade Lesao recém-registrada.
+     */
+    @Override
+    public void observarLesao(Lesao lesao) {
+        Integer jogadorId = lesao.getJogador().getId();
+        String nomeJogador = lesao.getJogador().getNome();
+        
+        System.out.println("PlanejamentoFisicoService notificado: Lesão de grau " + lesao.getGrau() + " registrada para " + nomeJogador);
+        
+        // Lógica: Buscar todos os treinos físicos ativos/planejados para o jogador lesionado
+        List<Fisico> treinosAtivos = fisicoRepository.buscarPorJogadorId(jogadorId);
+        
+        for (Fisico treino : treinosAtivos) {
+            // Suspende todos os treinos ou protocolos de retorno existentes
+            if ("PLANEJADO".equals(treino.getStatus()) || "PROTOCOLO_RETORNO".equals(treino.getStatus())) {
+                treino.setStatus("SUSPENSO_LESAO");
+                fisicoRepository.salvar(treino);
+                System.out.println("Treino Físico ID " + treino.getId() + " suspenso devido à lesão.");
+            }
+        }
     }
 }
