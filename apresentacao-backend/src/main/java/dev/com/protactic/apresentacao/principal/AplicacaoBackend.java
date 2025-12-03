@@ -1,9 +1,6 @@
 package dev.com.protactic.apresentacao.principal;
 
 import static org.springframework.boot.SpringApplication.run;
-
-import java.time.Clock;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.time.Clock;
 import dev.com.protactic.aplicacao.principal.clube.*;
 import dev.com.protactic.aplicacao.principal.competicao.CompeticaoRepositorioAplicacao;
 import dev.com.protactic.aplicacao.principal.competicao.CompeticaoServicoAplicacao;
@@ -66,6 +64,7 @@ import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaServiceProxy;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService;
+
 
 @SpringBootApplication
 @ComponentScan(basePackages = "dev.com.protactic")
@@ -144,16 +143,11 @@ public class AplicacaoBackend {
     }
 
     @Bean
-    public Clock clock() {
-        return Clock.systemDefaultZone();
-    }
-
-    @Bean
     public CapitaoService capitaoService(
             CapitaoRepository capitaoRepo,
             JogadorRepository jogadorRepo,
             Clock clock) { 
-        return new CapitaoService(capitaoRepo, jogadorRepo, clock); 
+        return new CapitaoService(capitaoRepo, jogadorRepo,clock); 
     }
 
     @Bean
@@ -270,15 +264,18 @@ public class AplicacaoBackend {
         return new FisicoServicoAplicacao(repositorio);
     }
     
-    @Bean
+   @Bean
     public PlanejamentoFisicoService planejamentoFisicoService(
             FisicoRepository fisicoRepository,
             JogadorRepository jogadorRepository,
-            PlanejamentoCargaSemanalService planejamentoCargaSemanalService) {
+            PlanejamentoCargaSemanalService planejamentoCargaSemanalService,
+            RegistroLesoesServico registroLesoesServico) { 
+        
         return new PlanejamentoFisicoService(
             fisicoRepository, 
             jogadorRepository, 
-            planejamentoCargaSemanalService
+            planejamentoCargaSemanalService,
+            registroLesoesServico 
         );
     }
     @Bean
