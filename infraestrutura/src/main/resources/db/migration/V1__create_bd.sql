@@ -248,14 +248,6 @@ CREATE TABLE IF NOT EXISTS registro_cartao (
         ON DELETE CASCADE
 );
 
--- ===========================
--- Tabela Escalacao Simples (BDD 4 - Esquema Tático)
--- ===========================
-CREATE TABLE IF NOT EXISTS escalacao_simples (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    jogo_data VARCHAR(255) NOT NULL,
-    nome_jogador VARCHAR(255) NOT NULL
-);
 
 -- ===========================
 -- Tabela InscricaoAtleta (BDD 6 - Inscrição)
