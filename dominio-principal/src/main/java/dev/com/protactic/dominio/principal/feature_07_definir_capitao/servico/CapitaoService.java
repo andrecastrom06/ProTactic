@@ -1,22 +1,25 @@
 package dev.com.protactic.dominio.principal.feature_07_definir_capitao.servico;
+
 import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.Jogador;
 import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
 import dev.com.protactic.dominio.principal.feature_07_definir_capitao.entidade.Capitao;
 import dev.com.protactic.dominio.principal.feature_07_definir_capitao.repositorio.CapitaoRepository;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Objects;
 
 public class CapitaoService {
 
     private final CapitaoRepository repository;
     private final JogadorRepository jogadorRepository;
+    private final Clock clock;
 
-    public CapitaoService(CapitaoRepository repository, JogadorRepository jogadorRepository) {
+    public CapitaoService(CapitaoRepository repository, JogadorRepository jogadorRepository, Clock clock) {
         this.repository = repository;
         this.jogadorRepository = jogadorRepository;
+        this.clock = clock;
     }
 
     public Capitao buscarCapitaoPorClube(Integer clubeId) {
@@ -26,42 +29,38 @@ public class CapitaoService {
 
     public void definirCapitaoPorId(Integer jogadorId) {
         Objects.requireNonNull(jogadorId, "O ID do Jogador não pode ser nulo.");
-        Jogador jogador = jogadorRepository.buscarPorId(jogadorId);
+        
+        Jogador jogador = jogadorRepository.buscarPorId(jogadorId); // Verifique se esse método existe no seu repo
+        
         if (jogador == null) {
-            throw new RuntimeException("Jogador não encontrado: " + jogadorId);
+            throw new IllegalArgumentException("Jogador não encontrado com ID: " + jogadorId);
         }
-        this.definirCapitao(jogador);
+
+        tentarDefinirCapitao(jogador);
     }
 
-    public boolean podeSerCapitao(Jogador jogador) {
-        if (!jogador.isContratoAtivo()) return false;
-        if (!"constante".equalsIgnoreCase(jogador.getMinutagem())) return false;
-        return mesesNoClube(jogador) >= 12;
-    }
-
-    public long mesesNoClube(Jogador jogador) {
-        if (jogador.getChegadaNoClube() == null) return 0;
-        return ChronoUnit.MONTHS.between(jogador.getChegadaNoClube(), LocalDate.now());
-    }
-
-    public void definirCapitao(Jogador jogador) {
+    public void tentarDefinirCapitao(Jogador jogador) {
+        validarRequisitosCapitao(jogador);
+        
         jogador.setCapitao(true);
+        
         Capitao capitao = new Capitao(jogador);
         repository.salvarCapitao(capitao);
     }
 
-    public void definirCapitaoEntreJogadores(List<Jogador> jogadores) {
-        Jogador melhor = null;
-        for (Jogador j : jogadores) {
-            if (!podeSerCapitao(j)) continue;
-            if (melhor == null || mesesNoClube(j) > mesesNoClube(melhor)) {
-                melhor = j;
-            } else if (mesesNoClube(j) == mesesNoClube(melhor)) {
-                melhor = null;
-            }
+    private void validarRequisitosCapitao(Jogador jogador) {
+        if (!jogador.isContratoAtivo()) {
+            throw new IllegalStateException("O jogador " + jogador.getNome() + " não possui contrato ativo.");
         }
-        if (melhor != null) {
-            definirCapitao(melhor);
+
+        long meses = mesesNoClube(jogador);
+        if (meses < 12) {
+            throw new IllegalStateException("O jogador " + jogador.getNome() + " tem apenas " + meses + " meses de clube. Mínimo exigido: 12 meses.");
         }
+    }
+
+    public long mesesNoClube(Jogador jogador) {
+        if (jogador.getChegadaNoClube() == null) return 0;
+        return ChronoUnit.MONTHS.between(jogador.getChegadaNoClube(), LocalDate.now(clock));
     }
 }

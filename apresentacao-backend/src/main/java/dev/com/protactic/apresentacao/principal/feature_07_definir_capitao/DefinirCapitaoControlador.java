@@ -8,27 +8,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity; // Importante para retornos HTTP corretos
+import org.springframework.http.HttpStatus;
 
 import dev.com.protactic.aplicacao.principal.jogador.JogadorResumo;
 import dev.com.protactic.aplicacao.principal.jogador.JogadorServicoAplicacao;
-
 import dev.com.protactic.aplicacao.principal.clube.ClubeResumo;
 import dev.com.protactic.aplicacao.principal.clube.ClubeServicoAplicacao;
 import dev.com.protactic.dominio.principal.feature_07_definir_capitao.entidade.Capitao;
 import dev.com.protactic.dominio.principal.feature_07_definir_capitao.servico.CapitaoService;
-
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("backend/capitao") 
 public class DefinirCapitaoControlador { 
 
-    private @Autowired JogadorServicoAplicacao jogadorServicoAplicacao;
-    private @Autowired ClubeServicoAplicacao clubeServicoAplicacao;
-    
-    private @Autowired CapitaoService capitaoService; 
-    
-    
+    @Autowired private JogadorServicoAplicacao jogadorServicoAplicacao;
+    @Autowired private ClubeServicoAplicacao clubeServicoAplicacao;
+    @Autowired private CapitaoService capitaoService; 
 
     @GetMapping(path = "pesquisa-jogadores")
     public List<JogadorResumo> pesquisarResumosDeJogadores() {
@@ -51,12 +48,17 @@ public class DefinirCapitaoControlador {
     }
 
     @PostMapping(path = "definir/{jogadorId}") 
-    public void definirCapitao(@PathVariable("jogadorId") Integer jogadorId) {
-        
+    public ResponseEntity<String> definirCapitao(@PathVariable("jogadorId") Integer jogadorId) {
         try {
             capitaoService.definirCapitaoPorId(jogadorId);
+            return ResponseEntity.ok("Capitão definido com sucesso.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException("Não foi possível definir o capitão. Verifique se o jogador existe e se pertence a um clube.", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro ao definir capitão: " + e.getMessage());
         }
     }
 }

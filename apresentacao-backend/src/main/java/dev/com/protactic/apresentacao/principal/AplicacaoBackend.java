@@ -1,6 +1,9 @@
 package dev.com.protactic.apresentacao.principal;
 
 import static org.springframework.boot.SpringApplication.run;
+
+import java.time.Clock;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -63,9 +66,6 @@ import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaServiceProxy;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService;
-import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService;
-import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaServiceProxy;
-
 
 @SpringBootApplication
 @ComponentScan(basePackages = "dev.com.protactic")
@@ -144,10 +144,16 @@ public class AplicacaoBackend {
     }
 
     @Bean
+    public Clock clock() {
+        return Clock.systemDefaultZone();
+    }
+
+    @Bean
     public CapitaoService capitaoService(
             CapitaoRepository capitaoRepo,
-            JogadorRepository jogadorRepo) { 
-        return new CapitaoService(capitaoRepo, jogadorRepo); 
+            JogadorRepository jogadorRepo,
+            Clock clock) { 
+        return new CapitaoService(capitaoRepo, jogadorRepo, clock); 
     }
 
     @Bean
