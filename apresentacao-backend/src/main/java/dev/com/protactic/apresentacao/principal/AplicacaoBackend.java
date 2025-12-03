@@ -143,11 +143,16 @@ public class AplicacaoBackend {
     }
 
     @Bean
+    public Clock clock() {
+        return Clock.systemDefaultZone();
+    }
+    
+    @Bean
     public CapitaoService capitaoService(
             CapitaoRepository capitaoRepo,
             JogadorRepository jogadorRepo,
             Clock clock) { 
-        return new CapitaoService(capitaoRepo, jogadorRepo,clock); 
+        return new CapitaoService(capitaoRepo, jogadorRepo, clock); 
     }
 
     @Bean
