@@ -4,7 +4,6 @@ import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.J
 import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.repositorio.PremiacaoRepository;
-// Importação do pacote onde ficarão os Decorators
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.decorator.*;
 
 import java.math.BigDecimal;
@@ -18,6 +17,8 @@ public class PremiacaoService {
 
     private final PremiacaoRepository repository;
     private final JogadorRepository jogadorRepository; 
+    
+    private static final BigDecimal VALOR_BASE = new BigDecimal("500.00");
 
     public PremiacaoService(PremiacaoRepository repository, JogadorRepository jogadorRepository) { 
         this.repository = repository;
@@ -30,7 +31,6 @@ public class PremiacaoService {
         Date dataPremiacao 
     ) {}
 
-    // --- MÉTODOS EXISTENTES (Mantidos) ---
 
     public Premiacao salvarPremiacaoPorDados(DadosPremiacao dados) throws Exception {
         Objects.requireNonNull(dados.jogadorId(), "O ID do Jogador não pode ser nulo.");
@@ -40,11 +40,14 @@ public class PremiacaoService {
             throw new Exception("Jogador com ID " + dados.jogadorId() + " não encontrado.");
         }
         
+        BigDecimal valorCalculado = calcularValorFinanceiro(jogador);
+
         Premiacao novaPremiacao = new Premiacao(
             0, 
             jogador,
             dados.nome(),
-            dados.dataPremiacao()
+            dados.dataPremiacao(),
+            valorCalculado
         );
 
         return this.salvarPremiacao(novaPremiacao);
@@ -57,15 +60,31 @@ public class PremiacaoService {
 
     public Premiacao criarPremiacaoMensal(String nomePremiacao, Date dataPremiacao, List<Jogador> jogadores) {
         Premiacao premiacao = repository.criarPremiacao(nomePremiacao, dataPremiacao);
+        
         Jogador vencedor = definirVencedor(jogadores);
 
         if (vencedor == null) {
-            return null;
+            return null; 
         }
 
         premiacao.setJogador(vencedor);
+        
+        premiacao.setValor(calcularValorFinanceiro(vencedor));
+
         repository.salvarPremiacao(premiacao);
         return premiacao;
+    }
+
+   
+    private BigDecimal calcularValorFinanceiro(Jogador jogador) {
+        CalculadoraPremiacao calculadora = new PremiacaoBase(VALOR_BASE);
+
+        if (jogador.isCapitao()) {
+            calculadora = new BonusCapitaoDecorator(calculadora);
+        }
+        
+       
+        return calculadora.calcular();
     }
 
     private Jogador definirVencedor(List<Jogador> jogadores) {
@@ -115,7 +134,7 @@ public class PremiacaoService {
             throw new Exception("Jogador não encontrado para cálculo de premiação.");
         }
 
-        CalculadoraPremiacao calculadora = new PremiacaoBase(valorBase);
+        CalculadoraPremiacao calculadora = new PremiacaoBase(BigDecimal.valueOf(valorBase));
 
         if (timeVenceu) {
             calculadora = new BonusVitoriaDecorator(calculadora);
@@ -130,8 +149,9 @@ public class PremiacaoService {
         Premiacao premiacao = new Premiacao(
             0,
             jogador,
-            "Premiação Financeira (Base + Bônus)",
-            new Date()
+            "Premiação Financeira Extra",
+            new Date(),
+            valorFinal
         );
         
         repository.salvarPremiacao(premiacao);

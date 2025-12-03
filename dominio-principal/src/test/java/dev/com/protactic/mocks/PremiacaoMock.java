@@ -4,6 +4,7 @@ import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.entidade.J
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.repositorio.PremiacaoRepository;
 
+import java.math.BigDecimal; // Importação necessária
 import java.util.*;
 
 public class PremiacaoMock implements PremiacaoRepository {
@@ -13,7 +14,7 @@ public class PremiacaoMock implements PremiacaoRepository {
 
     @Override
     public Premiacao criarPremiacao(String nomePremiacao, Date dataPremiacao) {
-        Premiacao nova = new Premiacao(0, null, nomePremiacao, dataPremiacao);
+        Premiacao nova = new Premiacao(0, null, nomePremiacao, dataPremiacao, BigDecimal.ZERO);
         return nova;
     }
 

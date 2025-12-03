@@ -1,41 +1,35 @@
-import React, { useState } from 'react'; // Removido 'useEffect'
-// Removidos os imports: useAuth e buscarTodosJogadores
+import React, { useState } from 'react';
 import { salvarPremiacao } from '../services/premiacaoService';
-import './NovoAtletaModal/NovoAtletaModal.css'; // Reutiliza estilos existentes
+import './NovoAtletaModal/NovoAtletaModal.css'; 
 
 export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
-    // Removidos os estados: jogadores, jogadorId e clubeIdLogado (que não é mais necessário aqui)
     const [nomePremio, setNomePremio] = useState('');
     const [dataPremio, setDataPremio] = useState('');
     
     const [loading, setLoading] = useState(false);
 
-    // Removido o useEffect para carregar jogadores
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Validação simplificada (apenas nome e data são necessários)
+        
         if (!nomePremio || !dataPremio) {
             alert("Preencha o Nome do Prémio e a Data de Referência.");
             return;
         }
 
         setLoading(true);
-        // Removido o objeto payload com jogadorId
 
         try {
-            // Chamada ao serviço com o novo formato (apenas nome e data)
+            // Não enviamos jogadorId, o backend calcula isso
             await salvarPremiacao(nomePremio, dataPremio); 
             
-            alert("Premiação registrada com sucesso! O jogador do mês foi atribuído automaticamente.");
+            alert("Premiação registrada com sucesso! O sistema calculou o Jogador do Mês e o valor do prémio.");
             onSuccess();
             onClose();
-            // Limpar estados após sucesso
+            
             setNomePremio('');
             setDataPremio('');
             
         } catch (err) {
-            // O erro agora pode conter a mensagem do backend, ex: "Não foi possível encontrar um jogador..."
             alert("Erro ao salvar: " + err.message);
         } finally {
             setLoading(false);
@@ -46,12 +40,11 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>Registrar Jogador do Mês (Premiação Interna)</h2>
+                    <h2>Gerar Premiação Automática</h2>
                     <button onClick={onClose} className="modal-close-btn">&times;</button>
                 </div>
                 
                 <form className="modal-form" onSubmit={handleSubmit}>
-                    {/* Removido o campo 'Jogador Vencedor' */}
                     
                     <div className="form-group">
                         <label>Nome do Prémio *</label>
@@ -59,7 +52,7 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
                             type="text" 
                             value={nomePremio} 
                             onChange={e => setNomePremio(e.target.value)} 
-                            placeholder="Ex: Jogador de Janeiro"
+                            placeholder="Ex: Melhor Jogador de Março"
                             required
                         />
                     </div>
@@ -72,15 +65,17 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
                             onChange={e => setDataPremio(e.target.value)} 
                             required
                         />
-                        <small style={{ marginTop: '5px', display: 'block' }}>
-                            A premiação será atribuída ao jogador com a melhor nota de partida registrada no mês e ano desta data.
+                        <small style={{ marginTop: '8px', display: 'block', color: '#666' }}>
+                            ℹ️ O sistema irá automaticamente:<br/>
+                            1. Encontrar o jogador com a maior nota neste mês.<br/>
+                            2. Calcular o valor financeiro (aplicando bónus de Capitão se aplicável).
                         </small>
                     </div>
 
                     <div className="modal-actions">
                         <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
                         <button type="submit" className="btn-submit" disabled={loading}>
-                            {loading ? 'Salvando...' : 'Salvar Premiação'}
+                            {loading ? 'Calculando e Salvando...' : 'Gerar Premiação'}
                         </button>
                     </div>
                 </form>

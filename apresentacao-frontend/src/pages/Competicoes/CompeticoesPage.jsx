@@ -4,12 +4,13 @@ import { buscarTodosJogadores } from '../../services/jogadorService';
 import { definirCapitao } from '../../services/capitaoService';
 import { buscarTodasCompeticoes } from '../../services/competicaoService';
 import { buscarInscricoesPorCompeticao } from '../../services/inscricaoService';
-import { buscarTodasPremiacoes } from '../../services/premiacaoService'; // NOVO
+import { buscarTodasPremiacoes } from '../../services/premiacaoService';
 
 import { RegistrarInscricaoModal } from '../../components/RegistrarInscricaoModal/RegistrarInscricaoModal';
-import { RegistrarPremiacaoModal } from '../../components/RegistrarPremiacaoModal'; // NOVO (caminho relativo se estiver na root de components)
+import { RegistrarPremiacaoModal } from '../../components/RegistrarPremiacaoModal'; 
 
-import { FaStar, FaTrophy } from 'react-icons/fa';
+// Adicionei FaMoneyBillWave para o ícone de dinheiro
+import { FaStar, FaTrophy, FaMoneyBillWave } from 'react-icons/fa';
 import './CompeticoesPage.css'; 
 
 const CustomCheckbox = ({ checked }) => (
@@ -23,15 +24,15 @@ export const CompeticoesPage = () => {
     // Dados
     const [atletas, setAtletas] = useState([]);
     const [competicoes, setCompeticoes] = useState([]);
-    const [premiacoes, setPremiacoes] = useState([]); // NOVO
+    const [premiacoes, setPremiacoes] = useState([]); 
     
     // Estados
     const [competicaoSelecionada, setCompeticaoSelecionada] = useState(null);
     const [isModalInscricaoOpen, setIsModalInscricaoOpen] = useState(false);
-    const [isModalPremiacaoOpen, setIsModalPremiacaoOpen] = useState(false); // NOVO
+    const [isModalPremiacaoOpen, setIsModalPremiacaoOpen] = useState(false); 
     const [inscricoes, setInscricoes] = useState(new Set()); 
 
-    const [loading, setLoading] = useState(true); // Simplifiquei para um loading geral
+    const [loading, setLoading] = useState(true); 
     const [error, setError] = useState(null);
 
     // --- 1. Carregar Dados Iniciais ---
@@ -44,7 +45,7 @@ export const CompeticoesPage = () => {
                 setCompeticoes(comps);
                 if(comps.length > 0) setCompeticaoSelecionada(comps[0]);
 
-                // Carrega premiações (NOVO)
+                // Carrega premiações
                 const prems = await buscarTodasPremiacoes();
                 setPremiacoes(prems);
 
@@ -58,17 +59,15 @@ export const CompeticoesPage = () => {
         loadData();
     }, []);
 
-    // --- 2. Carregar Inscrições e Atletas (Quando muda competição ou clube) ---
+    // --- 2. Carregar Inscrições e Atletas ---
     const carregarAtletasEInscricoes = useCallback(async () => {
         if (!competicaoSelecionada || !clubeIdLogado) return;
 
         try {
-            // Busca inscrições da competição atual
             const inscricoesData = await buscarInscricoesPorCompeticao(competicaoSelecionada.nome);
             const nomesInscritos = new Set(inscricoesData.filter(i => i.inscrito).map(i => i.atleta));
             setInscricoes(nomesInscritos);
 
-            // Busca todos atletas e filtra pelo meu clube
             const todosAtletas = await buscarTodosJogadores();
             const meusAtletas = todosAtletas.filter(a => a.clubeId === clubeIdLogado).map(atleta => ({
                 ...atleta,
@@ -103,6 +102,11 @@ export const CompeticoesPage = () => {
         } catch(e) { alert(e.message); }
     };
 
+    // Função utilitária para formatar moeda
+    const formatarMoeda = (valor) => {
+        if (valor === null || valor === undefined) return 'R$ 0,00';
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    };
 
     // --- Componentes das Abas ---
 
@@ -132,32 +136,39 @@ export const CompeticoesPage = () => {
         </div>
     );
 
-    // --- ABA DE PREMIAÇÕES (NOVA) ---
+    // --- ABA DE PREMIAÇÕES (CORRIGIDA) ---
     const AbaPremiacoes = () => {
-        // Filtra premiações para mostrar apenas as que pertencem aos jogadores do meu clube
-        // (Opcional: se quiseres ver todas, remove o filtro)
         const minhasPremiacoes = premiacoes.filter(p => 
             atletas.some(a => a.id === p.jogadorId)
         );
 
         return (
             <div className="atleta-list-container">
-                <div className="atleta-list-item header" style={{gridTemplateColumns: '2fr 2fr 1fr'}}>
+                {/* Header atualizado com a coluna Valor */}
+                <div className="atleta-list-item header" style={{gridTemplateColumns: '2fr 2fr 1.5fr 1fr'}}>
                     <span>Prémio</span>
                     <span>Jogador Vencedor</span>
+                    <span>Valor (Bônus)</span>
                     <span>Data</span>
                 </div>
                 {minhasPremiacoes.length === 0 ? (
-                    <div style={{padding:20, textAlign:'center', color:'#777'}}>Nenhuma premiação registrada.</div>
+                    <div style={{padding:20, textAlign:'center', color:'#777'}}>Nenhuma premiação registrada para seus atletas.</div>
                 ) : (
                     minhasPremiacoes.map(p => {
-                        // Encontra o nome do jogador na lista de atletas carregada
                         const jogador = atletas.find(a => a.id === p.jogadorId);
                         const nomeJogador = jogador ? jogador.nome : `ID: ${p.jogadorId}`;
+                        
                         return (
-                            <div key={p.id} className="atleta-list-item" style={{gridTemplateColumns: '2fr 2fr 1fr'}}>
-                                <span style={{fontWeight:'bold', color:'#004d40'}}><FaTrophy style={{marginRight:8}}/> {p.nome}</span>
+                            <div key={p.id} className="atleta-list-item" style={{gridTemplateColumns: '2fr 2fr 1.5fr 1fr'}}>
+                                <span style={{fontWeight:'bold', color:'#004d40'}}>
+                                    <FaTrophy style={{marginRight:8, color:'#f0ad4e'}}/> {p.nome}
+                                </span>
                                 <span>{nomeJogador}</span>
+                                {/* Exibe o valor calculado pelo Decorator */}
+                                <span style={{color: '#2e7d32', fontWeight:'bold'}}>
+                                    <FaMoneyBillWave style={{marginRight:5}}/>
+                                    {formatarMoeda(p.valor)}
+                                </span>
                                 <span>{new Date(p.dataPremiacao).toLocaleDateString()}</span>
                             </div>
                         );
@@ -172,7 +183,7 @@ export const CompeticoesPage = () => {
     return (
         <div className="competicoes-page">
             <div className="competicao-header">
-                <h2>Competição Ativa</h2>
+                <h2>Gestão de Competições</h2>
                 <div className="form-group">
                     <label>Selecionar Competição</label>
                     <select 
@@ -191,7 +202,6 @@ export const CompeticoesPage = () => {
                     <button className={`tab-item ${activeTab === 'premiacoes' ? 'active' : ''}`} onClick={() => setActiveTab('premiacoes')}>Premiações</button>
                 </div>
                 
-                {/* Botões de Ação Variáveis */}
                 {activeTab === 'atletas' && (
                      <button className="registrar-inscricao-btn" onClick={() => setIsModalInscricaoOpen(true)} disabled={!competicaoSelecionada}>
                         + Registrar Inscrição
@@ -199,7 +209,7 @@ export const CompeticoesPage = () => {
                 )}
                 {activeTab === 'premiacoes' && (
                      <button className="registrar-inscricao-btn" onClick={() => setIsModalPremiacaoOpen(true)}>
-                        + Nova Premiação
+                        + Gerar Premiação do Mês
                     </button>
                 )}
             </div>
@@ -218,7 +228,6 @@ export const CompeticoesPage = () => {
                 />
             )}
 
-            {/* Modal de Premiação */}
             {isModalPremiacaoOpen && (
                 <RegistrarPremiacaoModal
                     onClose={() => setIsModalPremiacaoOpen(false)}

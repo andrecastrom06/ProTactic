@@ -2,17 +2,16 @@ package dev.com.protactic.dominio.principal.feature_11_premiacao_interna.decorat
 
 import java.math.BigDecimal;
 
-public class BonusCapitaoDecorator extends PremiacaoDecorator {
+public class BonusCapitaoDecorator implements CalculadoraPremiacao {
+    private final CalculadoraPremiacao proximo;
 
-    public BonusCapitaoDecorator(CalculadoraPremiacao calculadora) {
-        super(calculadora);
+    public BonusCapitaoDecorator(CalculadoraPremiacao proximo) {
+        this.proximo = proximo;
     }
 
     @Override
     public BigDecimal calcular() {
-        // Capitão ganha 20% extra sobre o valor acumulado
-        BigDecimal valorAtual = super.calcular();
-        BigDecimal bonus = valorAtual.multiply(new BigDecimal("0.20"));
-        return valorAtual.add(bonus);
+        BigDecimal valorAtual = proximo.calcular();
+        return valorAtual.add(valorAtual.multiply(new BigDecimal("0.20")));
     }
 }

@@ -19,26 +19,30 @@ export const buscarTodasPremiacoes = async () => {
 
 /**
  * Salva uma nova premiação.
+ * O Backend calcula automaticamente o vencedor e o valor (Decorator).
  * Chama: POST /backend/premiacao/salvar
- * Payload: { jogadorId, nome, dataPremiacao }
+ * Payload: { nome, dataPremiacao }
  */
-
-export const salvarPremiacao = async (nome, dataPremiacao) => { // Linha a modificar
+export const salvarPremiacao = async (nome, dataPremiacao) => {
     try {
-        const payload = { nome, dataPremiacao }; // Linha a adicionar/modificar
+        const payload = { nome, dataPremiacao }; 
         const response = await fetch(`${API_BASE_URL}/premiacao/salvar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload) // Linha a modificar
+            body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
-            // O backend pode não retornar JSON no caso de void/erro, então lemos texto
             const text = await response.text(); 
             throw new Error(text || 'Erro ao salvar premiação.');
         }
         
-        return true;
+        // Tenta retornar JSON se houver, senão true
+        try {
+            return await response.json();
+        } catch {
+            return true;
+        }
     } catch (error) {
         console.error(error);
         throw error;

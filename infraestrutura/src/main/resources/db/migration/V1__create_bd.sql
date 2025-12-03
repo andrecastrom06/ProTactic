@@ -212,6 +212,7 @@ create table if not exists Premiacao (
     id_jogador int not null,
     nome varchar(100) not null,
     data_premiacao date,
+    valor decimal(10,2) default 0.00, 
     primary key (id),
     foreign key (id_jogador) references Jogador(id)
 );
