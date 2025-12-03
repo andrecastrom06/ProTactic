@@ -32,8 +32,6 @@ export const RegistrarInscricaoModal = ({ competicaoNome, onClose, onSuccess, at
 
             try {
                 const todosAtletas = await buscarTodosJogadores();
-                // Filtra atletas que pertencem ao clube do usuário logado
-                // E que AINDA NÃO ESTÃO INSCRITOS
                 const atletasFiltrados = todosAtletas.filter(a => 
                     a.clubeId === clubeIdLogado && !atletasJaInscritos.has(a.nome)
                 );
@@ -47,7 +45,6 @@ export const RegistrarInscricaoModal = ({ competicaoNome, onClose, onSuccess, at
         carregarAtletas();
     }, [clubeIdLogado, atletasJaInscritos]);
 
-    // Atualiza os campos Idade e Posição quando o atleta é selecionado
     const handleAtletaChange = (e) => {
         const id = e.target.value;
         setAtletaSelecionadoId(id);

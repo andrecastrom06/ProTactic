@@ -18,7 +18,6 @@
     font-size: 22px;
 }
 
-/* Para o seletor de competição */
 .competicao-header .form-group {
     display: flex;
     flex-direction: column;

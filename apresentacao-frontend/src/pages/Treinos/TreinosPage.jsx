@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { 
     LuCalendarDays, LuUsers, LuDumbbell,
-    LuX, LuCheck, LuZap, LuUser, LuRefreshCw
+    LuX, LuCheck, LuZap, LuUser, LuRefreshCw,
+    
 } from "react-icons/lu";
+import {FiAlertOctagon } from "react-icons/fi";
 import { GiSoccerField, GiWhistle } from "react-icons/gi";
 import { FaPlus } from "react-icons/fa";
 import './TreinosPage.css';
@@ -56,6 +58,7 @@ export const TreinosPage = () => {
         
         if (texto === 'CONCLUIDO' || texto === 'CONCLUÍDO') return 'Concluído';
         if (texto === 'EM ANDAMENTO' || texto === 'ANDAMENTO') return 'Em Andamento';
+        if (texto === 'SUSPENSO_LESAO') return 'SUSPENSO_LESAO';
         
         return 'Planejado';
     };
@@ -107,12 +110,14 @@ export const TreinosPage = () => {
             await Promise.all(meusJogadores.map(async (j) => {
                 const treinosDoAtleta = await buscarTreinosFisicosPorJogador(j.id);
                 
+                const isLesionado = j.saudavel === false; 
+
                 const formatados = treinosDoAtleta.map(t => ({
                     id: t.id, nomeAtleta: j.nome, foco: t.nome, musculo: t.musculo,
                     dataInicio: formatarData(t.dataInicio), dataFim: formatarData(t.dataFim),
                     intensidadeValor: t.intensidade === 'Alta' ? 85 : (t.intensidade === 'Media' ? 50 : 20),
                     intensidadeLabel: t.intensidade,
-                    status: formatarStatus(t.status) 
+                    status: isLesionado ? 'SUSPENSO_LESAO' : formatarStatus(t.status) 
                 }));
                 acumuladorFisicos = [...acumuladorFisicos, ...formatados];
             }));
@@ -162,17 +167,21 @@ export const TreinosPage = () => {
     };
 
     const handleAtualizarStatusFisico = async (id, statusAtual) => {
+        if (statusAtual === 'SUSPENSO_LESAO') return;
+
         setLoadingStatus(id); 
         
+        const statusNormalizado = formatarStatus(statusAtual);
+
         let novoStatus = 'Planejado';
         
-        if (statusAtual === 'Planejado') novoStatus = 'Em Andamento';
-        else if (statusAtual === 'Em Andamento') novoStatus = 'Concluído';
-        else if (statusAtual === 'Concluído') novoStatus = 'Planejado'; 
+        if (statusNormalizado === 'Planejado') novoStatus = 'Em Andamento';
+        else if (statusNormalizado === 'Em Andamento') novoStatus = 'Concluído';
+        else if (statusNormalizado === 'Concluído') novoStatus = 'Planejado'; 
         
         try {
             await atualizarStatusTreinoFisico(id, novoStatus);
-            
+            // Atualiza localmente já formatado
             setListaFisicos(prev => prev.map(t => t.id === id ? { ...t, status: novoStatus } : t));
         } catch (err) {
             alert("Erro ao atualizar status: " + err.message);
@@ -245,7 +254,7 @@ export const TreinosPage = () => {
             }
 
             fecharModal();
-            carregarDados(); // Recarrega os dados do banco para garantir consistência
+            carregarDados();
 
         } catch (err) {
             alert("Erro: " + err.message);
@@ -254,6 +263,9 @@ export const TreinosPage = () => {
 
     const getStatusColor = (status) => {
         if (!status) return 'status-gray';
+        
+        if (status === 'SUSPENSO_LESAO') return 'status-suspended';
+
         const s = status.toLowerCase();
         if(s === 'concluído' || s === 'concluido') return 'status-success';
         if(s === 'em andamento') return 'status-warning';
@@ -322,7 +334,7 @@ export const TreinosPage = () => {
                 <div className="cards-list">
                     {loading && listaFisicos.length === 0 ? <p>Carregando...</p> : listaFisicos.length === 0 ? <p className="empty-msg">Nenhum treino físico.</p> :
                     listaFisicos.map(treino => (
-                        <div key={treino.id} className="training-card fisico">
+                        <div key={treino.id} className={`training-card fisico ${treino.status === 'SUSPENSO_LESAO' ? 'suspended-card' : ''}`}>
                             <div className="card-left">
                                 <div className="player-row">
                                     <span className="player-avatar">{treino.nomeAtleta ? treino.nomeAtleta.charAt(0) : '?'}</span>
@@ -333,26 +345,40 @@ export const TreinosPage = () => {
                                     <span><LuCalendarDays size={12}/> {treino.dataInicio} - {treino.dataFim}</span>
                                 </div>
                                 
-                                <div className="intensity-mini-bar">
-                                    <div style={{width: `${treino.intensidadeValor}%`, background: treino.intensidadeValor > 80 ? '#ef4444' : '#4caf50'}}></div>
-                                </div>
-                                <small style={{color:'#666', fontSize:'0.7rem'}}>Intensidade: {treino.intensidadeLabel}</small>
+                                {treino.status !== 'SUSPENSO_LESAO' && (
+                                    <>
+                                        <div className="intensity-mini-bar">
+                                            <div style={{width: `${treino.intensidadeValor}%`, background: treino.intensidadeValor > 80 ? '#ef4444' : '#4caf50'}}></div>
+                                        </div>
+                                        <small style={{color:'#666', fontSize:'0.7rem'}}>Intensidade: {treino.intensidadeLabel}</small>
+                                    </>
+                                )}
                             </div>
                             <div className="card-right">
-                                <span className={`status-pill ${getStatusColor(treino.status)}`}>{treino.status}</span>
+                                <span className={`status-pill ${getStatusColor(treino.status)}`}>
+                                    {treino.status === 'SUSPENSO_LESAO' ? 'SUSPENSO (LESÃO)' : treino.status}
+                                </span>
                                 <button 
                                     className="btn-update-status" 
                                     onClick={() => handleAtualizarStatusFisico(treino.id, treino.status)}
-                                    disabled={loadingStatus === treino.id}
-                                    title="Mudar Status"
+                                    disabled={loadingStatus === treino.id || treino.status === 'SUSPENSO_LESAO'}
+                                    title={treino.status === 'SUSPENSO_LESAO' ? "Bloqueado: Atleta Lesionado" : "Mudar Status"}
+                                    style={{ 
+                                        opacity: treino.status === 'SUSPENSO_LESAO' ? 0.5 : 1, 
+                                        cursor: treino.status === 'SUSPENSO_LESAO' ? 'not-allowed' : 'pointer'
+                                    }}
                                 >
-                                    <LuRefreshCw className={loadingStatus === treino.id ? 'spinning' : ''}/>
+                                    {treino.status === 'SUSPENSO_LESAO' ? 
+                                        <FiAlertOctagon color="#ef4444" /> : 
+                                        <LuRefreshCw className={loadingStatus === treino.id ? 'spinning' : ''}/>
+                                    }
                                 </button>
                             </div>
                         </div>
                     ))}
                 </div>
             </section>
+
             {modalAberto && (
                 <div className="modal-overlay" onClick={(e) => { if(e.target.className === 'modal-overlay') fecharModal() }}>
                     <div className="modal-content">
