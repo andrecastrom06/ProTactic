@@ -9,13 +9,18 @@ import { buscarTodasPremiacoes } from '../../services/premiacaoService';
 import { RegistrarInscricaoModal } from '../../components/RegistrarInscricaoModal/RegistrarInscricaoModal';
 import { RegistrarPremiacaoModal } from '../../components/RegistrarPremiacaoModal'; 
 
-// Adicionei FaMoneyBillWave para o ícone de dinheiro
 import { FaStar, FaTrophy, FaMoneyBillWave } from 'react-icons/fa';
 import './CompeticoesPage.css'; 
 
 const CustomCheckbox = ({ checked }) => (
     <div className={`custom-checkbox ${checked ? 'checked' : ''}`}></div>
 );
+
+const formatarDataSemFuso = (dataString) => {
+    if (!dataString) return '-';
+    const date = new Date(dataString);
+    return new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' }).format(date);
+};
 
 export const CompeticoesPage = () => {
     const { clubeIdLogado } = useAuth(); 
@@ -40,12 +45,10 @@ export const CompeticoesPage = () => {
         const loadData = async () => {
             setLoading(true);
             try {
-                // Carrega competições
                 const comps = await buscarTodasCompeticoes();
                 setCompeticoes(comps);
                 if(comps.length > 0) setCompeticaoSelecionada(comps[0]);
 
-                // Carrega premiações
                 const prems = await buscarTodasPremiacoes();
                 setPremiacoes(prems);
 
@@ -151,6 +154,7 @@ export const CompeticoesPage = () => {
                     <span>Valor (Bônus)</span>
                     <span>Data</span>
                 </div>
+                
                 {minhasPremiacoes.length === 0 ? (
                     <div style={{padding:20, textAlign:'center', color:'#777'}}>Nenhuma premiação registrada para seus atletas.</div>
                 ) : (
@@ -164,12 +168,11 @@ export const CompeticoesPage = () => {
                                     <FaTrophy style={{marginRight:8, color:'#f0ad4e'}}/> {p.nome}
                                 </span>
                                 <span>{nomeJogador}</span>
-                                {/* Exibe o valor calculado pelo Decorator */}
                                 <span style={{color: '#2e7d32', fontWeight:'bold'}}>
                                     <FaMoneyBillWave style={{marginRight:5}}/>
                                     {formatarMoeda(p.valor)}
                                 </span>
-                                <span>{new Date(p.dataPremiacao).toLocaleDateString()}</span>
+                                <span>{formatarDataSemFuso(p.dataPremiacao)}</span>
                             </div>
                         );
                     })

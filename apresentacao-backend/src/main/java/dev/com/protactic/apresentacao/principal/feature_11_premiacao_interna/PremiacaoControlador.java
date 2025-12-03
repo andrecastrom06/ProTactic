@@ -27,7 +27,9 @@ public class PremiacaoControlador {
 
     public record PremiacaoFormulario(
         String nome, 
-        @JsonFormat(pattern = "yyyy-MM-dd") Date dataPremiacao 
+        // CORREÇÃO: Fuso Horário ajustado para evitar o erro de -1 dia
+        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "America/Sao_Paulo") 
+        Date dataPremiacao 
     ) {}
     
     private void validarFormulario(PremiacaoFormulario formulario) {

@@ -34,7 +34,7 @@ public class PartidaControlador {
     public record CriarPartidaFormulario(
         Integer clubeCasaId,
         Integer clubeVisitanteId,
-        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
+        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "America/Sao_Paulo")
         Date dataJogo,
         String hora
     ) {}

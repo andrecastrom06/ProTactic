@@ -7,9 +7,12 @@ import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.repositor
 import dev.com.protactic.infraestrutura.persistencia.jpa.JpaMapeador;
 
 import org.springframework.stereotype.Component;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class PartidaRepositoryImpl implements PartidaRepositorioAplicacao, PartidaRepository {
@@ -34,6 +37,20 @@ public class PartidaRepositoryImpl implements PartidaRepositorioAplicacao, Parti
         PartidaJPA jpa = mapeador.map(partida, PartidaJPA.class);
         PartidaJPA salvo = repositoryJPA.save(jpa);
         return mapeador.map(salvo, Partida.class);
+    }
+
+    @Override
+    public List<Partida> buscarPorMesEClube(Date data, Integer clubeId) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(data);
+        int mes = cal.get(Calendar.MONTH) + 1; 
+        int ano = cal.get(Calendar.YEAR);
+
+        List<PartidaJPA> partidasJPA = repositoryJPA.findByClubeAndMes(clubeId, mes, ano);
+        
+        return partidasJPA.stream()
+                .map(jpa -> mapeador.map(jpa, Partida.class))
+                .collect(Collectors.toList());
     }
 
     @Override

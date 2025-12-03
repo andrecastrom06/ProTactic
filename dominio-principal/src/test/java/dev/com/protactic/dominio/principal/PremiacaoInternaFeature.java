@@ -8,6 +8,7 @@ import io.cucumber.java.Before;
 
 import dev.com.protactic.mocks.PremiacaoMock;
 import dev.com.protactic.mocks.JogadorMock;
+import dev.com.protactic.mocks.PartidaMock; // 1. Importar o Mock de Partida
 import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositorio.JogadorRepository;
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.entidade.Premiacao;
 import dev.com.protactic.dominio.principal.feature_11_premiacao_interna.servico.PremiacaoService;
@@ -18,15 +19,20 @@ public class PremiacaoInternaFeature {
     private Premiacao premiacao;
     private PremiacaoService service;
     private JogadorRepository jogadorRepo; 
+    private PartidaMock partidaMock; 
 
     @Before
     public void setup() {
         this.mock = new PremiacaoMock();
         this.jogadorRepo = new JogadorMock(); 
-        this.service = new PremiacaoService(mock, jogadorRepo); 
+        this.partidaMock = new PartidaMock();
+        
+       
+        this.service = new PremiacaoService(mock, jogadorRepo, partidaMock); 
         
         this.premiacao = null;
         this.mock.clear();
+        this.partidaMock.limpar(); 
     }
 
     @Dado("que {string} com média {string} no período de {string} existe")
@@ -37,12 +43,14 @@ public class PremiacaoInternaFeature {
 
     @Quando("eu criar a premiação do mês de {string}")
     public void eu_criar_a_premiacao(String mes) {
+       
         premiacao = service.criarPremiacaoMensal("Premiação " + mes, new Date(), mock.getJogadores());
     }
 
     @Então("a premiação ficará sem vencedor")
     public void premiacao_sem_vencedor() {
         assertNull(premiacao, "Não deveria haver vencedor");
+       
         assertNull(mock.getUltimaPremiacao(), "Nenhuma premiação deveria ter sido persistida");
     }
 
@@ -62,4 +70,5 @@ public class PremiacaoInternaFeature {
                 mock.getJogadores()
         ), "O vencedor deveria ter o menor desvio padrão");
     }
+    
 }

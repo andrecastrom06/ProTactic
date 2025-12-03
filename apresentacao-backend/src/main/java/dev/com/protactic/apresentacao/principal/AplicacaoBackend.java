@@ -190,11 +190,13 @@ public class AplicacaoBackend {
         return new LoginService(usuarioRepository, clubeRepository); 
     }
     
-    @Bean
+   @Bean
     public PremiacaoService premiacaoService(
             PremiacaoRepository premiacaoRepo,
-            JogadorRepository jogadorRepo) { 
-        return new PremiacaoService(premiacaoRepo, jogadorRepo);
+            JogadorRepository jogadorRepo,
+            PartidaRepository partidaRepo) { 
+        
+        return new PremiacaoService(premiacaoRepo, jogadorRepo, partidaRepo);
     }
 
     @Bean

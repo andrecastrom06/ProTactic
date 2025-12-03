@@ -1,8 +1,9 @@
 package dev.com.protactic.infraestrutura.persistencia.jpa.premiacao;
 
-import jakarta.persistence.*; // Usando * para garantir todos os imports
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import dev.com.protactic.infraestrutura.persistencia.jpa.jogador.JogadorJPA;
 
 @Entity(name = "Premiacao")
 @Table(name = "Premiacao") 
@@ -12,8 +13,9 @@ public class PremiacaoJPA {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "id_jogador") 
-    private Integer jogadorId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_jogador") 
+    private JogadorJPA jogador;
 
     private String nome;
 
@@ -26,19 +28,31 @@ public class PremiacaoJPA {
  
     public PremiacaoJPA() {}
 
-    public PremiacaoJPA(Integer id, Integer jogadorId, String nome, Date dataPremiacao, BigDecimal valor) {
+    public PremiacaoJPA(Integer id, JogadorJPA jogador, String nome, Date dataPremiacao, BigDecimal valor) {
         this.id = id;
-        this.jogadorId = jogadorId;
+        this.jogador = jogador;
         this.nome = nome;
         this.dataPremiacao = dataPremiacao;
         this.valor = valor;
     }
 
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
-    public Integer getJogadorId() { return jogadorId; }
-    public void setJogadorId(Integer jogadorId) { this.jogadorId = jogadorId; }
+    public JogadorJPA getJogador() { return jogador; }
+    public void setJogador(JogadorJPA jogador) { this.jogador = jogador; }
+
+    public void setJogadorId(Integer jogadorId) {
+        if (jogadorId != null) {
+            this.jogador = new JogadorJPA();
+            this.jogador.setId(jogadorId);
+        }
+    }
+    
+    public Integer getJogadorId() {
+        return (jogador != null) ? jogador.getId() : null;
+    }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
