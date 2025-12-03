@@ -1,76 +1,92 @@
-// src/pages/GestaoJogo/components/AbaCartoesInfo.jsx
 import React, { useState, useEffect } from 'react';
 import { cartaoService } from '../../../services/cartaoService'; 
-import { partidaService } from '../../../services/partidaService'; // Importe o serviço de partida
+import { partidaService } from '../../../services/partidaService'; 
 import './AbaAtribuirNotas.css';
 
-export const AbaCartoesInfo = ({ atletas, partidaId }) => {
+// Recebe a nova prop 'aoAtualizarPartida' do pai
+export const AbaCartoesInfo = ({ atletas, partidaId, partidaDados, meuClubeId, aoAtualizarPartida }) => {
     const [stats, setStats] = useState({});
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const carregarDados = async () => {
-            try {
-                // Lógica futura para carregar dados já salvos, se necessário
-            } catch (error) {
-                console.error("Erro ao carregar dados iniciais", error);
-            }
-        };
-        carregarDados();
-    }, [atletas]);
+    // Estados para o Placar (inicializa com o que veio do banco ou 0)
+    const [placarCasa, setPlacarCasa] = useState(0);
+    const [placarVisitante, setPlacarVisitante] = useState(0);
 
-    const updateStat = (id, field, value) => {
-        setStats(prev => ({
-            ...prev,
-            [id]: {
-                ...prev[id],
-                [field]: value
-            }
-        }));
+    // Atualiza os inputs quando mudar a partida selecionada na tela anterior
+    useEffect(() => {
+        if (partidaDados) {
+            setPlacarCasa(partidaDados.placarClubeCasa || 0);
+            setPlacarVisitante(partidaDados.placarClubeVisitante || 0);
+        }
+    }, [partidaDados]);
+
+    // Lógica para determinar status (Vitória/Derrota/Empate)
+    const getStatusResultado = () => {
+        if (!partidaDados || !meuClubeId) return null;
+
+        // Verifica se sou Mandante ou Visitante
+        const souMandante = (partidaDados.clubeCasaId === meuClubeId) || (partidaDados.clubeCasa?.id === meuClubeId);
+
+        const golsPro = souMandante ? placarCasa : placarVisitante;
+        const golsContra = souMandante ? placarVisitante : placarCasa;
+
+        if (golsPro > golsContra) {
+            return <span style={{color: '#28a745', fontWeight: 'bold', border: '1px solid #28a745', padding: '4px 8px', borderRadius: '4px'}}>VITÓRIA 🟢</span>;
+        } else if (golsPro < golsContra) {
+            return <span style={{color: '#dc3545', fontWeight: 'bold', border: '1px solid #dc3545', padding: '4px 8px', borderRadius: '4px'}}>DERROTA 🔴</span>;
+        } else {
+            return <span style={{color: '#6c757d', fontWeight: 'bold', border: '1px solid #6c757d', padding: '4px 8px', borderRadius: '4px'}}>EMPATE ⚪</span>;
+        }
     };
 
-    // Função para registrar CARTÃO (imediato)
-    const handleAddCartao = async (atleta, tipo) => {
+    const handleSalvarPlacar = async () => {
         try {
             setLoading(true);
-            // Envia o NOME do atleta, conforme exigido pelo backend
-            await cartaoService.registrarCartao(atleta.nome, tipo.toUpperCase()); 
-
-            const currentQtd = stats[atleta.id]?.[tipo] || 0;
-            updateStat(atleta.id, tipo, currentQtd + 1);
-
-            alert(`Cartão ${tipo === 'amarelo' ? 'Amarelo' : 'Vermelho'} registrado com sucesso!`);
+            await partidaService.atualizarPlacar(partidaId, placarCasa, placarVisitante);
+            
+            // --- CORREÇÃO AQUI: Chama a função do pai para recarregar os dados ---
+            if (aoAtualizarPartida) {
+                await aoAtualizarPartida();
+            }
+            
+            alert("Placar atualizado com sucesso!");
         } catch (error) {
             console.error(error);
-            alert("Erro ao registrar cartão: " + error.message);
+            alert("Erro ao atualizar placar: " + error.message);
         } finally {
             setLoading(false);
         }
     };
 
-    // Função para salvar ESTATÍSTICAS (Gols, Assistências, Jogos)
+    const updateStat = (id, field, value) => {
+        setStats(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }));
+    };
+
+    const handleAddCartao = async (atleta, tipo) => {
+        try {
+            setLoading(true);
+            await cartaoService.registrarCartao(atleta.nome, tipo.toUpperCase()); 
+            const currentQtd = stats[atleta.id]?.[tipo] || 0;
+            updateStat(atleta.id, tipo, currentQtd + 1);
+            alert(`Cartão ${tipo === 'amarelo' ? 'Amarelo' : 'Vermelho'} registrado!`);
+        } catch (error) {
+            alert("Erro: " + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleSalvarEstatisticas = async () => {
         try {
             setLoading(true);
-            
-            // Prepara o payload: ID do atleta, Gols e Assistências
-            // O backend deve incrementar 'jogos' automaticamente para cada item dessa lista
             const dadosParaEnviar = atletas.map(atleta => {
                 const s = stats[atleta.id] || {};
-                return {
-                    atletaId: atleta.id,
-                    gols: s.gols || 0,
-                    assistencias: s.assistencias || 0
-                };
+                return { atletaId: atleta.id, gols: s.gols || 0, assistencias: s.assistencias || 0 };
             });
-
-            // Chama o novo endpoint do backend
             await partidaService.registrarEstatisticas(dadosParaEnviar);
-            
-            alert("Estatísticas salvas com sucesso! (Jogos, Gols e Assistências atualizados)");
+            alert("Estatísticas salvas!");
         } catch (error) {
-            console.error(error);
-            alert("Erro ao salvar estatísticas: " + error.message);
+            alert("Erro: " + error.message);
         } finally {
             setLoading(false);
         }
@@ -78,9 +94,63 @@ export const AbaCartoesInfo = ({ atletas, partidaId }) => {
 
     return (
         <div className="aba-notas-container">
+            
+            {/* --- SEÇÃO: PLACAR --- */}
+            <div style={{
+                backgroundColor: '#f8f9fa', 
+                padding: '20px', 
+                borderRadius: '8px', 
+                marginBottom: '25px',
+                border: '1px solid #dee2e6',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '15px'
+            }}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <h3 style={{margin: 0, color: '#444'}}>Resultado da Partida</h3>
+                    <div>{getStatusResultado()}</div>
+                </div>
+
+                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px'}}>
+                    {/* Time Casa */}
+                    <div style={{textAlign: 'center'}}>
+                        <label style={{display:'block', fontSize:'12px', fontWeight:'bold', color:'#555', marginBottom:'5px'}}>MANDANTE</label>
+                        <input 
+                            type="number" 
+                            min="0"
+                            style={{width: '70px', height: '50px', fontSize: '24px', textAlign: 'center', borderRadius: '5px', border: '1px solid #ccc'}}
+                            value={placarCasa}
+                            onChange={(e) => setPlacarCasa(e.target.value)}
+                        />
+                    </div>
+                    
+                    <span style={{fontSize: '32px', fontWeight: 'bold', color: '#999'}}>X</span>
+
+                    {/* Time Visitante */}
+                    <div style={{textAlign: 'center'}}>
+                        <label style={{display:'block', fontSize:'12px', fontWeight:'bold', color:'#555', marginBottom:'5px'}}>VISITANTE</label>
+                        <input 
+                            type="number" 
+                            min="0"
+                            style={{width: '70px', height: '50px', fontSize: '24px', textAlign: 'center', borderRadius: '5px', border: '1px solid #ccc'}}
+                            value={placarVisitante}
+                            onChange={(e) => setPlacarVisitante(e.target.value)}
+                        />
+                    </div>
+
+                    <button 
+                        className="btn-salvar-notas" 
+                        onClick={handleSalvarPlacar}
+                        disabled={loading}
+                        style={{marginLeft: '30px', padding: '10px 20px', height: 'fit-content'}}
+                    >
+                        Atualizar Placar
+                    </button>
+                </div>
+            </div>
+
             <div className="aba-notas-header-actions">
-                <h3 style={{margin: 0, color: '#333'}}>Registro de Eventos da Partida</h3>
-                {/* Botão conectado à função de salvar */}
+                <h3 style={{margin: 0, color: '#333'}}>Estatísticas dos Atletas</h3>
                 <button 
                     className="btn-salvar-notas" 
                     onClick={handleSalvarEstatisticas}

@@ -54,6 +54,15 @@ public class PartidaService {
             }
         }
     }
+    public void atualizarPlacar(Integer partidaId, int golsCasa, int golsVisitante) throws Exception {
+        Partida partida = partidaRepository.buscarPorId(partidaId)
+                .orElseThrow(() -> new Exception("Partida não encontrada"));
+
+        partida.setPlacarClubeCasa(golsCasa);
+        partida.setPlacarClubeVisitante(golsVisitante);
+
+        partidaRepository.salvar(partida);
+    }
 
     public record DadosDesempenhoAtleta(Integer atletaId, int gols, int assistencias) {}
 }

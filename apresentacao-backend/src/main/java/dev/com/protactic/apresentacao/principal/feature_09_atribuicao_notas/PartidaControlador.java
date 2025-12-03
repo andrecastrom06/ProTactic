@@ -6,7 +6,6 @@ import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.entidade.
 import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.servico.PartidaService;
 import dev.com.protactic.dominio.principal.feature_09_atribuicao_notas.servico.PartidaService.DadosDesempenhoAtleta;
 
-// 1. IMPORTAÇÃO CRUCIAL
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +54,7 @@ public class PartidaControlador {
             return ResponseEntity.badRequest().build();
         }
     }
+
     @PostMapping(path = "/registrar-estatisticas")
     public ResponseEntity<Void> registrarEstatisticas(@RequestBody List<DadosDesempenhoAtleta> formulario) {
         try {
@@ -68,6 +68,28 @@ public class PartidaControlador {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    public record AtualizarPlacarFormulario(
+        Integer placarCasa, 
+        Integer placarVisitante
+    ) {}
+
+    @PutMapping(path = "/{id}/placar")
+    public ResponseEntity<Void> atualizarPlacar(
+            @PathVariable Integer id, 
+            @RequestBody AtualizarPlacarFormulario form) {
+        try {
+            partidaService.atualizarPlacar(
+                id, 
+                form.placarCasa(), 
+                form.placarVisitante()
+            );
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
         }
     }
 }

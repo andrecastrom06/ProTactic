@@ -12,5 +12,20 @@ export const partidaService = {
         });
 
         if (!response.ok) throw new Error('Erro ao salvar estatísticas.');
+    },
+
+    atualizarPlacar: async (partidaId, placarCasa, placarVisitante) => {
+        const response = await fetch(`${API_BASE_URL}/partida/${partidaId}/placar`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                placarCasa: parseInt(placarCasa),
+                placarVisitante: parseInt(placarVisitante)
+            })
+        });
+
+        if (!response.ok) throw new Error('Erro ao atualizar placar.');
     }
 };

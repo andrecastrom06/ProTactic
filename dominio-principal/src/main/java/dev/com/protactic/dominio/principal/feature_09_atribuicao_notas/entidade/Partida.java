@@ -25,7 +25,31 @@ public class Partida {
         this.placarClubeCasa = placarClubeCasa;
         this.placarClubeVisitante = placarClubeVisitante;
     }
+    public enum Resultado {
+        VITORIA, DERROTA, EMPATE, NAO_REALIZADA
+    }
+    public Resultado obterResultadoPara(Integer clubeId) {
+        if (placarClubeCasa == -1 || placarClubeVisitante == -1) { 
+            return Resultado.NAO_REALIZADA; 
+        }
 
+        boolean souMandante = this.clubeCasa.getId() == clubeId; 
+        boolean souVisitante = this.clubeVisitante.getId() == clubeId;
+
+        if (!souMandante && !souVisitante) {
+            throw new IllegalArgumentException("O clube informado não participou desta partida.");
+        }
+
+        if (placarClubeCasa == placarClubeVisitante) {
+            return Resultado.EMPATE;
+        }
+
+        if (souMandante) {
+            return placarClubeCasa > placarClubeVisitante ? Resultado.VITORIA : Resultado.DERROTA;
+        } else {
+            return placarClubeVisitante > placarClubeCasa ? Resultado.VITORIA : Resultado.DERROTA;
+        }
+    }
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

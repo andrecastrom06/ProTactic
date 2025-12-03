@@ -137,6 +137,17 @@ export const GestaoJogoPage = () => {
         carregarDetalhesPartida();
     }, [partidaSelecionada, todosAtletas, clubeIdLogado]);
 
+    // --- NOVA FUNÇÃO PARA RECARREGAR A LISTA DE PARTIDAS ---
+    const atualizarListaDePartidas = async () => {
+        if (!clubeIdLogado) return;
+        try {
+            const jogosAtualizados = await buscarJogosDoClube(clubeIdLogado);
+            setPartidas(jogosAtualizados);
+        } catch (error) {
+            console.error("Erro ao atualizar lista de partidas:", error);
+        }
+    };
+
     const handleDragEnd = (event) => {
         const { active, over, delta } = event;
         if (!over) return; 
@@ -196,7 +207,6 @@ export const GestaoJogoPage = () => {
         };
         try {
             await salvarEscalacao(payload);
-            // Salva posições no localStorage para persistir layout tático localmente
             try {
                 const posKey = `escalacao_posicoes_${partidaSelecionada}_${clubeIdLogado}`;
                 const positionsMap = {};
@@ -224,7 +234,6 @@ export const GestaoJogoPage = () => {
             const promessas = Object.keys(avaliacoes).map(async (atletaId) => {
                 const dados = avaliacoes[atletaId];
                 
-                // Envia se tiver nota ou observação
                 if (dados.nota > 0 || (dados.observacao && dados.observacao.trim() !== '')) {
                     const payload = {
                         jogoId: `JOGO-${partidaSelecionada}`, 
@@ -239,7 +248,6 @@ export const GestaoJogoPage = () => {
 
             await Promise.all(promessas);
             
-         
             const notasAtualizadas = await buscarNotasPorJogo("JOGO-" + partidaSelecionada);
             setNotasDoBanco(notasAtualizadas);
 
@@ -253,7 +261,7 @@ export const GestaoJogoPage = () => {
         }
     };
 
-   const atletasRelacionados = [...atletasNoCampo, ...reservas]; 
+    const atletasRelacionados = [...atletasNoCampo, ...reservas]; 
     
     const AvisoSemEscalacao = () => (
         <div style={{
@@ -273,6 +281,9 @@ export const GestaoJogoPage = () => {
             <p style={{fontSize: '0.9em'}}>Por favor, aceda à aba "Escalação Tática" e salve os titulares antes de prosseguir.</p>
         </div>
     );
+
+    // --- CORREÇÃO: Busca dados atuais ANTES do return ---
+    const dadosPartidaAtual = partidas.find(p => String(p.id) === String(partidaSelecionada));
 
     if (loading) return <div style={{padding:20}}>Carregando dados...</div>;
 
@@ -342,6 +353,11 @@ export const GestaoJogoPage = () => {
                                 <AbaCartoesInfo 
                                     atletas={atletasRelacionados.length > 0 ? atletasRelacionados : todosAtletas}
                                     partidaId={partidaSelecionada}
+                                    partidaDados={dadosPartidaAtual} 
+                                    meuClubeId={clubeIdLogado ? parseInt(clubeIdLogado) : null}
+                                    
+                                    // --- CORREÇÃO: Passa a função para o filho ---
+                                    aoAtualizarPartida={atualizarListaDePartidas}
                                 />
                             )}
                         </div>
