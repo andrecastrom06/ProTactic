@@ -63,8 +63,6 @@ import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaServiceProxy;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService;
-import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService;
-import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaServiceProxy;
 
 
 @SpringBootApplication
@@ -264,15 +262,18 @@ public class AplicacaoBackend {
         return new FisicoServicoAplicacao(repositorio);
     }
     
-    @Bean
+   @Bean
     public PlanejamentoFisicoService planejamentoFisicoService(
             FisicoRepository fisicoRepository,
             JogadorRepository jogadorRepository,
-            PlanejamentoCargaSemanalService planejamentoCargaSemanalService) {
+            PlanejamentoCargaSemanalService planejamentoCargaSemanalService,
+            RegistroLesoesServico registroLesoesServico) { 
+        
         return new PlanejamentoFisicoService(
             fisicoRepository, 
             jogadorRepository, 
-            planejamentoCargaSemanalService
+            planejamentoCargaSemanalService,
+            registroLesoesServico 
         );
     }
     @Bean

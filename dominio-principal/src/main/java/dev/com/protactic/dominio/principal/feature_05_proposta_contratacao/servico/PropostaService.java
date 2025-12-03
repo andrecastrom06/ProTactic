@@ -15,7 +15,6 @@ import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.repos
 import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.template.GeradorProposta;
 import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.template.GeradorPropostaBase;
 import dev.com.protactic.dominio.principal.feature_05_proposta_contratacao.template.GeradorPropostaEstrela;
-import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.DispensaService;
 import dev.com.protactic.dominio.principal.feature_12_dispensa_rescisao.servico.IDispensaService; 
 
 public class PropostaService {
