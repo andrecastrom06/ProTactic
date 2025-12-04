@@ -86,3 +86,27 @@ export const atualizarStatusTreinoFisico = async (treinoId, novoStatus) => {
         throw error;
     }
 };
+export const registrarCargaSemanal = async (jogadorId, duracao, intensidade, tipoCalculo) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/carga-semanal/registrar/${jogadorId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                duracao: parseFloat(duracao), 
+                intensidade: parseFloat(intensidade),
+                tipoCalculo: tipoCalculo // "LINEAR" ou "EXPONENCIAL"
+            })
+        });
+
+        if (!response.ok) {
+            const erroText = await response.text();
+            throw new Error(erroText || "Erro ao registrar carga.");
+        }
+        
+        // Retorna o JSON com o valor calculado pelo Backend
+        return await response.json(); 
+    } catch (error) {
+        console.error("Erro no serviço de carga:", error);
+        throw error;
+    }
+};

@@ -20,7 +20,8 @@ import {
     salvarTreinoFisico, 
     buscarTreinosFisicosPorJogador,
     atualizarStatusTreinoFisico,
-    buscarSessoesPorPartida
+    buscarSessoesPorPartida,
+    registrarCargaSemanal // <--- NOVO
 } from '../../services/treinoService';
 
 export const TreinosPage = () => {
@@ -62,6 +63,46 @@ export const TreinosPage = () => {
         if (texto === 'SUSPENSO_LESAO') return 'SUSPENSO_LESAO';
         
         return 'Planejado';
+    };
+    const [calculadora, setCalculadora] = useState({
+        jogadorId: '',
+        duracao: 60,
+        intensidade: 5,
+        tipoCalculo: 'LINEAR' // Default
+    });
+    const [resultadoCarga, setResultadoCarga] = useState(null);
+
+    // 3. Função para manipular inputs da calculadora
+    const handleCalcChange = (e) => {
+        setCalculadora({...calculadora, [e.target.name]: e.target.value});
+    };
+
+    // 4. Função para Enviar o Cálculo
+    const handleCalcularCarga = async (e) => {
+        e.preventDefault();
+        if (!calculadora.jogadorId) {
+            Swal.fire('Atenção', 'Selecione um jogador.', 'warning');
+            return;
+        }
+
+        try {
+            const resp = await registrarCargaSemanal(
+                calculadora.jogadorId, 
+                calculadora.duracao, 
+                calculadora.intensidade,
+                calculadora.tipoCalculo
+            );
+            
+            setResultadoCarga(resp); // Guarda o resultado vindo do backend
+            
+            Swal.fire({
+                title: 'Calculado!',
+                text: `Carga Total: ${resp.cargaCalculada.toFixed(2)} (Estratégia: ${resp.estrategiaUsada})`,
+                icon: 'success'
+            });
+        } catch (err) {
+            Swal.fire('Erro', err.message, 'error');
+        }
     };
 
     const formatarData = (dataString) => {
@@ -422,6 +463,124 @@ export const TreinosPage = () => {
                             </div>
                         </div>
                     ))}
+                </div>
+            </section>
+<section className="section-container" style={{borderLeft: '5px solid #673ab7', marginTop: '30px'}}>
+                <div className="section-header">
+                    <div className="header-title-group">
+                        <LuZap size={24} color="#673ab7"/>
+                        <div>
+                            <h2>Calculadora de Carga</h2>
+                            <small>Simulação de algoritmos sem vínculo com atleta</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="calculadora-box" style={{padding: '20px', backgroundColor: '#f5f3ff', borderRadius: '8px', marginTop: '10px'}}>
+                    {/* Formulário de Cálculo */}
+                    <form onSubmit={(e) => {
+                        // Injeta um ID fictício apenas para a rota da API funcionar, já que não estamos selecionando jogador visualmente
+                        if(!calculadora.jogadorId) setCalculadora(prev => ({...prev, jogadorId: '1'})); 
+                        handleCalcularCarga(e);
+                    }} style={{display: 'flex', gap: '20px', alignItems: 'flex-end', flexWrap: 'wrap'}}>
+                        
+                        <div className="form-group">
+                            <label style={{fontSize:'12px', fontWeight:'bold', display:'block', marginBottom:'5px'}}>Duração (minutos)</label>
+                            <input 
+                                type="number" name="duracao" 
+                                value={calculadora.duracao} onChange={handleCalcChange}
+                                placeholder="Ex: 60"
+                                style={{padding: '10px', width: '120px', borderRadius: '6px', border: '1px solid #ccc'}}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label style={{fontSize:'12px', fontWeight:'bold', display:'block', marginBottom:'5px'}}>Intensidade (PSE 0-10)</label>
+                            <input 
+                                type="number" name="intensidade" max="10" min="0"
+                                value={calculadora.intensidade} onChange={handleCalcChange}
+                                placeholder="Ex: 7"
+                                style={{padding: '10px', width: '120px', borderRadius: '6px', border: '1px solid #ccc'}}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label style={{fontSize:'12px', fontWeight:'bold', display:'block', marginBottom:'5px'}}>Estratégia de Cálculo</label>
+                            <select 
+                                name="tipoCalculo" 
+                                value={calculadora.tipoCalculo} 
+                                onChange={handleCalcChange}
+                                style={{padding: '10px', borderRadius: '6px', border: '1px solid #ccc', fontWeight: 'bold', color: '#673ab7', minWidth: '180px'}}
+                            >
+                                <option value="LINEAR">Linear (Padrão)</option>
+                                <option value="EXPONENCIAL">Exponencial (Foster Mod.)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" className="btn-action primary" style={{backgroundColor: '#673ab7', height: '42px', padding: '0 20px', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>
+                            <LuZap style={{marginRight: '5px'}}/> Calcular
+                        </button>
+                    </form>
+
+                    {/* Área de Resultados e Interpretação */}
+                    {resultadoCarga && (
+                        <div style={{marginTop: '25px', display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
+                            
+                            {/* Card do Resultado Numérico */}
+                            <div style={{flex: '1', padding: '15px', background: 'white', border: '1px solid #e0e0e0', borderRadius: '8px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)'}}>
+                                <h4 style={{margin: '0 0 10px 0', color: '#555'}}>Dados Processados (Backend)</h4>
+                                <div style={{fontSize: '0.9rem', color: '#666'}}>
+                                    <p style={{margin: '5px 0'}}><strong>Estratégia:</strong> {resultadoCarga.estrategiaUsada}</p>
+                                    <p style={{margin: '5px 0'}}><strong>Carga Calculada:</strong></p>
+                                    <span style={{fontSize: '2rem', fontWeight: '800', color: '#673ab7'}}>
+                                        {resultadoCarga.cargaCalculada.toFixed(1)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Card de Interpretação (O que o número significa) */}
+                            <div style={{flex: '1', padding: '15px', background: 'white', border: '1px solid #e0e0e0', borderRadius: '8px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)'}}>
+                                <h4 style={{margin: '0 0 10px 0', color: '#555'}}>Interpretação da Carga</h4>
+                                {(() => {
+                                    const carga = resultadoCarga.cargaCalculada;
+                                    const isLinear = calculadora.tipoCalculo === 'LINEAR';
+                                    
+                                    // Definição das faixas de valores para colorir o feedback
+                                    let status = { texto: '', cor: '', descricao: '' };
+
+                                    if (isLinear) {
+                                        if (carga < 300) status = { texto: 'LEVE', cor: '#4caf50', descricao: 'Treino regenerativo ou aquecimento.' };
+                                        else if (carga < 600) status = { texto: 'MODERADO', cor: '#ff9800', descricao: 'Manutenção de performance.' };
+                                        else status = { texto: 'PESADO', cor: '#f44336', descricao: 'Sobrecarga. Risco de fadiga se frequente.' };
+                                    } else {
+                                        // Exponencial escala mais rápido
+                                        if (carga < 400) status = { texto: 'LEVE', cor: '#4caf50', descricao: 'Estímulo baixo.' };
+                                        else if (carga < 1000) status = { texto: 'INTENSO', cor: '#ff9800', descricao: 'Treino de desenvolvimento.' };
+                                        else status = { texto: 'EXTREMO', cor: '#d32f2f', descricao: 'Alto risco de lesão (Overreaching).' };
+                                    }
+
+                                    return (
+                                        <div style={{display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center'}}>
+                                            <span style={{
+                                                backgroundColor: status.cor, 
+                                                color: 'white', 
+                                                padding: '5px 10px', 
+                                                borderRadius: '4px', 
+                                                fontWeight: 'bold', 
+                                                alignSelf: 'flex-start',
+                                                marginBottom: '8px'
+                                            }}>
+                                                {status.texto}
+                                            </span>
+                                            <p style={{margin: 0, fontSize: '0.9rem', color: '#444'}}>
+                                                {status.descricao}
+                                            </p>
+                                        </div>
+                                    );
+                                })()}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </section>
 
