@@ -5,7 +5,7 @@ import dev.com.protactic.dominio.principal.feature_01_cadastro_atleta.repositori
 import dev.com.protactic.dominio.principal.feature_03_registro_lesao.entidade.Lesao;
 import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.LesaoRepository;
 import dev.com.protactic.dominio.principal.feature_03_registro_lesao.repositorio.RegistroLesoesRepository;
-import dev.com.protactic.dominio.principal.feature_03_registro_lesao.observer.LesaoObserver; // NOVO IMPORT
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.observer.LesaoObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,6 @@ public class RegistroLesoesServico {
     private final JogadorRepository jogadorRepository;
     private final LesaoRepository lesaoRepository;    
     
-    // NOVO: Coleção para manter os observadores
     private final List<LesaoObserver> observers; 
 
     public RegistroLesoesServico(RegistroLesoesRepository repo, 
@@ -27,11 +26,9 @@ public class RegistroLesoesServico {
         this.repo = repo;
         this.jogadorRepository = jogadorRepository;
         this.lesaoRepository = lesaoRepository;
-        // NOVO: Inicializa a coleção
         this.observers = new ArrayList<>();
     }
     
-    // NOVO: Método para adicionar um Observer (Attach)
     public void adicionarObserver(LesaoObserver observer) {
         if (observer == null) {
             throw new IllegalArgumentException("O observer não pode ser nulo.");
@@ -39,30 +36,25 @@ public class RegistroLesoesServico {
         observers.add(observer);
     }
     
-    // NOVO: Método para remover um Observer (Detach - Opcional)
     public void removerObserver(LesaoObserver observer) {
         observers.remove(observer);
     }
     
-    // NOVO: Método para notificar os Observers (Notify)
     private void notificarObservers(Lesao lesao) {
         for (LesaoObserver observer : observers) {
             observer.observarLesao(lesao); 
         }
     }
 
-
     public void registrarLesaoPorId(Integer jogadorId, int grau) throws Exception {
         Objects.requireNonNull(jogadorId, "O ID do Jogador não pode ser nulo.");
         Jogador jogador = buscarJogadorOuLancarExcecao(jogadorId);
         
-        // 1. Executa a lógica de registro de lesão no repositório
         this.registrarLesao(jogador.getNome(), grau);
         
-        // 2. Busca o objeto Lesao recém-criado/ativo
         Optional<Lesao> lesaoOpt = lesaoRepository.buscarAtivaPorJogadorId(jogador.getId());
         if (lesaoOpt.isPresent()) {
-            this.notificarObservers(lesaoOpt.get()); // Dispara a notificação para todos os observadores
+            this.notificarObservers(lesaoOpt.get());
         }
     }
     
@@ -87,7 +79,13 @@ public class RegistroLesoesServico {
         Objects.requireNonNull(jogadorId, "O ID do Jogador não pode ser nulo.");
         Jogador jogador = buscarJogadorOuLancarExcecao(jogadorId);
         
+        Optional<Lesao> lesaoOpt = lesaoRepository.buscarAtivaPorJogadorId(jogador.getId());
+
         this.encerrarRecuperacao(jogador.getNome());
+
+        if (lesaoOpt.isPresent()) {
+            this.notificarObservers(lesaoOpt.get());
+        }
     }
     
     private Jogador buscarJogadorOuLancarExcecao(Integer jogadorId) throws Exception {

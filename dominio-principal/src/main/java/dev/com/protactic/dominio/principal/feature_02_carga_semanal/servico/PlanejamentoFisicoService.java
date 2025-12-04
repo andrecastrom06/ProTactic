@@ -7,7 +7,7 @@ import dev.com.protactic.dominio.principal.feature_02_carga_semanal.entidade.Fis
 import dev.com.protactic.dominio.principal.feature_02_carga_semanal.repositorio.FisicoRepository;
 import dev.com.protactic.dominio.principal.feature_03_registro_lesao.entidade.Lesao;
 import dev.com.protactic.dominio.principal.feature_03_registro_lesao.observer.LesaoObserver;
-import dev.com.protactic.dominio.principal.feature_03_registro_lesao.servico.RegistroLesoesServico; // NOVO IMPORT
+import dev.com.protactic.dominio.principal.feature_03_registro_lesao.servico.RegistroLesoesServico;
 
 import java.util.Date;
 import java.util.List;
@@ -23,7 +23,7 @@ public class PlanejamentoFisicoService implements LesaoObserver {
     public PlanejamentoFisicoService(FisicoRepository fisicoRepository,
                                      JogadorRepository jogadorRepository,
                                      PlanejamentoCargaSemanalService planejamentoCargaSemanalService,
-                                     RegistroLesoesServico registroLesoesServico) { // Parâmetro injetado
+                                     RegistroLesoesServico registroLesoesServico) {
         this.fisicoRepository = fisicoRepository;
         this.jogadorRepository = jogadorRepository;
         this.planejamentoCargaSemanalService = planejamentoCargaSemanalService;
@@ -46,12 +46,18 @@ public class PlanejamentoFisicoService implements LesaoObserver {
     public Fisico salvarTreinoFisico(DadosTreinoFisico formulario) throws Exception {
         Jogador jogador = buscarJogadorOuLancarExcecao(formulario.jogadorId());
 
-        planejamentoCargaSemanalService.registrarTreino(
+        // Verifica se o registo de carga é permitido
+        boolean registroAutorizado = planejamentoCargaSemanalService.registrarTreino(
             jogador, 
             60.0, 
             5.0, 
             new CalculoCargaLinear() 
         );
+
+        // Se o serviço de carga bloqueou (retornou false), impedimos a criação do treino físico
+        if (!registroAutorizado) {
+            throw new Exception("Não é possível criar treino físico: O jogador está lesionado ou sem contrato ativo.");
+        }
 
         Fisico novoTreino = new Fisico(
             0, 
@@ -129,18 +135,27 @@ public class PlanejamentoFisicoService implements LesaoObserver {
     
     @Override
     public void observarLesao(Lesao lesao) {
-        Integer jogadorId = lesao.getJogador().getId();
+        Jogador jogador = jogadorRepository.buscarPorId(lesao.getJogador().getId());
         
-        // Busca treinos ativos ou planejados para o jogador
-        List<Fisico> treinosAtivos = fisicoRepository.buscarPorJogadorId(jogadorId);
+        boolean estaSaudavel = (jogador.getGrauLesao() == -1 || jogador.getGrauLesao() == 0);
+
+        List<Fisico> treinosAtivos = fisicoRepository.buscarPorJogadorId(jogador.getId());
         
         for (Fisico treino : treinosAtivos) {
-            // Verifica se o treino está planeado e suspende-o
-            if ("PLANEJADO".equalsIgnoreCase(treino.getStatus()) || 
-                "PROTOCOLO_RETORNO".equalsIgnoreCase(treino.getStatus())) {
-                
-                treino.setStatus("SUSPENSO_LESAO");
-                fisicoRepository.salvar(treino);
+            if (!estaSaudavel) {
+                // CASO 1: Jogador LESIONADO -> Suspender treinos planejados
+                if ("PLANEJADO".equalsIgnoreCase(treino.getStatus()) || 
+                    "PROTOCOLO_RETORNO".equalsIgnoreCase(treino.getStatus())) {
+                    
+                    treino.setStatus("SUSPENSO_LESAO");
+                    fisicoRepository.salvar(treino);
+                }
+            } else {
+                if ("SUSPENSO_LESAO".equalsIgnoreCase(treino.getStatus())) {
+                    
+                    treino.setStatus("PLANEJADO");
+                    fisicoRepository.salvar(treino);
+                }
             }
         }
     }

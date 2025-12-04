@@ -35,7 +35,8 @@ public class PlanejamentoCargaSemanalService {
                                 (jogador.getGrauLesao() == -1 || jogador.getGrauLesao() == 0);
 
         if (!podeRegistrar) {
-            System.out.println("Não é possível registrar treino: Jogador lesionado ou sem contrato.");
+            System.out.println("Bloqueado: Jogador lesionado ou sem contrato.");
+            return false; 
         }
 
         if (estrategia == null) {
@@ -49,15 +50,13 @@ public class PlanejamentoCargaSemanalService {
         BigDecimal cargaCalculada = estrategia.calcularCarga(duracao, intensidade);
         treino.setCargaTotal(cargaCalculada);
         
-        treino.setRegistrado(podeRegistrar);
+        treino.setRegistrado(true);
 
         repository.salvarTreino(treino);
 
-        if (podeRegistrar) {
-            System.out.println("Treino registrado com sucesso para " + jogador.getNome() + 
-                               ". Carga: " + cargaCalculada);
-        }
+        System.out.println("Treino registrado com sucesso para " + jogador.getNome() + 
+                           ". Carga: " + cargaCalculada);
 
-        return podeRegistrar;
+        return true;
     }
 }

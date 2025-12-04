@@ -36,10 +36,8 @@ public class PlanejamentoCargaSemanalFeature {
         this.ultimoJogadorEmContexto = null;
     }
 
-
     @Dado("que o preparador físico está na tela de planejamento de cargas semanais")
     public void preparador_esta_na_tela() {
-       
     }
 
     @Dado("que o jogador {string} tem uma lesão de grau {int}")
@@ -102,14 +100,11 @@ public class PlanejamentoCargaSemanalFeature {
     }
 
     @Então("{string} não poderá ter o treino registrado")
-    public void nao_podera_ter_o_treino_registrado(String nome) {
-        TreinoSemanal treinoPersistido = repository.buscarPorJogador(nome);
+    public void nao_podera_ter_o_treino_registrado(String nomeJogador) {
+        TreinoSemanal treinoSalvo = repository.buscarPorJogador(nomeJogador);
 
-        assertNotNull(treinoPersistido, "O repositório deveria conter o treino do jogador, mesmo que inválido.");
-        assertFalse(treinoPersistido.isRegistrado(), "Falha: O treino de " + nome + " foi registrado, mas não deveria.");
-
-        assertEquals(nome, treinoPersistido.getJogador().getNome(), 
-            "O treino persistido não pertence ao jogador correto.");
+        // O treino DEVE ser nulo porque o bloqueámos no Serviço
+        assertNull(treinoSalvo, "Erro: O treino foi salvo no banco, mas não devia (jogador lesionado).");
     }
 
     @Então("o treino será registrado na aba de {string}")
@@ -122,9 +117,5 @@ public class PlanejamentoCargaSemanalFeature {
 
         assertEquals(nome, treinoPersistido.getJogador().getNome(),
             "O treino persistido não está vinculado ao jogador correto.");
-
-        TreinoSemanal treinoBuscado = repository.buscarPorJogador(nome);
-        assertEquals(treinoPersistido, treinoBuscado, 
-            "Os dados persistidos no repositório não correspondem ao treino recuperado.");
     }
 }
