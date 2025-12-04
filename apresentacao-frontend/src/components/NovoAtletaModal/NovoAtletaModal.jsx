@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import Swal from 'sweetalert2'; // Importação do SweetAlert2
 import { useAuth } from '../../store/AuthContext';
 import { cadastrarNovoAtleta } from '../../services/jogadorService';
 import './NovoAtletaModal.css';
@@ -8,16 +9,14 @@ const POSICOES = ["Goleiro", "Lateral", "Zagueiro", "Meio-campo", "Atacante"];
 export const NovoAtletaModal = ({ onClose, onSuccess }) => {
     const { clubeIdLogado } = useAuth();
 
-    // Estados do formulário
     const [nome, setNome] = useState('');
     const [posicao, setPosicao] = useState('');
     const [idade, setIdade] = useState('');
     const [duracaoMeses, setDuracaoMeses] = useState('');
     const [salario, setSalario] = useState('');
     
-    const [erroApi, setErroApi] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Validações simplificadas (sempre exige contrato e salário)
     const requisitos = useMemo(() => {
         return {
             nomePreenchido: nome.trim().length > 2,
@@ -32,30 +31,54 @@ export const NovoAtletaModal = ({ onClose, onSuccess }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
+
         if (!isFormularioValido) {
-            alert("Por favor, preencha todos os requisitos.");
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Por favor, preencha todos os requisitos corretamente.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            setIsSubmitting(false);
             return;
         }
 
         try {
-            // Monta o objeto enviando a situação fixa
             const formulario = {
                 nomeCompleto: nome,
                 posicao: posicao,
                 idade: parseInt(idade, 10),
                 duracaoMeses: parseInt(duracaoMeses, 10),
                 salario: parseFloat(salario),
-                situacaoContratual: "ATIVO", // Definido automaticamente
+                situacaoContratual: "ATIVO",
                 clubeId: clubeIdLogado
             };
 
             await cadastrarNovoAtleta(formulario);
             
-            alert("Atleta contratado e adicionado ao elenco!");
+            await Swal.fire({
+                title: 'Sucesso!',
+                text: 'Atleta contratado e adicionado ao elenco.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
             onSuccess(); 
             
         } catch (error) {
-            setErroApi(error.message || "Erro ao cadastrar atleta.");
+            console.error("Erro ao cadastrar atleta:", error);
+            const errorMessage = error.message || "Falha ao cadastrar atleta. Tente novamente.";
+
+            Swal.fire({
+                title: 'Erro',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -96,7 +119,6 @@ export const NovoAtletaModal = ({ onClose, onSuccess }) => {
                                 {POSICOES.map(p => <option key={p} value={p}>{p}</option>)}
                             </select>
                         </div>
-                        {/* Campo de Situação removido visualmente */}
                     </div>
                     
                     <div className="form-group-row">
@@ -130,12 +152,11 @@ export const NovoAtletaModal = ({ onClose, onSuccess }) => {
                         </ul>
                     </div>
 
-                    {erroApi && <p className="error-message">{erroApi}</p>}
 
                     <div className="modal-actions">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
-                        <button type="submit" className="btn-submit" disabled={!isFormularioValido}>
-                            Contratar
+                        <button type="button" className="btn-cancel" onClick={onClose} disabled={isSubmitting}>Cancelar</button>
+                        <button type="submit" className="btn-submit" disabled={!isFormularioValido || isSubmitting}>
+                            {isSubmitting ? 'Contratando...' : 'Contratar'}
                         </button>
                     </div>
                 </form>
