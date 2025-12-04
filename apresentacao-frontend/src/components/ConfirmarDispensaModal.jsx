@@ -1,33 +1,49 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2'; // Importação do SweetAlert2
 import { dispensarJogador } from '../services/contratoService';
-import { useAuth } from '../store/AuthContext'; // 1. IMPORTAR O HOOK DE AUTH
+import { useAuth } from '../store/AuthContext';
 import './NovoAtletaModal/NovoAtletaModal.css'; 
 
 export const ConfirmarDispensaModal = ({ contrato, onClose, onSuccess }) => {
     const [loading, setLoading] = useState(false);
     
-    // 2. RECUPERAR O USUÁRIO LOGADO
     const { usuario } = useAuth();
 
     const handleConfirm = async () => {
-        // Validação de segurança no frontend
         if (!usuario || !usuario.id) {
-            alert("Erro: Usuário não identificado na sessão.");
+            Swal.fire({
+                title: 'Erro de Sessão',
+                text: 'Usuário não identificado. Faça login novamente.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
         setLoading(true);
         try {
-            // 3. PASSAR O ID DO USUÁRIO COMO SEGUNDO PARÂMETRO
-            // O serviço contratoService.js já foi ajustado para enviar isso no Header 'usuarioId'
             await dispensarJogador(contrato.jogadorId, usuario.id);
             
-            alert("Contrato encerrado e jogador dispensado.");
+            await Swal.fire({
+                title: 'Contrato Encerrado!',
+                text: 'O jogador foi dispensado com sucesso.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
             onSuccess();
             onClose();
+
         } catch (err) {
-            // Se o usuário não for ANALISTA, o erro 403 do backend aparecerá aqui
-            alert("Erro ao encerrar: " + err.message);
+            console.error("Erro ao dispensar:", err);
+            
+            Swal.fire({
+                title: 'Falha ao encerrar',
+                text: err.message || "Não foi possível dispensar o jogador.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         } finally {
             setLoading(false);
         }
@@ -52,7 +68,9 @@ export const ConfirmarDispensaModal = ({ contrato, onClose, onSuccess }) => {
                 </p>
 
                 <div className="modal-actions">
-                    <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
+                    <button type="button" className="btn-cancel" onClick={onClose} disabled={loading}>
+                        Cancelar
+                    </button>
                     <button 
                         type="button" 
                         className="btn-submit" 

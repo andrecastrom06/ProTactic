@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2'; // Importação do SweetAlert2
 import { useAuth } from '../../store/AuthContext';
 import { buscarTodosJogadores } from '../../services/jogadorService';
 import { registrarInscricao } from '../../services/inscricaoService';
@@ -11,21 +12,13 @@ const POSICOES = ["Goleiro", "Lateral", "Zagueiro", "Meio-campo", "Atacante"];
 export const RegistrarInscricaoModal = ({ competicaoNome, onClose, onSuccess, atletasJaInscritos }) => {
     const { clubeIdLogado } = useAuth();
     
-    // Estados do formulário
     const [atletasDoClube, setAtletasDoClube] = useState([]);
     const [atletaSelecionadoId, setAtletaSelecionadoId] = useState('');
-    
-    // --- ALTERAÇÃO 1: Estado 'numeroCamisa' removido ---
-    // const [numeroCamisa, setNumeroCamisa] = useState(''); // REMOVIDO
     
     const [posicao, setPosicao] = useState('');
     const [idade, setIdade] = useState('');
     const [carregandoAtletas, setCarregandoAtletas] = useState(true);
-    
-    const [erroApi, setErroApi] = useState(null);
     const [carregando, setCarregando] = useState(false);
-
-    // Carrega os atletas do clube do usuário logado
     useEffect(() => {
         const carregarAtletas = async () => {
             if (!clubeIdLogado) return;
@@ -37,7 +30,13 @@ export const RegistrarInscricaoModal = ({ competicaoNome, onClose, onSuccess, at
                 );
                 setAtletasDoClube(atletasFiltrados);
             } catch (err) {
-                setErroApi(err.message);
+                console.error(err);
+                Swal.fire({
+                    title: 'Erro',
+                    text: 'Não foi possível carregar a lista de atletas.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             } finally {
                 setCarregandoAtletas(false);
             }
@@ -59,33 +58,52 @@ export const RegistrarInscricaoModal = ({ competicaoNome, onClose, onSuccess, at
         }
     };
 
-    // Handler para o envio
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // --- ALTERAÇÃO 2: Validação atualizada (sem numeroCamisa) ---
         const atleta = atletasDoClube.find(a => a.id === parseInt(atletaSelecionadoId, 10));
+        
         if (!atleta || !posicao || !idade) {
-            setErroApi("Por favor, preencha todos os campos obrigatórios.");
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Por favor, preencha todos os campos obrigatórios.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
         setCarregando(true);
-        setErroApi(null);
 
         try {
-            // O backend espera os Nomes, e não os IDs
             const resultado = await registrarInscricao(atleta.nome, competicaoNome);
             
             if (resultado.inscrito) {
-                alert("Atleta inscrito com sucesso!");
-                onSuccess(atleta.nome); // Passa o nome do atleta de volta
+                await Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Atleta inscrito com sucesso!',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                onSuccess(atleta.nome); 
             } else {
-                setErroApi(resultado.mensagemErro || "Falha ao registrar inscrição.");
+                Swal.fire({
+                    title: 'Erro',
+                    text: resultado.mensagemErro || "Falha ao registrar inscrição.",
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
 
         } catch (error) {
-            setErroApi(error.message);
+            console.error(error);
+            Swal.fire({
+                title: 'Erro',
+                text: error.message || "Ocorreu um erro inesperado.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         } finally {
             setCarregando(false);
         }
@@ -105,13 +123,12 @@ export const RegistrarInscricaoModal = ({ competicaoNome, onClose, onSuccess, at
 
                 <form className="modal-form" onSubmit={handleSubmit}>
                     
-                    {/* Seletor de Atleta */}
                     <div className="form-group">
                         <label>Nome Completo *</label>
                         {carregandoAtletas ? (
                             <p>Carregando atletas...</p>
                         ) : (
-                            <select value={atletaSelecionadoId} onChange={handleAtletaChange} required>
+                            <select value={atletaSelecionadoId} onChange={handleAtletaChange} disabled={carregando}>
                                 <option value="">Selecione um atleta...</option>
                                 {atletasDoClube.map(atleta => (
                                     <option key={atleta.id} value={atleta.id}>
@@ -122,26 +139,23 @@ export const RegistrarInscricaoModal = ({ competicaoNome, onClose, onSuccess, at
                         )}
                     </div>
                     
-                    {/* --- ALTERAÇÃO 3: Campo "Número da Camisa" REMOVIDO --- */}
-
                     <div className="form-group-row">
                         <div className="form-group">
                             <label>Posição *</label>
-                            <select value={posicao} onChange={(e) => setPosicao(e.target.value)} required>
+                            <select value={posicao} onChange={(e) => setPosicao(e.target.value)} disabled={carregando}>
                                 <option value="">Selecione a posição</option>
                                 {POSICOES.map(p => <option key={p} value={p}>{p}</option>)}
                             </select>
                         </div>
                         
-                        {/* --- ALTERAÇÃO 4: Campo "Idade" agora é readOnly --- */}
                         <div className="form-group">
-                            <label>Idade</label> {/* (O '*' foi removido) */}
+                            <label>Idade</label>
                             <input 
                                 type="number" 
                                 value={idade}
-                                readOnly // <-- Torna o campo não editável
+                                readOnly 
                                 placeholder="-"
-                                style={{ backgroundColor: '#f0f0f0' }} // Estilo visual de "desabilitado"
+                                style={{ backgroundColor: '#f0f0f0' }} 
                             />
                         </div>
                     </div>
@@ -150,10 +164,9 @@ export const RegistrarInscricaoModal = ({ competicaoNome, onClose, onSuccess, at
                         <strong>Importante:</strong> Apenas atletas com 16 anos ou mais podem ser inscritos na competição.
                     </div>
 
-                    {erroApi && <p className="error-message">{erroApi}</p>}
 
                     <div className="modal-actions">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
+                        <button type="button" className="btn-cancel" onClick={onClose} disabled={carregando}>Cancelar</button>
                         <button type="submit" className="btn-submit" disabled={carregando || carregandoAtletas}>
                             {carregando ? "Registrando..." : "Registrar Atleta"}
                         </button>

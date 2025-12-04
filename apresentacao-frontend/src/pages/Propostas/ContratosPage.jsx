@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Swal from 'sweetalert2';
 import { 
     buscarPropostasRecebidas,
     aceitarProposta,      
@@ -6,10 +7,9 @@ import {
 } from '../../services/propostaService';
 import { buscarContratosVigentes } from '../../services/contratoService';
 
-// Importação dos Modais
 import { NovaPropostaModal } from '../../components/NovaPropostaModal';
-import { RenovarContratoModal } from '../../components/RenovarContratoModal'; // NOVO
-import { ConfirmarDispensaModal } from '../../components/ConfirmarDispensaModal'; // NOVO
+import { RenovarContratoModal } from '../../components/RenovarContratoModal'; 
+import { ConfirmarDispensaModal } from '../../components/ConfirmarDispensaModal'; 
 
 import { useAuth } from '../../store/AuthContext';
 import './ContratosPage.css'; 
@@ -68,12 +68,14 @@ export const ContratosPage = () => {
     
     // Estados dos Modais
     const [isNovaPropostaOpen, setIsNovaPropostaOpen] = useState(false);
-    const [isRenovarOpen, setIsRenovarOpen] = useState(false);   // NOVO
-    const [isEncerrarOpen, setIsEncerrarOpen] = useState(false); // NOVO
-    const [contratoSelecionado, setContratoSelecionado] = useState(null); // NOVO
+    const [isRenovarOpen, setIsRenovarOpen] = useState(false);   
+    const [isEncerrarOpen, setIsEncerrarOpen] = useState(false); 
+    const [contratoSelecionado, setContratoSelecionado] = useState(null); 
 
     const [propostas, setPropostas] = useState([]);
     const [contratos, setContratos] = useState([]);
+    
+    // Removido estados de loading individuais para simplificar, mas mantidos na lógica se desejar usar spinners
     const [carregandoPropostas, setCarregandoPropostas] = useState(true);
     const [carregandoContratos, setCarregandoContratos] = useState(true);
     
@@ -102,7 +104,6 @@ export const ContratosPage = () => {
         carregarContratos();
     }, [carregarPropostas, carregarContratos]); 
 
-    // Handlers de Ação de Contrato
     const abrirModalRenovar = (contrato) => {
         setContratoSelecionado(contrato);
         setIsRenovarOpen(true);
@@ -114,29 +115,83 @@ export const ContratosPage = () => {
     };
 
     const handleSuccessContrato = () => {
-        carregarContratos(); // Recarrega a lista
+        carregarContratos();
     };
 
-    // Handlers de Proposta
     const handleAceitar = async (propostaId) => {
-        if (!window.confirm("Aceitar proposta?")) return;
+        const result = await Swal.fire({
+            title: 'Aceitar Proposta?',
+            text: "O jogador será contratado e adicionado ao elenco.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00796b',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, aceitar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await aceitarProposta(propostaId);
-            alert("Proposta aceite!");
-            carregarPropostas(); carregarContratos(); 
-        } catch (err) { alert(err.message); }
+            
+            await Swal.fire({
+                title: 'Proposta Aceita!',
+                text: 'Novo contrato gerado com sucesso.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            carregarPropostas(); 
+            carregarContratos(); 
+        } catch (err) { 
+            // 3. Erro
+            Swal.fire({
+                title: 'Erro',
+                text: err.message || "Não foi possível aceitar a proposta.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
     };
 
     const handleRejeitar = async (propostaId) => {
-        if (!window.confirm("Rejeitar proposta?")) return;
+        const result = await Swal.fire({
+            title: 'Rejeitar Proposta?',
+            text: "Esta ação não pode ser desfeita.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sim, rejeitar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await recusarProposta(propostaId);
-            alert("Proposta rejeitada.");
+            
+            await Swal.fire({
+                title: 'Rejeitada',
+                text: 'A proposta foi recusada.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            
             carregarPropostas(); 
-        } catch (err) { alert(err.message); }
+        } catch (err) { 
+            Swal.fire({
+                title: 'Erro',
+                text: err.message || "Não foi possível rejeitar a proposta.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
     };
 
-    // --- Tabelas ---
     const TabelaPropostas = () => (
         <table className="propostas-table">
             <thead>

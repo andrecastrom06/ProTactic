@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { buscarJogadoresPorClube } from '../../services/jogadorService'; // <--- Filtro mantido
+import Swal from 'sweetalert2';
+import { buscarJogadoresPorClube } from '../../services/jogadorService'; 
 import { encerrarLesao } from '../../services/lesaoService';
 import { NovoAtletaModal } from '../../components/NovoAtletaModal/NovoAtletaModal';
 import { DetalhesAtletaModal } from '../../components/DetalhesAtletaModal/DetalhesAtletaModal';
@@ -26,7 +27,6 @@ const AtletasPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-    // Modais
     const [isCadastroModalOpen, setIsCadastroModalOpen] = useState(false);
     const [isLesaoModalOpen, setIsLesaoModalOpen] = useState(false);
     const [isDetalhesModalOpen, setIsDetalhesModalOpen] = useState(false);
@@ -35,18 +35,28 @@ const AtletasPage = () => {
 
     const { clubeIdLogado } = useAuth();
 
-    // Lógica de busca com FILTRO por clubeIdLogado
     const carregarAtletas = useCallback(async () => {
         if (!clubeIdLogado) return; 
 
         try {
             setLoading(true);
-            const response = await buscarJogadoresPorClube(clubeIdLogado); // <--- Passando o ID
+            const response = await buscarJogadoresPorClube(clubeIdLogado); 
             setAtletas(response); 
             setError(null);
         } catch (err) {
             console.error("Erro ao buscar atletas:", err);
             setError("Não foi possível carregar o elenco.");
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            Toast.fire({
+                icon: 'error',
+                title: 'Erro de conexão ao buscar elenco.'
+            });
+
         } finally {
             setLoading(false);
         }
@@ -78,15 +88,38 @@ const AtletasPage = () => {
     };
 
     const handleEncerrarLesao = async (jogadorId) => {
-        if (!window.confirm("Tem certeza que deseja encerrar esta lesão e marcar o atleta como 'Saudável'?")) {
-            return;
-        }
+        const result = await Swal.fire({
+            title: 'Encerrar Lesão?',
+            text: "O atleta será marcado como 'Saudável' e estará disponível para jogar.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, encerrar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await encerrarLesao(jogadorId);
-            alert("Lesão encerrada. O atleta está saudável.");
+            
+            await Swal.fire({
+                title: 'Recuperado!',
+                text: 'Lesão encerrada. O atleta está saudável.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            
             carregarAtletas();
         } catch (err) {
-            alert(`Erro ao encerrar lesão: ${err.message}`);
+            Swal.fire({
+                title: 'Erro',
+                text: `Erro ao encerrar lesão: ${err.message}`,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     };
 
@@ -180,6 +213,7 @@ const AtletasPage = () => {
                                                 className="action-btn action-btn-details" 
                                                 onClick={() => handleEncerrarLesao(atleta.id)}
                                                 title="Encerrar Lesão Ativa"
+                                                style={{borderColor: '#28a745', color: '#28a745'}} // Destaque visual
                                             >
                                                 <FaHeartbeat size={14} /> Encerrar Lesão
                                             </button>

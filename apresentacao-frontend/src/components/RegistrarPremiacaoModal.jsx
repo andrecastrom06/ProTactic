@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2'; // Importação do SweetAlert2
 import { salvarPremiacao } from '../services/premiacaoService';
 import './NovoAtletaModal/NovoAtletaModal.css'; 
 
@@ -12,17 +13,28 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
         e.preventDefault();
         
         if (!nomePremio || !dataPremio) {
-            alert("Preencha o Nome do Prémio e a Data de Referência.");
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Preencha o Nome do Prémio e a Data de Referência.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
         setLoading(true);
 
         try {
-            // Não enviamos jogadorId, o backend calcula isso
             await salvarPremiacao(nomePremio, dataPremio); 
             
-            alert("Premiação registrada com sucesso! O sistema calculou o Jogador do Mês e o valor do prémio.");
+            await Swal.fire({
+                title: 'Sucesso!',
+                text: 'Premiação registrada! O sistema calculou o Jogador do Mês e o valor do prémio.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
             onSuccess();
             onClose();
             
@@ -30,7 +42,13 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
             setDataPremio('');
             
         } catch (err) {
-            alert("Erro ao salvar: " + err.message);
+            console.error(err);
+            Swal.fire({
+                title: 'Erro ao salvar',
+                text: err.message || "Não foi possível registrar a premiação.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         } finally {
             setLoading(false);
         }
@@ -53,6 +71,7 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
                             value={nomePremio} 
                             onChange={e => setNomePremio(e.target.value)} 
                             placeholder="Ex: Melhor Jogador de Março"
+                            disabled={loading}
                             required
                         />
                     </div>
@@ -63,6 +82,7 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
                             type="date" 
                             value={dataPremio} 
                             onChange={e => setDataPremio(e.target.value)} 
+                            disabled={loading}
                             required
                         />
                         <small style={{ marginTop: '8px', display: 'block', color: '#666' }}>
@@ -73,9 +93,9 @@ export const RegistrarPremiacaoModal = ({ onClose, onSuccess }) => {
                     </div>
 
                     <div className="modal-actions">
-                        <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
+                        <button type="button" className="btn-cancel" onClick={onClose} disabled={loading}>Cancelar</button>
                         <button type="submit" className="btn-submit" disabled={loading}>
-                            {loading ? 'Calculando e Salvando...' : 'Gerar Premiação'}
+                            {loading ? 'Calculando...' : 'Gerar Premiação'}
                         </button>
                     </div>
                 </form>

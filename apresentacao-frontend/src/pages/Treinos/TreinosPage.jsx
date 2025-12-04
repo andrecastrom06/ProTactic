@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import Swal from 'sweetalert2'; // Importação do SweetAlert2
 import { 
     LuCalendarDays, LuUsers, LuDumbbell,
     LuX, LuCheck, LuZap, LuUser, LuRefreshCw,
@@ -181,10 +182,14 @@ export const TreinosPage = () => {
         
         try {
             await atualizarStatusTreinoFisico(id, novoStatus);
-            // Atualiza localmente já formatado
             setListaFisicos(prev => prev.map(t => t.id === id ? { ...t, status: novoStatus } : t));
         } catch (err) {
-            alert("Erro ao atualizar status: " + err.message);
+            Swal.fire({
+                title: 'Erro',
+                text: "Erro ao atualizar status: " + err.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         } finally {
             setLoadingStatus(null);
         }
@@ -213,7 +218,14 @@ export const TreinosPage = () => {
 
         try {
             if (tipoTreinoSelecionado === 'Físico') {
-                if (!novoTreino.jogadorFisicoId) return alert("Selecione um atleta.");
+                if (!novoTreino.jogadorFisicoId) {
+                    return Swal.fire({
+                        title: 'Atenção',
+                        text: 'Selecione um atleta.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                }
                 
                 let intensidadeEnum = 'Baixa';
                 if (novoTreino.intensidade > 66) intensidadeEnum = 'Alta';
@@ -229,14 +241,36 @@ export const TreinosPage = () => {
                 };
 
                 await salvarTreinoFisico(novoTreino.jogadorFisicoId, payload);
-                alert("Treino Físico registrado!");
+                
+                await Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Treino Físico registrado!',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
             } 
             else if (tipoTreinoSelecionado === 'Tático') {
-                if (!novoTreino.partidaId) return alert("Selecione uma partida.");
+                if (!novoTreino.partidaId) {
+                    return Swal.fire({
+                        title: 'Atenção',
+                        text: 'Selecione uma partida.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                }
                 
                 let listaConvocados = [];
                 if (novoTreino.escopoTatico === 'INDIVIDUAL') {
-                    if(!novoTreino.jogadorTaticoId) return alert("Selecione o jogador escalado.");
+                    if(!novoTreino.jogadorTaticoId) {
+                        return Swal.fire({
+                            title: 'Atenção',
+                            text: 'Selecione o jogador escalado.',
+                            icon: 'warning',
+                            confirmButtonText: 'OK'
+                        });
+                    }
                     listaConvocados = [parseInt(novoTreino.jogadorTaticoId)];
                 } else {
                     listaConvocados = jogadores.map(j => j.id);
@@ -250,14 +284,26 @@ export const TreinosPage = () => {
                 };
 
                 await criarSessaoTatica(payload);
-                alert("Sessão Tática agendada!");
+                
+                await Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Sessão Tática agendada!',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
             }
 
             fecharModal();
             carregarDados();
 
         } catch (err) {
-            alert("Erro: " + err.message);
+            Swal.fire({
+                title: 'Erro',
+                text: err.message || "Erro ao salvar treino.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     };
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2'; // Importação do SweetAlert2
 import { useAuth } from '../../store/AuthContext';
 import { useNavigate } from 'react-router-dom'; 
 import './LoginPage.css'; // Estilos
@@ -6,27 +7,47 @@ import './LoginPage.css'; // Estilos
 export const LoginPage = () => {
     const [login, setLogin] = useState('');
     const [senha, setSenha] = useState('');
-    const [erro, setErro] = useState(null);
     const [carregando, setCarregando] = useState(false);
 
-    const auth = useAuth(); // Acede ao nosso AuthContext
-    const navigate = useNavigate(); // Acede ao router
+    const auth = useAuth();
+    const navigate = useNavigate(); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErro(null);
+        
+        if (!login || !senha) {
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Por favor, preencha todos os campos.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
         setCarregando(true);
 
         try {
-            // 1. Chama a função de login do nosso Context
             await auth.login(login, senha);
             
-            // 2. Se funcionar, redireciona para o Dashboard
+            await Swal.fire({
+                title: 'Bem-vindo!',
+                text: 'Login realizado com sucesso.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            
             navigate('/dashboard'); 
             
         } catch (error) {
-            // 3. Se falhar, mostra o erro
-            setErro(error.message);
+            console.error(error);
+            Swal.fire({
+                title: 'Falha no Login',
+                text: error.message || 'Usuário ou senha incorretos.',
+                icon: 'error',
+                confirmButtonText: 'Tentar Novamente'
+            });
         } finally {
             setCarregando(false);
         }
@@ -46,6 +67,7 @@ export const LoginPage = () => {
                             value={login}
                             onChange={(e) => setLogin(e.target.value)}
                             required
+                            disabled={carregando}
                         />
                     </div>
                     <div className="form-group">
@@ -55,13 +77,12 @@ export const LoginPage = () => {
                             value={senha}
                             onChange={(e) => setSenha(e.target.value)}
                             required
+                            disabled={carregando}
                         />
                     </div>
                     
-                    {erro && <p className="error-message">{erro}</p>}
-
                     <button type="submit" className="login-button" disabled={carregando}>
-                        {carregando ? "A entrar..." : "Entrar"}
+                        {carregando ? "Entrando..." : "Entrar"}
                     </button>
                 </form>
             </div>

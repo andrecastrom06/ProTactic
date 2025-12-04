@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Swal from 'sweetalert2';
 import { useAuth } from '../../store/AuthContext';
 import { buscarTodosJogadores } from '../../services/jogadorService';
 import { definirCapitao } from '../../services/capitaoService';
@@ -40,7 +41,6 @@ export const CompeticoesPage = () => {
     const [loading, setLoading] = useState(true); 
     const [error, setError] = useState(null);
 
-    // --- 1. Carregar Dados Iniciais ---
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
@@ -55,6 +55,12 @@ export const CompeticoesPage = () => {
             } catch(e) {
                 console.error(e);
                 setError("Erro ao carregar dados iniciais.");
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de Conexão',
+                    text: 'Não foi possível carregar as competições e premiações.'
+                });
             } finally {
                 setLoading(false);
             }
@@ -62,7 +68,6 @@ export const CompeticoesPage = () => {
         loadData();
     }, []);
 
-    // --- 2. Carregar Inscrições e Atletas ---
     const carregarAtletasEInscricoes = useCallback(async () => {
         if (!competicaoSelecionada || !clubeIdLogado) return;
 
@@ -88,8 +93,6 @@ export const CompeticoesPage = () => {
     }, [carregarAtletasEInscricoes]);
 
     
-    // --- Handlers ---
-    
     const handleRecarregarPremiacoes = async () => {
         const prems = await buscarTodasPremiacoes();
         setPremiacoes(prems);
@@ -97,21 +100,44 @@ export const CompeticoesPage = () => {
     };
 
     const handleDefinirCapitao = async (jogadorId) => {
-        if(!window.confirm("Definir novo capitão?")) return;
+        const result = await Swal.fire({
+            title: 'Definir Capitão?',
+            text: "Este jogador passará a ser o líder da equipe.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#f0ad4e',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, definir',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await definirCapitao(jogadorId);
-            alert("Sucesso!");
+            await Swal.fire({
+                title: 'Novo Capitão!',
+                text: 'A braçadeira foi passada com sucesso.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+
             carregarAtletasEInscricoes();
-        } catch(e) { alert(e.message); }
+        } catch(e) { 
+            Swal.fire({
+                title: 'Erro',
+                text: e.message || "Não foi possível definir o capitão.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
     };
 
-    // Função utilitária para formatar moeda
     const formatarMoeda = (valor) => {
         if (valor === null || valor === undefined) return 'R$ 0,00';
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
     };
-
-    // --- Componentes das Abas ---
 
     const AbaAtletas = () => (
         <div className="atleta-list-container">
@@ -139,7 +165,6 @@ export const CompeticoesPage = () => {
         </div>
     );
 
-    // --- ABA DE PREMIAÇÕES (CORRIGIDA) ---
     const AbaPremiacoes = () => {
         const minhasPremiacoes = premiacoes.filter(p => 
             atletas.some(a => a.id === p.jogadorId)
@@ -147,7 +172,6 @@ export const CompeticoesPage = () => {
 
         return (
             <div className="atleta-list-container">
-                {/* Header atualizado com a coluna Valor */}
                 <div className="atleta-list-item header" style={{gridTemplateColumns: '2fr 2fr 1.5fr 1fr'}}>
                     <span>Prémio</span>
                     <span>Jogador Vencedor</span>

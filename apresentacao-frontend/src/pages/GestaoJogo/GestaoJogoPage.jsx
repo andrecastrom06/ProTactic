@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { DndContext, closestCenter } from '@dnd-kit/core';
+import Swal from 'sweetalert2';
 
 import { CampoTatico } from './components/CampoTatico';
 import { ListaAtletas } from './components/ListaAtletas';
@@ -34,7 +35,6 @@ export const GestaoJogoPage = () => {
     const [loading, setLoading] = useState(true);
     const campoTaticoRef = useRef(null);
 
-    // Carregamento inicial de dados
     useEffect(() => {
         const carregarDados = async () => {
             if (!clubeIdLogado) return;
@@ -104,7 +104,6 @@ export const GestaoJogoPage = () => {
                             poolDeAtletas.splice(index, 1); 
                         }
                     });
-                    // Tenta restaurar posições previamente salvas no localStorage
                     try {
                         const posKey = `escalacao_posicoes_${partidaSelecionada}_${clubeIdLogado}`;
                         const json = localStorage.getItem(posKey);
@@ -137,7 +136,6 @@ export const GestaoJogoPage = () => {
         carregarDetalhesPartida();
     }, [partidaSelecionada, todosAtletas, clubeIdLogado]);
 
-    // --- NOVA FUNÇÃO PARA RECARREGAR A LISTA DE PARTIDAS ---
     const atualizarListaDePartidas = async () => {
         if (!clubeIdLogado) return;
         try {
@@ -184,7 +182,18 @@ export const GestaoJogoPage = () => {
                      y: (relativeY / campoRect.height) * 100 
                  };
             }
-            if (atletasNoCampo.length >= 11) alert("Atenção: Já existem 11 jogadores em campo.");
+            if (atletasNoCampo.length >= 11) {
+                Swal.fire({
+                    title: 'Limite Atingido',
+                    text: 'Já existem 11 jogadores em campo.',
+                    icon: 'warning',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                setAtletasDisponiveis(p => [...p, atletaLimpo]);
+                return; 
+            }
+            
             setAtletasNoCampo(prev => [...prev, { ...atletaLimpo, position: newPosition }]);
         } else if (idDestino === 'DISPONIVEIS_LIST') {
             setAtletasDisponiveis(p => [...p, atletaLimpo]);
@@ -195,7 +204,12 @@ export const GestaoJogoPage = () => {
 
     const handleSalvarEscalacao = async () => {
         if (!partidaSelecionada) {
-            alert("Selecione uma partida primeiro.");
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Selecione uma partida primeiro.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
             return;
         }
         const idsJogadores = atletasNoCampo.map(a => a.id);
@@ -217,15 +231,32 @@ export const GestaoJogoPage = () => {
             } catch (err) {
                 console.error('Erro ao salvar posições localmente:', err);
             }
-            alert("Escalação salva com sucesso!");
+            await Swal.fire({
+                title: 'Escalação Salva!',
+                text: 'A formação tática foi salva com sucesso.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
             setEscalacaoJaExiste(true);
         } catch (err) {
-            alert("Erro ao salvar: " + err.message);
+            Swal.fire({
+                title: 'Erro',
+                text: err.message || "Erro ao salvar a escalação.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     };
+    
     const handleSalvarNotas = async (avaliacoes) => {
         if (!partidaSelecionada) {
-            alert("Selecione uma partida primeiro.");
+            Swal.fire({
+                title: 'Atenção',
+                text: 'Selecione uma partida primeiro.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
             return;
         }
 
@@ -251,11 +282,22 @@ export const GestaoJogoPage = () => {
             const notasAtualizadas = await buscarNotasPorJogo("JOGO-" + partidaSelecionada);
             setNotasDoBanco(notasAtualizadas);
 
-            alert("Notas e observações salvas e atualizadas com sucesso!");
+            await Swal.fire({
+                title: 'Sucesso!',
+                text: 'Notas e observações atualizadas.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
 
         } catch (error) {
             console.error("Erro ao salvar notas:", error);
-            alert("Erro ao salvar notas: " + error.message);
+            Swal.fire({
+                title: 'Erro',
+                text: error.message || "Erro ao salvar notas.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         } finally {
             setLoading(false);
         }
@@ -282,7 +324,6 @@ export const GestaoJogoPage = () => {
         </div>
     );
 
-    // --- CORREÇÃO: Busca dados atuais ANTES do return ---
     const dadosPartidaAtual = partidas.find(p => String(p.id) === String(partidaSelecionada));
 
     if (loading) return <div style={{padding:20}}>Carregando dados...</div>;
@@ -311,7 +352,6 @@ export const GestaoJogoPage = () => {
                 </header>
                 
                 <div className="gestao-jogo-content">
-                    {/* === ABA ESCALAÇÃO === */}
                     {abaAtiva === 'ESCALACAO' && (
                         <>
                             <div className="campo-column">
@@ -355,15 +395,12 @@ export const GestaoJogoPage = () => {
                                     partidaId={partidaSelecionada}
                                     partidaDados={dadosPartidaAtual} 
                                     meuClubeId={clubeIdLogado ? parseInt(clubeIdLogado) : null}
-                                    
-                                    // --- CORREÇÃO: Passa a função para o filho ---
                                     aoAtualizarPartida={atualizarListaDePartidas}
                                 />
                             )}
                         </div>
                     )}
 
-                    {/* === ABA SUSPENSÕES === */}
                     {abaAtiva === 'SUSPENSOES' && (
                         <div style={{width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
                             <AbaSuspensoes clubeId={clubeIdLogado} />
