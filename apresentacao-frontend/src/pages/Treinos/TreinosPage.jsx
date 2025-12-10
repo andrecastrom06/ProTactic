@@ -608,14 +608,7 @@ export const TreinosPage = () => {
                                             className={`scope-btn ${novoTreino.escopoTatico === 'EQUIPE' ? 'active' : ''}`}
                                             onClick={() => setNovoTreino({...novoTreino, escopoTatico: 'EQUIPE', jogadorTaticoId: ''})}
                                         >
-                                            <LuUsers style={{verticalAlign:'middle'}}/> Equipe Toda
-                                        </button>
-                                        <button 
-                                            type="button"
-                                            className={`scope-btn ${novoTreino.escopoTatico === 'INDIVIDUAL' ? 'active' : ''}`}
-                                            onClick={() => setNovoTreino({...novoTreino, escopoTatico: 'INDIVIDUAL'})}
-                                        >
-                                            <LuUser style={{verticalAlign:'middle'}}/> Individual
+                                            <LuUsers style={{verticalAlign:'middle'}}/> Equipe Completa
                                         </button>
                                     </div>
 
