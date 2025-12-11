@@ -50,16 +50,15 @@ Esses comandos garantem que o projeto seja recompilado a partir do zero e que to
 
 Para usufruir do nosso backend rode:
 
-1. 
-2. 
-3. 
+1. ```cd apresentacao-backend```
+2. ```mvn spring-boot:run```
 
 Esses comandos garantem um ambiente de teste exclusivo para o backend
 
-Para usufruir da nossa aplicação por inteiro rode:
+Para usufruir do nosso frontend rode:
 
-1. 
-2. 
-3. 
+1. ```cd apresentacao-frontend```
+2. ```npm install```
+3. ```npm start```
 
 Esses comandos fazem a conexão backend + frontend, para melhor entendimento das dinâmicas do projeto
